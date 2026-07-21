@@ -290,12 +290,26 @@ optional extras (`pip install qnetbench[sequence]`, `[netsquid]`).
 
 ---
 
+### SeQUeNCe backend model — RESOLVED: hybrid (entanglement-supply)
+
+SeQUeNCe owns the entanglement-generation physics; qnetbench owns app execution.
+For each edge we run a SeQUeNCe reservation and extract the delivered-pair stream
+(inter-arrival timing + fidelity); the verified reference engine then *replays*
+that supply and runs the local quantum ops + classical protocol. This targets the
+layer Issue #4 discriminates on (how entanglement is supplied), reuses the
+reference engine (so the SeQUeNCe backend is a ~90-line subclass overriding two
+physics hooks), and keeps cross-backend equivalence clean (delivered fidelity is
+the controlled variable). Two SeQUeNCe-specific notes: delivered fidelity is set
+by the memory `raw_fidelity` param; and SeQUeNCe keeps process-global state that
+misbehaves under the engine's worker threads, so every edge's supply is
+pre-generated eagerly on the main thread in `SequenceBackend.__init__`.
+
 ## 11. Roadmap — phases mapped to the issue's deliverables
 
 | Phase | Output | Issue deliverable |
 |---|---|---|
-| **0. Skeleton** | scaffolding, typed `api` + `trace`, reference backend, apps #1–#3, metrics, CLI, CI, invariant tests | foundation for all |
-| **1. SeQUeNCe backend** | `backends/sequence` + cross-backend invariants for #1–#3 | Deliverable 1 (½) |
+| **0. Skeleton** ✅ | scaffolding, typed `api` + `trace`, reference backend, apps #1–#3, metrics, CLI, CI, invariant tests | foundation for all |
+| **1. SeQUeNCe backend** ✅ | `backends/sequence` (hybrid) + cross-backend invariants for #1–#3 | Deliverable 1 (½) |
 | **2. NetSquid backend** | `backends/netsquid` + equivalence report | Deliverable 1 (✔ ≥2 sims) |
 | **3. Full app set** | apps #4–#6 (+ stretch) across backends | Deliverable 1 (✔ 6–8 apps) |
 | **4. Characterization** | signature vectors + curves for all apps; the characterization write-up | Deliverable 2 |

@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-sequence = ["sequence>=0.6"]
+sequence = ["sequence>=1.0"]
 netsquid = []  # NetSquid is not on public PyPI; install per its own instructions.
 dev = [
     "pytest>=8.0",

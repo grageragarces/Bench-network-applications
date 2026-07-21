@@ -11,12 +11,13 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 0 (skeleton).** The architecture is in place and runnable
-> end-to-end on the built-in reference backend: the portable API, the versioned
-> trace format, three applications spanning three demand signatures, the metric
-> suite, and the arbitration seam. The SeQUeNCe and NetSquid backends, the full
-> 6–8 application set, demand-signature characterization, and the cross-policy
-> ranking-inversion result are later phases ([docs/design.md §11](docs/design.md)).
+> **Status: Phase 1.** Runnable end-to-end on **two backends** — the built-in
+> reference engine and **SeQUeNCe** — with the portable API, the versioned trace
+> format, three applications spanning three demand signatures, the metric suite,
+> and the arbitration seam. Cross-backend equivalence tests pass. The NetSquid
+> backend, the full 6–8 application set, demand-signature characterization, and
+> the cross-policy ranking-inversion result are later phases
+> ([docs/design.md §11](docs/design.md)).
 
 ## The two ideas
 
@@ -46,6 +47,7 @@ nothing else, so the whole suite runs and tests in CI without any simulator.
 ```bash
 qnetbench list                              # available apps and policies
 qnetbench run qkd                           # run and print the standard report
+qnetbench run qkd --backend sequence        # supply entanglement from SeQUeNCe
 qnetbench run bqc --arbitration policy:edf  # apply a scheduling policy
 qnetbench run distributed_gate --out run.jsonl   # also write the JSONL trace
 qnetbench run qkd --json                    # machine-readable report
@@ -91,7 +93,7 @@ qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
   apps/        qkd, bqc, distributed_gate — written once, backend-agnostic
-  backends/    reference (pure-Python); sequence, netsquid (later phases)
+  backends/    reference (pure-Python) + sequence (SeQUeNCe, hybrid); netsquid (Phase 2)
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report
   topology.py  network + link model

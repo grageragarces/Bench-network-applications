@@ -38,12 +38,24 @@ def run_once(
     if missing:
         raise ValueError(f"topology {topo.name!r} is missing nodes for roles {missing}")
 
-    if backend != "reference":
-        raise NotImplementedError(
-            f"backend {backend!r} is not available yet; the SeQUeNCe and NetSquid "
-            "backends arrive in Phases 1–2. Only 'reference' is implemented."
-        )
-
     arb_label, policy = _parse_arbitration(arbitration)
-    ref = ReferenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
-    return ref.run(app, cfg or {}, roles_to_nodes)
+
+    if backend == "reference":
+        ref = ReferenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        return ref.run(app, cfg or {}, roles_to_nodes)
+
+    if backend == "sequence":
+        try:
+            from qnetbench.backends.sequence import SequenceBackend
+        except ImportError as exc:  # pragma: no cover - depends on optional extra
+            raise RuntimeError(
+                "the 'sequence' backend needs the optional SeQUeNCe dependency; "
+                "install it with: pip install qnetbench[sequence]"
+            ) from exc
+        seq = SequenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        return seq.run(app, cfg or {}, roles_to_nodes)
+
+    raise NotImplementedError(
+        f"unknown backend {backend!r}; available: 'reference', 'sequence'. "
+        "The NetSquid backend arrives in Phase 2."
+    )
