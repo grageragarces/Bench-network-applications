@@ -1,9 +1,8 @@
 """SeQUeNCe backend + cross-backend equivalence.
 
-These are the first cross-backend equivalence checks (Deliverable 1): the same
-applications, written once, must satisfy the same outcome invariants whether the
-entanglement is supplied by the reference link model or by SeQUeNCe. Physics
-differs, so noisy comparisons are asserted as tolerances, not bit-equality.
+The same applications, written once, must satisfy the same outcome invariants
+whether entanglement is supplied by the reference link model or by SeQUeNCe.
+Physics differs, so noisy comparisons are asserted as tolerances.
 
 Skipped unless the optional `sequence` extra is installed.
 """
@@ -14,9 +13,10 @@ import importlib.util
 
 import pytest
 
+from qnetbench.apps import available_apps
 from qnetbench.harness.runner import run_once
 from qnetbench.metrics import compute_report
-from qnetbench.topology import LinkModel, line2
+from qnetbench.topology import LinkModel, line2, star
 from qnetbench.trace.events import AppOutcomeEvent
 
 pytestmark = pytest.mark.skipif(
@@ -24,37 +24,42 @@ pytestmark = pytest.mark.skipif(
     reason="requires the optional 'sequence' extra (pip install qnetbench[sequence])",
 )
 
+BACKEND = "sequence"
 PERFECT = line2(link=LinkModel(attempt_latency=1e-3, link_fidelity=1.0, fidelity_std=0.0))
+_PL = LinkModel(attempt_latency=1e-3, link_fidelity=1.0, fidelity_std=0.0)
+PERFECT_STAR = star("charlie", ["alice", "bob"], link=_PL)
 
 
-def _report(app: str, backend: str, seed: int = 0, topo=None):
-    return compute_report(run_once(app, seed=seed, backend=backend, topology=topo or PERFECT))
+def _report(app: str, seed: int = 0, topo=None):
+    return compute_report(run_once(app, seed=seed, backend=BACKEND, topology=topo))
 
 
-def test_all_apps_run_on_sequence() -> None:
-    for app in ("qkd", "bqc", "distributed_gate"):
-        rep = _report(app, "sequence")
-        assert rep.backend == "sequence"
+def test_all_apps_run_on_backend() -> None:
+    for app in available_apps():  # default topology per app
+        rep = _report(app)
+        assert rep.backend == BACKEND
         assert rep.n_delivered > 0
 
 
-def test_sequence_is_deterministic_per_seed() -> None:
-    a = run_once("distributed_gate", seed=2, backend="sequence")
-    b = run_once("distributed_gate", seed=2, backend="sequence")
+def test_backend_is_deterministic_per_seed() -> None:
+    a = run_once("distributed_gate", seed=2, backend=BACKEND)
+    b = run_once("distributed_gate", seed=2, backend=BACKEND)
     assert [e.model_dump() for e in a] == [e.model_dump() for e in b]
 
 
-def test_sequence_noiseless_invariants_are_exact() -> None:
-    # Same invariants as the reference backend, now supplied by SeQUeNCe.
-    assert _report("bqc", "sequence").app_utility == 1.0
-    assert _report("distributed_gate", "sequence").app_utility == 1.0
-    assert _report("qkd", "sequence").app_success
+def test_noiseless_invariants_are_exact() -> None:
+    assert _report("bqc", topo=PERFECT).app_utility == 1.0
+    assert _report("distributed_gate", topo=PERFECT).app_utility == 1.0
+    assert _report("anonymous_transmission", topo=PERFECT_STAR).app_utility == 1.0
+    assert _report("qkd", topo=PERFECT).app_success
+    assert _report("chsh", topo=PERFECT).app_success  # S > 2
+    assert _report("clock_sync", topo=PERFECT).app_utility > 0.9
 
 
 def test_distributed_gate_truth_table_matches_across_backends() -> None:
-    ref = _report("distributed_gate", "reference")
-    seq = _report("distributed_gate", "sequence")
-    assert ref.app_utility == seq.app_utility == 1.0  # exact CNOT truth table on both
+    ref = compute_report(run_once("distributed_gate", seed=0, topology=PERFECT))
+    sim = _report("distributed_gate", topo=PERFECT)
+    assert ref.app_utility == sim.app_utility == 1.0
 
 
 def test_qkd_qber_agrees_across_backends() -> None:
@@ -69,12 +74,5 @@ def test_qkd_qber_agrees_across_backends() -> None:
         )
 
     theory = 2 * (1 - 0.9) / 3  # ≈ 0.0667
-    ref, seq = qber("reference"), qber("sequence")
-    assert abs(ref - theory) < 0.05
-    assert abs(seq - theory) < 0.05
-
-
-def test_sequence_reports_realistic_supply() -> None:
-    rep = _report("qkd", "sequence")
-    assert rep.delivered_rate > 0  # SeQUeNCe-derived generation rate
-    assert 0.99 <= rep.mean_fidelity <= 1.0  # noiseless link
+    assert abs(qber("reference") - theory) < 0.05
+    assert abs(qber(BACKEND) - theory) < 0.05

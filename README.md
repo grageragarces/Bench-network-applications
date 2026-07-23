@@ -11,13 +11,13 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 2.** Runnable end-to-end on **three backends** — the built-in
-> reference engine, **SeQUeNCe**, and **NetSquid** — with the portable API, the
-> versioned trace format, three applications spanning three demand signatures, the
-> metric suite, and the arbitration seam. Cross-backend equivalence tests pass on
-> both simulators (Deliverable 1 ✔ ≥2 sims). The full 6–8 application set,
-> demand-signature characterization, and the cross-policy ranking-inversion result
-> are later phases ([docs/design.md §11](docs/design.md)).
+> **Status: Phase 3.** Runnable end-to-end on **three backends** — the built-in
+> reference engine, **SeQUeNCe**, and **NetSquid** — with **six applications**
+> spanning every demand-signature class, the portable API, the versioned trace
+> format, the metric suite, and the arbitration seam. Cross-backend equivalence
+> tests pass on both simulators (Deliverable 1 ✔ ≥2 sims, 6–8 apps). Next:
+> demand-signature characterization and the cross-policy ranking-inversion result
+> ([docs/design.md §11](docs/design.md)).
 
 ## The two ideas
 
@@ -91,17 +91,22 @@ events = run_once("distributed_gate", seed=0)   # a list of trace events
 print(render(compute_report(events)))
 ```
 
-## The three Phase-0 applications
+## The applications
 
 | App | Class | Demand signature |
 |---|---|---|
 | `qkd` | key distribution (E91/BBM92) | steady, rate-hungry, fidelity-thresholded |
 | `bqc` | universal blind quantum computation | bursty, latency-coupled, classical-heavy, high-fidelity |
-| `distributed_gate` | teleported CNOT | deadline-critical, staleness-intolerant |
+| `distributed_gate` | distributed gate (teleported CNOT) | deadline-critical, staleness-intolerant |
+| `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
+| `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
+| `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
 
-Each is physically real on the reference backend: QKD sifts and estimates QBER,
-BQC delegates a verifiable blind computation, and the distributed gate reproduces
-the CNOT truth table (all exact at fidelity 1.0, degrading as fidelity drops).
+Each is physically real: QKD sifts and estimates QBER, BQC delegates a verifiable
+blind computation, the distributed gate reproduces the CNOT truth table, CHSH
+reaches S ≈ 2√2, clock-sync recovers the phase offset, and anonymous transmission
+recovers the broadcast bit from GHZ parity — all exact at fidelity 1.0 and
+degrading as fidelity drops, on every backend.
 
 ## Arbitration modes
 
@@ -122,7 +127,7 @@ is Phase 6.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        qkd, bqc, distributed_gate — written once, backend-agnostic
+  apps/        qkd, bqc, distributed_gate, chsh, clock_sync, anonymous — written once
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report

@@ -8,8 +8,16 @@ from __future__ import annotations
 from qnetbench.apps import get_app
 from qnetbench.backends.reference import ReferenceBackend
 from qnetbench.policies import get_policy
-from qnetbench.topology import Topology, line2
+from qnetbench.topology import Topology, line2, star
 from qnetbench.trace.events import Event
+
+
+def _default_topology(roles: list[str]) -> Topology:
+    """The default topology for an application: a direct link for two roles, or a
+    hub-and-spoke star (role[0] = hub) for multipartite applications."""
+    if len(roles) == 2:
+        return line2(roles[0], roles[1])
+    return star(roles[0], list(roles[1:]))
 
 
 def _parse_arbitration(spec: str) -> tuple[str, object | None]:
@@ -32,7 +40,7 @@ def run_once(
 ) -> list[Event]:
     """Execute one run and return its trace as a list of events."""
     app = get_app(app_name)
-    topo = topology or line2()
+    topo = topology or _default_topology(app.roles())
     roles_to_nodes = {role: role for role in app.roles()}
     missing = [n for n in roles_to_nodes.values() if n not in topo.nodes]
     if missing:

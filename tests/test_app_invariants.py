@@ -11,10 +11,12 @@ import pytest
 
 from qnetbench.harness.runner import run_once
 from qnetbench.metrics import compute_report
-from qnetbench.topology import LinkModel, line2
+from qnetbench.topology import LinkModel, line2, star
 from qnetbench.trace.events import AppOutcomeEvent
 
-PERFECT = line2(link=LinkModel(link_fidelity=1.0, fidelity_std=0.0))
+_PERFECT_LINK = LinkModel(link_fidelity=1.0, fidelity_std=0.0)
+PERFECT = line2(link=_PERFECT_LINK)
+PERFECT_STAR = star("charlie", ["alice", "bob"], link=_PERFECT_LINK)
 
 
 def _report(app: str, seed: int, topo=PERFECT):
@@ -53,6 +55,28 @@ def test_distributed_gate_reproduces_cnot_truth_table(seed: int) -> None:
     rep = _report("distributed_gate", seed)
     assert rep.app_success
     assert rep.app_utility == 1.0
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_chsh_violates_classical_bound_noiseless(seed: int) -> None:
+    assert _report("chsh", seed).app_success  # S > 2, the classical bound
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_clock_sync_estimates_phase_noiseless(seed: int) -> None:
+    assert _report("clock_sync", seed).app_utility > 0.9
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_anonymous_transmission_is_exact_noiseless(seed: int) -> None:
+    rep = _report("anonymous_transmission", seed, PERFECT_STAR)
+    assert rep.app_success and rep.app_utility == 1.0
+
+
+def test_chsh_degrades_below_classical_bound_at_low_fidelity() -> None:
+    noisy = line2(link=LinkModel(link_fidelity=0.6, fidelity_std=0.0))
+    # Werner F=0.6 gives S = 2√2·(4F−1)/3 ≈ 1.32, below the classical bound of 2.
+    assert not any(_report("chsh", s, noisy).app_success for s in range(8))
 
 
 def test_fidelity_monotonically_degrades_utility() -> None:

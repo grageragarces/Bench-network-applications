@@ -9,11 +9,17 @@ transmission) land in a later phase.
 from __future__ import annotations
 
 from qnetbench.api import Application
+from qnetbench.apps.anonymous import AnonymousTransmission
 from qnetbench.apps.bqc import BQC
+from qnetbench.apps.chsh import CHSH
+from qnetbench.apps.clock_sync import ClockSync
 from qnetbench.apps.distributed_gate import DistributedGate
 from qnetbench.apps.qkd import QKD
 
-_REGISTRY: dict[str, Application] = {app.name: app for app in (QKD(), BQC(), DistributedGate())}
+_REGISTRY: dict[str, Application] = {
+    app.name: app
+    for app in (QKD(), BQC(), DistributedGate(), CHSH(), ClockSync(), AnonymousTransmission())
+}
 
 
 def get_app(name: str) -> Application:
@@ -27,4 +33,13 @@ def available_apps() -> list[str]:
     return sorted(_REGISTRY)
 
 
-__all__ = ["BQC", "QKD", "DistributedGate", "available_apps", "get_app"]
+__all__ = [
+    "BQC",
+    "CHSH",
+    "QKD",
+    "AnonymousTransmission",
+    "ClockSync",
+    "DistributedGate",
+    "available_apps",
+    "get_app",
+]

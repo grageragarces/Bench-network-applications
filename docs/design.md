@@ -311,7 +311,7 @@ pre-generated eagerly on the main thread in `SequenceBackend.__init__`.
 | **0. Skeleton** ✅ | scaffolding, typed `api` + `trace`, reference backend, apps #1–#3, metrics, CLI, CI, invariant tests | foundation for all |
 | **1. SeQUeNCe backend** ✅ | `backends/sequence` (hybrid) + cross-backend invariants for #1–#3 | Deliverable 1 (½) |
 | **2. NetSquid backend** ✅ | `backends/netsquid` (hybrid) + shared `ReplayBackend` base + equivalence tests | Deliverable 1 (✔ ≥2 sims) |
-| **3. Full app set** | apps #4–#6 (+ stretch) across backends | Deliverable 1 (✔ 6–8 apps) |
+| **3. Full app set** ✅ | apps #4–#6 (chsh, clock_sync, anonymous) across all backends; star topology + GHZ fusion | Deliverable 1 (✔ 6–8 apps) |
 | **4. Characterization** | signature vectors + curves for all apps; the characterization write-up | Deliverable 2 |
 | **5. Spec freeze** | versioned trace-spec + metric-spec in `docs/specs`; published reference traces | Deliverable 3 |
 | **6. Cross-policy eval** | 2–3 policies × full suite; ranking-inversion result | Deliverable 4 |

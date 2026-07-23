@@ -41,3 +41,21 @@ def line2(
 ) -> Topology:
     """A single direct link between two nodes."""
     return Topology(name="line2", nodes=(a, b), links={frozenset((a, b)): link or LinkModel()})
+
+
+def star(
+    center: NodeId,
+    leaves: list[NodeId],
+    *,
+    link: LinkModel | None = None,
+) -> Topology:
+    """A hub-and-spoke topology: `center` shares a direct link with each leaf.
+
+    Multipartite applications (e.g. anonymous transmission) fuse the hub's
+    bipartite pairs into a shared multipartite state.
+    """
+    return Topology(
+        name=f"star{1 + len(leaves)}",
+        nodes=(center, *leaves),
+        links={frozenset((center, leaf)): link or LinkModel() for leaf in leaves},
+    )

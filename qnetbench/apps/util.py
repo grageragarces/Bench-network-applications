@@ -10,3 +10,10 @@ def cfg_int(cfg: Mapping[str, object], key: str, default: int) -> int:
     if isinstance(val, bool) or not isinstance(val, (int, float, str)):
         return default
     return int(val)
+
+
+def cfg_float(cfg: Mapping[str, object], key: str, default: float) -> float:
+    val = cfg.get(key, default)
+    if isinstance(val, bool) or not isinstance(val, (int, float, str)):
+        return default
+    return float(val)
