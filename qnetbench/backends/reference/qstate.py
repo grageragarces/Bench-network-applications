@@ -11,6 +11,7 @@ Qubit ordering is MSB-first: position 0 is the most significant bit of the index
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import NDArray
 
 I2 = np.array([[1, 0], [0, 1]], dtype=complex)
 _X = np.array([[0, 1], [1, 0]], dtype=complex)
@@ -21,7 +22,7 @@ _S = np.array([[1, 0], [0, 1j]], dtype=complex)
 _SDG = np.array([[1, 0], [0, -1j]], dtype=complex)
 _T = np.array([[1, 0], [0, np.exp(1j * np.pi / 4)]], dtype=complex)
 
-_STATIC: dict[str, np.ndarray] = {
+_STATIC: dict[str, NDArray[np.complex128]] = {
     "I": I2,
     "X": _X,
     "Y": _Y,
@@ -33,21 +34,21 @@ _STATIC: dict[str, np.ndarray] = {
 _PAULIS = [I2, _X, _Y, _Z]
 
 
-def _rx(theta: float) -> np.ndarray:
+def _rx(theta: float) -> NDArray[np.complex128]:
     c, s = np.cos(theta / 2), np.sin(theta / 2)
     return np.array([[c, -1j * s], [-1j * s, c]], dtype=complex)
 
 
-def _ry(theta: float) -> np.ndarray:
+def _ry(theta: float) -> NDArray[np.complex128]:
     c, s = np.cos(theta / 2), np.sin(theta / 2)
     return np.array([[c, -s], [s, c]], dtype=complex)
 
 
-def _rz(theta: float) -> np.ndarray:
+def _rz(theta: float) -> NDArray[np.complex128]:
     return np.array([[np.exp(-1j * theta / 2), 0], [0, np.exp(1j * theta / 2)]], dtype=complex)
 
 
-def gate_matrix(name: str, params: tuple[float, ...]) -> np.ndarray:
+def gate_matrix(name: str, params: tuple[float, ...]) -> NDArray[np.complex128]:
     if name in _STATIC:
         return _STATIC[name]
     if name == "RX":
@@ -83,7 +84,7 @@ class Register:
         self._state = np.kron(self._state, np.array([1, 0], dtype=complex))
         return qid
 
-    def apply_1q(self, qid: int, matrix: np.ndarray) -> None:
+    def apply_1q(self, qid: int, matrix: NDArray[np.complex128]) -> None:
         pos, n = self._pos(qid), self.n
         psi = self._state.reshape([2] * n)
         psi = np.tensordot(matrix, psi, axes=([1], [pos]))

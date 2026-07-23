@@ -11,13 +11,13 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 1.** Runnable end-to-end on **two backends** — the built-in
-> reference engine and **SeQUeNCe** — with the portable API, the versioned trace
-> format, three applications spanning three demand signatures, the metric suite,
-> and the arbitration seam. Cross-backend equivalence tests pass. The NetSquid
-> backend, the full 6–8 application set, demand-signature characterization, and
-> the cross-policy ranking-inversion result are later phases
-> ([docs/design.md §11](docs/design.md)).
+> **Status: Phase 2.** Runnable end-to-end on **three backends** — the built-in
+> reference engine, **SeQUeNCe**, and **NetSquid** — with the portable API, the
+> versioned trace format, three applications spanning three demand signatures, the
+> metric suite, and the arbitration seam. Cross-backend equivalence tests pass on
+> both simulators (Deliverable 1 ✔ ≥2 sims). The full 6–8 application set,
+> demand-signature characterization, and the cross-policy ranking-inversion result
+> are later phases ([docs/design.md §11](docs/design.md)).
 
 ## The two ideas
 
@@ -36,11 +36,41 @@ design and roadmap.
 
 ```bash
 pip install -e ".[dev]"          # core + test/lint tooling
-# pip install -e ".[sequence]"   # (Phase 1) SeQUeNCe backend
 ```
 
 Core dependencies are just `pydantic` and `numpy`; the reference backend needs
 nothing else, so the whole suite runs and tests in CI without any simulator.
+
+## Backends & environments
+
+Applications are written **once** against the portable API and never import a
+simulator. You choose the physics by naming a backend — the simulator is imported
+lazily behind an optional extra:
+
+```bash
+qnetbench run qkd --backend reference   # pure-Python, no simulator needed
+qnetbench run qkd --backend sequence    # entanglement supplied by SeQUeNCe
+qnetbench run qkd --backend netsquid    # entanglement supplied by NetSquid
+```
+
+Install the extra for the simulator you want:
+
+| Backend | Install | Notes |
+|---|---|---|
+| `reference` | `pip install qnetbench` | Always available. |
+| `sequence` | `pip install "qnetbench[sequence]"` | Pulls SeQUeNCe from PyPI. Requires **numpy ≥ 2.3.5**. |
+| `netsquid` | register at [netsquid.org](https://netsquid.org), then<br>`pip install --extra-index-url https://pypi.netsquid.org "qnetbench[netsquid]"` | NetSquid ships from its own index (free registration). Requires **numpy < 2**. |
+
+> ⚠️ **SeQUeNCe and NetSquid cannot live in the same environment.** SeQUeNCe pins
+> `numpy ≥ 2.3.5` and NetSquid pins `numpy < 2`, so the two extras conflict. Use a
+> **separate virtualenv per simulator** (e.g. `.venv` for SeQUeNCe, `.venv-ns` for
+> NetSquid). This incompatibility is inherent to the simulators — and is precisely
+> the kind of fragmentation this suite exists to paper over: the same applications,
+> traces, and metrics run unchanged across otherwise-incompatible tools, because
+> only the backend swaps.
+
+Within a given environment you can of course still `import sequence` / `import
+netsquid` directly; qnetbench just spares you from writing to their APIs.
 
 ## Use it
 
@@ -93,7 +123,7 @@ qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
   apps/        qkd, bqc, distributed_gate — written once, backend-agnostic
-  backends/    reference (pure-Python) + sequence (SeQUeNCe, hybrid); netsquid (Phase 2)
+  backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report
   topology.py  network + link model
@@ -113,3 +143,7 @@ mypy qnetbench    # strict
 ## License
 
 Apache-2.0.
+
+## AI usage
+
+Note that both Fable 5 and Opus 4.8 were used to help in the development of this library. 

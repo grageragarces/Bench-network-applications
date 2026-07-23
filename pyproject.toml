@@ -33,8 +33,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-sequence = ["sequence>=1.0"]
-netsquid = []  # NetSquid is not on public PyPI; install per its own instructions.
+# NOTE: the sequence and netsquid extras have CONFLICTING numpy pins (SeQUeNCe
+# needs numpy>=2.3.5, NetSquid needs numpy<2) and cannot be installed in the same
+# environment. Use one virtualenv per simulator. See the README.
+sequence = ["sequence>=1.0"]  # pulls numpy>=2.3.5
+netsquid = ["netsquid>=1.1", "numpy<2"]  # NetSquid ships from https://pypi.netsquid.org
 dev = [
     "pytest>=8.0",
     "mypy>=1.8",

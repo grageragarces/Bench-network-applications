@@ -11,24 +11,7 @@ Requires the optional `sequence` extra: ``pip install qnetbench[sequence]``.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class Supply:
-    """A replayable entanglement supply between one pair of nodes.
-
-    `inter_arrivals[i]` is the simulated-seconds gap before delivery i (the first
-    is measured from the reservation start); `fidelities[i]` is that pair's
-    delivered fidelity. `classical_latency` is the one-way classical delay.
-    """
-
-    inter_arrivals: list[float]
-    fidelities: list[float]
-    classical_latency: float
-
-    def __len__(self) -> int:
-        return len(self.fidelities)
+from qnetbench.backends.replay import Supply
 
 
 def generate_supply(

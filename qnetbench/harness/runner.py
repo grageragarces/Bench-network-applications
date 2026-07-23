@@ -55,7 +55,18 @@ def run_once(
         seq = SequenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
         return seq.run(app, cfg or {}, roles_to_nodes)
 
+    if backend == "netsquid":
+        try:
+            from qnetbench.backends.netsquid import NetSquidBackend
+        except ImportError as exc:  # pragma: no cover - depends on optional extra
+            raise RuntimeError(
+                "the 'netsquid' backend needs the optional NetSquid dependency; "
+                "register at netsquid.org and install with: "
+                "pip install --extra-index-url https://pypi.netsquid.org qnetbench[netsquid]"
+            ) from exc
+        nsq = NetSquidBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        return nsq.run(app, cfg or {}, roles_to_nodes)
+
     raise NotImplementedError(
-        f"unknown backend {backend!r}; available: 'reference', 'sequence'. "
-        "The NetSquid backend arrives in Phase 2."
+        f"unknown backend {backend!r}; available: 'reference', 'sequence', 'netsquid'."
     )
