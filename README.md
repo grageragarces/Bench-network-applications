@@ -11,14 +11,13 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 4.** Runnable end-to-end on **three backends** (reference,
+> **Status: Phase 5.** Runnable end-to-end on **three backends** (reference,
 > **SeQUeNCe**, **NetSquid**) with **six applications** spanning every
-> demand-signature class, the portable API, the versioned trace format, the metric
-> suite, the arbitration seam, and **demand-signature characterization** (burstiness,
-> classical coupling, deadline-criticality, fidelity-sensitivity and
-> staleness-tolerance curves). Deliverables 1 ✔ (≥2 sims, 6–8 apps) and 2 ✔. Next:
-> the versioned spec freeze and the cross-policy ranking-inversion result
-> ([docs/design.md §11](docs/design.md)).
+> demand-signature class, the portable API, demand-signature characterization, and
+> a **versioned, machine-readable trace + metric spec** with **published reference
+> traces** ([docs/specs/](docs/specs/), [traces/](traces/)). Deliverables 1 ✔
+> (≥2 sims, 6–8 apps), 2 ✔ (characterization), 3 ✔ (spec + traces). Next: the
+> cross-policy ranking-inversion result ([docs/design.md §11](docs/design.md)).
 
 ## The two ideas
 
@@ -164,8 +163,10 @@ qnetbench/
   characterize/ demand-signature extraction (single-trace + fidelity/staleness curves)
   topology.py  network + link model
   harness/     run(app × backend × policy × topology) and the CLI
+  spec.py      versioned JSON Schemas + reference-corpus generator
 tests/         statevector physics, cross-backend invariants, trace round-trip
-docs/          design.md (architecture + roadmap), issue-4.md (motivation)
+docs/          design.md (architecture + roadmap), issue-4.md, specs/ (versioned spec)
+traces/        published reference traces (one per app) + checksummed manifest
 ```
 
 ## Develop

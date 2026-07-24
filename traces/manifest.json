@@ -1,0 +1,43 @@
+{
+  "spec_version": "0.1.0",
+  "backend": "reference",
+  "seed": 0,
+  "traces": [
+    {
+      "app": "anonymous_transmission",
+      "file": "anonymous_transmission.jsonl",
+      "n_events": 518,
+      "sha256": "362dff962376bd3f762fcf1acdc2abccccda6416abcdab963234b1c4ddcc499a"
+    },
+    {
+      "app": "bqc",
+      "file": "bqc.jsonl",
+      "n_events": 56,
+      "sha256": "e9c7fa2906ac8d64772703401936e26ad5ed9f292054669ea0261ecf3bd47922"
+    },
+    {
+      "app": "chsh",
+      "file": "chsh.jsonl",
+      "n_events": 517,
+      "sha256": "b67f490e8d46b7cec08f1d02d5f867c9635b7061b42101dc45cb55e62622569a"
+    },
+    {
+      "app": "clock_sync",
+      "file": "clock_sync.jsonl",
+      "n_events": 517,
+      "sha256": "d8b5dee9552ad8950caf30703073e76755105c67fce9b39f6b72f57bc2e4acbe"
+    },
+    {
+      "app": "distributed_gate",
+      "file": "distributed_gate.jsonl",
+      "n_events": 37,
+      "sha256": "afcebef4730dbff3f28a70ffbc646b1c79c5db0281a32d0f116da5b78c6f125f"
+    },
+    {
+      "app": "qkd",
+      "file": "qkd.jsonl",
+      "n_events": 1031,
+      "sha256": "2cb57d5ec4a9ab6938dfacfb8ab43d71608ff0f5d8ac771235c4eb26fd9d96a3"
+    }
+  ]
+}

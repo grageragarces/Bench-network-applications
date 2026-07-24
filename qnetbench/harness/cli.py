@@ -40,6 +40,13 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     ch.add_argument("--seeds", type=int, default=8, help="seeds averaged per sweep point")
     ch.add_argument("--out", help="directory to write per-app signature+curve JSON")
+
+    sp = sub.add_parser("spec", help="write the versioned trace + metric JSON Schemas")
+    sp.add_argument("--out", default="docs/specs", help="output directory (default: docs/specs)")
+
+    co = sub.add_parser("corpus", help="write the published reference traces + manifest")
+    co.add_argument("--out", default="traces", help="output directory (default: traces)")
+    co.add_argument("--seed", type=int, default=0)
     return parser
 
 
@@ -76,6 +83,23 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "characterize":
         return _characterize(args.app, args.seeds, args.out)
+
+    if args.command == "spec":
+        from qnetbench.spec import SPEC_VERSION, write_specs
+
+        paths = write_specs(args.out)
+        print(f"spec v{SPEC_VERSION} written:")
+        for path in paths:
+            print(f"  {path}")
+        return 0
+
+    if args.command == "corpus":
+        from qnetbench.spec import generate_reference_corpus
+
+        manifest = generate_reference_corpus(args.out, seed=args.seed)
+        print(f"reference corpus v{manifest['spec_version']} written to {args.out}/ "
+              f"({len(manifest['traces'])} traces)")
+        return 0
 
     events = run_once(
         args.app, seed=args.seed, backend=args.backend, arbitration=args.arbitration

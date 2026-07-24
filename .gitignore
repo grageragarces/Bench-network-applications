@@ -11,4 +11,5 @@ dist/
 venv/
 runs/
 *.jsonl
+!traces/*.jsonl
 .claude

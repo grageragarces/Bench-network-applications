@@ -313,7 +313,7 @@ pre-generated eagerly on the main thread in `SequenceBackend.__init__`.
 | **2. NetSquid backend** ✅ | `backends/netsquid` (hybrid) + shared `ReplayBackend` base + equivalence tests | Deliverable 1 (✔ ≥2 sims) |
 | **3. Full app set** ✅ | apps #4–#6 (chsh, clock_sync, anonymous) across all backends; star topology + GHZ fusion | Deliverable 1 (✔ 6–8 apps) |
 | **4. Characterization** ✅ | `qnetbench.characterize`: single-trace signatures + fidelity/staleness curves + cross-app table + CLI; pair-aging in the reference backend | Deliverable 2 |
-| **5. Spec freeze** | versioned trace-spec + metric-spec in `docs/specs`; published reference traces | Deliverable 3 |
+| **5. Spec freeze** ✅ | versioned trace + metric JSON Schemas in `docs/specs` (drift-guarded) + published reference traces in `traces/` with a checksummed manifest; `qnetbench spec`/`corpus` | Deliverable 3 |
 | **6. Cross-policy eval** | 2–3 policies × full suite; ranking-inversion result | Deliverable 4 |
 | **7. Adoption docs** | `adopting.md`, examples, release to PyPI | Deliverable 5 (the real success metric) |
 

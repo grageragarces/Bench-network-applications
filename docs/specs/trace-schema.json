@@ -1,0 +1,386 @@
+{
+  "$defs": {
+    "AppOutcomeEvent": {
+      "properties": {
+        "kind": {
+          "const": "app_outcome",
+          "default": "app_outcome",
+          "title": "Kind",
+          "type": "string"
+        },
+        "node": {
+          "title": "Node",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "success": {
+          "title": "Success",
+          "type": "boolean"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        },
+        "utility": {
+          "title": "Utility",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t",
+        "role",
+        "node",
+        "success",
+        "utility"
+      ],
+      "title": "AppOutcomeEvent",
+      "type": "object"
+    },
+    "ClassicalMessage": {
+      "properties": {
+        "dst": {
+          "title": "Dst",
+          "type": "string"
+        },
+        "kind": {
+          "const": "classical_msg",
+          "default": "classical_msg",
+          "title": "Kind",
+          "type": "string"
+        },
+        "n_bytes": {
+          "title": "N Bytes",
+          "type": "integer"
+        },
+        "src": {
+          "title": "Src",
+          "type": "string"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t",
+        "src",
+        "dst",
+        "n_bytes"
+      ],
+      "title": "ClassicalMessage",
+      "type": "object"
+    },
+    "ContractViolation": {
+      "properties": {
+        "kind": {
+          "const": "contract_violation",
+          "default": "contract_violation",
+          "title": "Kind",
+          "type": "string"
+        },
+        "req_id": {
+          "title": "Req Id",
+          "type": "integer"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        },
+        "violation": {
+          "enum": [
+            "fidelity",
+            "deadline",
+            "staleness",
+            "dropped"
+          ],
+          "title": "Violation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "t",
+        "req_id",
+        "violation"
+      ],
+      "title": "ContractViolation",
+      "type": "object"
+    },
+    "Demand": {
+      "description": "The contract attached to a request for entanglement.\n\nThis is what makes the suite discriminative: schedulers read it, the trace\nrecords requested-vs-delivered against it, and the characterizer mines its\ndistribution across an application's run.",
+      "properties": {
+        "deadline": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deadline"
+        },
+        "latency_budget": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency Budget"
+        },
+        "min_fidelity": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Min Fidelity",
+          "type": "number"
+        },
+        "priority": {
+          "default": 1.0,
+          "title": "Priority",
+          "type": "number"
+        },
+        "purpose": {
+          "default": "keep",
+          "enum": [
+            "keep",
+            "measure"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "staleness_tolerance": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staleness Tolerance"
+        }
+      },
+      "title": "Demand",
+      "type": "object"
+    },
+    "EntanglementDelivered": {
+      "properties": {
+        "actual_fidelity": {
+          "title": "Actual Fidelity",
+          "type": "number"
+        },
+        "kind": {
+          "const": "ent_delivered",
+          "default": "ent_delivered",
+          "title": "Kind",
+          "type": "string"
+        },
+        "latency": {
+          "title": "Latency",
+          "type": "number"
+        },
+        "pair_age": {
+          "title": "Pair Age",
+          "type": "number"
+        },
+        "req_id": {
+          "title": "Req Id",
+          "type": "integer"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t",
+        "req_id",
+        "actual_fidelity",
+        "latency",
+        "pair_age"
+      ],
+      "title": "EntanglementDelivered",
+      "type": "object"
+    },
+    "EntanglementRequested": {
+      "properties": {
+        "demand": {
+          "$ref": "#/$defs/Demand"
+        },
+        "dst": {
+          "title": "Dst",
+          "type": "string"
+        },
+        "kind": {
+          "const": "ent_requested",
+          "default": "ent_requested",
+          "title": "Kind",
+          "type": "string"
+        },
+        "n": {
+          "title": "N",
+          "type": "integer"
+        },
+        "req_id": {
+          "title": "Req Id",
+          "type": "integer"
+        },
+        "src": {
+          "title": "Src",
+          "type": "string"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t",
+        "req_id",
+        "src",
+        "dst",
+        "n",
+        "demand"
+      ],
+      "title": "EntanglementRequested",
+      "type": "object"
+    },
+    "Measurement": {
+      "properties": {
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        },
+        "kind": {
+          "const": "measurement",
+          "default": "measurement",
+          "title": "Kind",
+          "type": "string"
+        },
+        "node": {
+          "title": "Node",
+          "type": "string"
+        },
+        "result": {
+          "title": "Result",
+          "type": "integer"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t",
+        "node",
+        "basis",
+        "result"
+      ],
+      "title": "Measurement",
+      "type": "object"
+    },
+    "RunHeader": {
+      "properties": {
+        "api_version": {
+          "title": "Api Version",
+          "type": "string"
+        },
+        "app": {
+          "title": "App",
+          "type": "string"
+        },
+        "arbitration": {
+          "title": "Arbitration",
+          "type": "string"
+        },
+        "backend": {
+          "title": "Backend",
+          "type": "string"
+        },
+        "kind": {
+          "const": "run_header",
+          "default": "run_header",
+          "title": "Kind",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "seed": {
+          "title": "Seed",
+          "type": "integer"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        },
+        "topology": {
+          "title": "Topology",
+          "type": "string"
+        }
+      },
+      "required": [
+        "t",
+        "api_version",
+        "app",
+        "backend",
+        "arbitration",
+        "topology",
+        "seed"
+      ],
+      "title": "RunHeader",
+      "type": "object"
+    }
+  },
+  "discriminator": {
+    "mapping": {
+      "app_outcome": "#/$defs/AppOutcomeEvent",
+      "classical_msg": "#/$defs/ClassicalMessage",
+      "contract_violation": "#/$defs/ContractViolation",
+      "ent_delivered": "#/$defs/EntanglementDelivered",
+      "ent_requested": "#/$defs/EntanglementRequested",
+      "measurement": "#/$defs/Measurement",
+      "run_header": "#/$defs/RunHeader"
+    },
+    "propertyName": "kind"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/RunHeader"
+    },
+    {
+      "$ref": "#/$defs/EntanglementRequested"
+    },
+    {
+      "$ref": "#/$defs/EntanglementDelivered"
+    },
+    {
+      "$ref": "#/$defs/ContractViolation"
+    },
+    {
+      "$ref": "#/$defs/ClassicalMessage"
+    },
+    {
+      "$ref": "#/$defs/Measurement"
+    },
+    {
+      "$ref": "#/$defs/AppOutcomeEvent"
+    }
+  ]
+}

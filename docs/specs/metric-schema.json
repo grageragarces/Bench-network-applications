@@ -1,0 +1,160 @@
+{
+  "$defs": {
+    "RoleResult": {
+      "properties": {
+        "node": {
+          "title": "Node",
+          "type": "string"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "success": {
+          "title": "Success",
+          "type": "boolean"
+        },
+        "utility": {
+          "title": "Utility",
+          "type": "number"
+        }
+      },
+      "required": [
+        "role",
+        "node",
+        "success",
+        "utility"
+      ],
+      "title": "RoleResult",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "app": {
+      "default": "",
+      "title": "App",
+      "type": "string"
+    },
+    "app_success": {
+      "default": false,
+      "title": "App Success",
+      "type": "boolean"
+    },
+    "app_utility": {
+      "default": 0.0,
+      "title": "App Utility",
+      "type": "number"
+    },
+    "arbitration": {
+      "default": "",
+      "title": "Arbitration",
+      "type": "string"
+    },
+    "backend": {
+      "default": "",
+      "title": "Backend",
+      "type": "string"
+    },
+    "bytes_per_pair": {
+      "default": 0.0,
+      "title": "Bytes Per Pair",
+      "type": "number"
+    },
+    "classical_bytes": {
+      "default": 0,
+      "title": "Classical Bytes",
+      "type": "integer"
+    },
+    "classical_msgs": {
+      "default": 0,
+      "title": "Classical Msgs",
+      "type": "integer"
+    },
+    "delivered_rate": {
+      "default": 0.0,
+      "title": "Delivered Rate",
+      "type": "number"
+    },
+    "fidelity_throughput": {
+      "default": 0.0,
+      "title": "Fidelity Throughput",
+      "type": "number"
+    },
+    "latency_mean": {
+      "default": 0.0,
+      "title": "Latency Mean",
+      "type": "number"
+    },
+    "latency_p50": {
+      "default": 0.0,
+      "title": "Latency P50",
+      "type": "number"
+    },
+    "latency_p95": {
+      "default": 0.0,
+      "title": "Latency P95",
+      "type": "number"
+    },
+    "latency_p99": {
+      "default": 0.0,
+      "title": "Latency P99",
+      "type": "number"
+    },
+    "mean_fidelity": {
+      "default": 0.0,
+      "title": "Mean Fidelity",
+      "type": "number"
+    },
+    "msgs_per_pair": {
+      "default": 0.0,
+      "title": "Msgs Per Pair",
+      "type": "number"
+    },
+    "n_delivered": {
+      "default": 0,
+      "title": "N Delivered",
+      "type": "integer"
+    },
+    "n_requests": {
+      "default": 0,
+      "title": "N Requests",
+      "type": "integer"
+    },
+    "roles": {
+      "items": {
+        "$ref": "#/$defs/RoleResult"
+      },
+      "title": "Roles",
+      "type": "array"
+    },
+    "seed": {
+      "default": 0,
+      "title": "Seed",
+      "type": "integer"
+    },
+    "sim_duration": {
+      "default": 0.0,
+      "title": "Sim Duration",
+      "type": "number"
+    },
+    "topology": {
+      "default": "",
+      "title": "Topology",
+      "type": "string"
+    },
+    "violation_rate": {
+      "default": 0.0,
+      "title": "Violation Rate",
+      "type": "number"
+    },
+    "violations": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Violations",
+      "type": "object"
+    }
+  },
+  "title": "Report",
+  "type": "object"
+}
