@@ -11,12 +11,13 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 3.** Runnable end-to-end on **three backends** — the built-in
-> reference engine, **SeQUeNCe**, and **NetSquid** — with **six applications**
-> spanning every demand-signature class, the portable API, the versioned trace
-> format, the metric suite, and the arbitration seam. Cross-backend equivalence
-> tests pass on both simulators (Deliverable 1 ✔ ≥2 sims, 6–8 apps). Next:
-> demand-signature characterization and the cross-policy ranking-inversion result
+> **Status: Phase 4.** Runnable end-to-end on **three backends** (reference,
+> **SeQUeNCe**, **NetSquid**) with **six applications** spanning every
+> demand-signature class, the portable API, the versioned trace format, the metric
+> suite, the arbitration seam, and **demand-signature characterization** (burstiness,
+> classical coupling, deadline-criticality, fidelity-sensitivity and
+> staleness-tolerance curves). Deliverables 1 ✔ (≥2 sims, 6–8 apps) and 2 ✔. Next:
+> the versioned spec freeze and the cross-policy ranking-inversion result
 > ([docs/design.md §11](docs/design.md)).
 
 ## The two ideas
@@ -108,6 +109,35 @@ reaches S ≈ 2√2, clock-sync recovers the phase offset, and anonymous transmi
 recovers the broadcast bit from GHZ parity — all exact at fidelity 1.0 and
 degrading as fidelity drops, on every backend.
 
+## Characterization
+
+`qnetbench characterize` measures each application's **demand signature** — the
+quantities that make workloads discriminative — and prints a cross-application
+table (add `--out DIR` to also write per-app signature + curve JSON, so figures
+regenerate from source):
+
+```bash
+qnetbench characterize            # all apps
+qnetbench characterize qkd --out sig/
+```
+
+```
+app                      parties     cv   fano  msg/pair deadline  F½util  stale½(ms)
+------------------------------------------------------------------------------------
+anonymous_transmission         3   1.10   0.35      2.02     0.00       —           —
+bqc                            2   0.14   0.60      2.00     1.00       —           —
+chsh                           2   0.94   0.84      0.01     0.00   0.908        0.23
+distributed_gate               2   0.34   0.60      2.25     1.00       —        1.43
+qkd                            2   0.94   0.84      0.02     0.00   0.851        0.35
+```
+
+The signature spans burstiness (`cv`, `fano`), classical-communication coupling
+(`msg/pair`), deadline-criticality (`deadline`), multipartiteness (`parties`),
+the fidelity at which utility falls to half its maximum (`F½util`), and the pair
+age at which utility halves (`stale½` — the staleness-tolerance curve, feeding the
+scheduler/staleness work). Coupled apps (BQC, distributed gate, anonymous) and
+fidelity-thresholded ones (QKD, CHSH) separate cleanly.
+
 ## Arbitration modes
 
 Borrowing MQT Bench's "pick your level" model, arbitration is a run-level choice:
@@ -131,6 +161,7 @@ qnetbench/
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report
+  characterize/ demand-signature extraction (single-trace + fidelity/staleness curves)
   topology.py  network + link model
   harness/     run(app × backend × policy × topology) and the CLI
 tests/         statevector physics, cross-backend invariants, trace round-trip

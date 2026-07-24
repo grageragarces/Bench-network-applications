@@ -63,10 +63,12 @@ class QKD:
 
         key = [bits[i] for i in keep]
         success = qber <= self.qber_threshold and len(key) > 0
-        utility = len(key) / rounds if rounds else 0.0
+        # Utility is the *secure* key rate: no secure key survives above the QBER
+        # threshold, so utility collapses to 0 there (fidelity-thresholded signature).
+        utility = min(len(key) / rounds, 1.0) if success and rounds else 0.0
         return AppOutcome(
             role=role,
             success=success,
-            utility=min(utility, 1.0),
+            utility=utility,
             payload={"qber": qber, "key_len": len(key), "sifted": len(sifted)},
         )

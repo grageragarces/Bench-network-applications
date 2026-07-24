@@ -7,6 +7,7 @@ backend that runs anywhere without registration.
 from __future__ import annotations
 
 import itertools
+import math
 from collections import deque
 from collections.abc import Callable
 
@@ -46,6 +47,14 @@ from qnetbench.trace.events import (
 )
 
 BACKEND_NAME = "reference"
+
+
+def _age_fidelity(f0: float, age: float, coherence_time: float) -> float:
+    """Werner fidelity after holding a pair `age` seconds: it decays toward the
+    maximally-mixed value 1/4 with time constant `coherence_time`."""
+    if age <= 0.0 or math.isinf(coherence_time):
+        return f0
+    return 0.25 + (f0 - 0.25) * math.exp(-age / coherence_time)
 
 
 def _merge_demands(a: Demand, b: Demand) -> Demand:
@@ -201,11 +210,18 @@ class ReferenceBackend:
         seed: int,
         arbitration: str = "native",
         policy: Policy | None = None,
+        pair_age: float = 0.0,
+        coherence_time: float = math.inf,
     ) -> None:
         self.topology = topology
         self.seed = seed
         self.arbitration = arbitration
         self.policy = policy
+        # Staleness model: every delivered pair has been held `pair_age` seconds,
+        # decohering its fidelity toward the maximally-mixed 1/4 with time constant
+        # `coherence_time`. pair_age=0 / coherence_time=inf means fresh pairs.
+        self.pair_age = pair_age
+        self.coherence_time = coherence_time
         self.engine = Engine()
         seq = np.random.SeedSequence(seed)
         self._phys_rng = np.random.default_rng(seq.spawn(1)[0])
@@ -293,13 +309,14 @@ class ReferenceBackend:
         gov = _merge_demands(matched.demand, demand)
         pairs = n
 
-        total_latency, fidelities = self._sample_pairs(node, peer, pairs)
+        total_latency, sampled = self._sample_pairs(node, peer, pairs)
+        pair_age = self.pair_age
+        fidelities = [_age_fidelity(f, pair_age, self.coherence_time) for f in sampled]
         pair_qubits = [self.register.make_bell_pair(fid) for fid in fidelities]
 
         request_time = matched.arrival
         delivery_time = self.now() + total_latency
         latency = delivery_time - request_time
-        pair_age = 0.0  # fresh generation; pre-provisioned pairs (staleness) come later
 
         waiter_handles: list[EntanglementHandle] = []
         caller_handles: list[EntanglementHandle] = []

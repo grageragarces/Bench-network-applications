@@ -5,6 +5,8 @@ sweep all go through."""
 
 from __future__ import annotations
 
+import math
+
 from qnetbench.apps import get_app
 from qnetbench.backends.reference import ReferenceBackend
 from qnetbench.policies import get_policy
@@ -37,8 +39,13 @@ def run_once(
     arbitration: str = "native",
     topology: Topology | None = None,
     cfg: dict[str, object] | None = None,
+    pair_age: float = 0.0,
+    coherence_time: float = math.inf,
 ) -> list[Event]:
-    """Execute one run and return its trace as a list of events."""
+    """Execute one run and return its trace as a list of events.
+
+    `pair_age`/`coherence_time` model staleness (used by characterization); they
+    are only supported on the reference backend."""
     app = get_app(app_name)
     topo = topology or _default_topology(app.roles())
     roles_to_nodes = {role: role for role in app.roles()}
@@ -49,8 +56,20 @@ def run_once(
     arb_label, policy = _parse_arbitration(arbitration)
 
     if backend == "reference":
-        ref = ReferenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        ref = ReferenceBackend(
+            topo,
+            seed=seed,
+            arbitration=arb_label,
+            policy=policy,  # type: ignore[arg-type]
+            pair_age=pair_age,
+            coherence_time=coherence_time,
+        )
         return ref.run(app, cfg or {}, roles_to_nodes)
+
+    if (pair_age, coherence_time) != (0.0, math.inf):
+        raise NotImplementedError(
+            f"pair aging (staleness) is only modelled on the reference backend, not {backend!r}"
+        )
 
     if backend == "sequence":
         try:
