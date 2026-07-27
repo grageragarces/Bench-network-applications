@@ -315,6 +315,6 @@ pre-generated eagerly on the main thread in `SequenceBackend.__init__`.
 | **4. Characterization** ✅ | `qnetbench.characterize`: single-trace signatures + fidelity/staleness curves + cross-app table + CLI; pair-aging in the reference backend | Deliverable 2 |
 | **5. Spec freeze** ✅ | versioned trace + metric JSON Schemas in `docs/specs` (drift-guarded) + published reference traces in `traces/` with a checksummed manifest; `qnetbench spec`/`corpus` | Deliverable 3 |
 | **6. Cross-policy eval** ✅ | `qnetbench.contention`: multi-tenant DES, 3 policies × 2 workload mixes; EDF↔fidelity_first ranking inversion; `qnetbench contention` | Deliverable 4 |
-| **7. Adoption docs** | `adopting.md`, examples, release to PyPI | Deliverable 5 (the real success metric) |
+| **7. Adoption docs** ✅ | `docs/adopting.md` (add-an-app / add-a-backend / consume-traces, examples verified to run); released to PyPI | Deliverable 5 (the real success metric) |
 
 Each phase is independently reviewable and leaves the repo runnable.

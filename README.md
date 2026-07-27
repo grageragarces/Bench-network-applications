@@ -11,13 +11,14 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 6.** Runnable on **three backends** (reference, **SeQUeNCe**,
-> **NetSquid**) with **six applications** spanning every demand-signature class,
-> the portable API, demand-signature characterization, a versioned machine-readable
-> spec with published reference traces, and the **cross-policy ranking-inversion
-> result** (`qnetbench contention`). Deliverables 1 ✔ (≥2 sims, 6–8 apps), 2 ✔
-> (characterization), 3 ✔ (spec + traces), 4 ✔ (discriminative power). Next: the
-> adoption docs ([docs/design.md §11](docs/design.md)).
+> **Status: all five deliverables complete.** Three backends (reference,
+> **SeQUeNCe**, **NetSquid**), six applications spanning every demand-signature
+> class, the portable API, demand-signature characterization, a versioned
+> machine-readable spec with published reference traces, the **cross-policy
+> ranking-inversion result** (`qnetbench contention`), and
+> [adoption docs](docs/adopting.md). Deliverables 1 ✔ (≥2 sims, 6–8 apps), 2 ✔
+> (characterization), 3 ✔ (spec + traces), 4 ✔ (ranking inversion), 5 ✔ (adoption
+> docs). Roadmap and design in [docs/design.md](docs/design.md).
 
 ## The two ideas
 
@@ -196,13 +197,29 @@ docs/          design.md (architecture + roadmap), issue-4.md, specs/ (versioned
 traces/        published reference traces (one per app) + checksummed manifest
 ```
 
+## Extending the suite
+
+Each extension point is small and documented in
+[docs/adopting.md](docs/adopting.md):
+
+- **Add an application** — one file against the portable API (a complete `Ping`
+  example runs on every backend).
+- **Add a backend** — a ~1-method `ReplayBackend` subclass returning a delivered-pair
+  supply.
+- **Consume traces** — read the JSONL in any language; the schema is the versioned
+  contract in [docs/specs/](docs/specs/).
+
 ## Develop
 
 ```bash
-pytest            # physics, app invariants, trace round-trip, policies, metrics
+pytest            # physics, app invariants, trace round-trip, policies, metrics, contention
 ruff check qnetbench tests
 mypy qnetbench    # strict
 ```
+
+The SeQUeNCe and NetSquid backends have conflicting numpy pins, so run the suite in
+one virtualenv per simulator (see [Backends & environments](#backends--environments));
+each shows the reference tests plus its own simulator's, skipping the other's.
 
 ## License
 
