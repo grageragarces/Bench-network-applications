@@ -107,8 +107,12 @@ def simulate(
             if idx >= len(requests):
                 break
             continue
+        # Ask the policy to rank the queue; each request's req_id is its index in
+        # `pending`, so order[0] is the position of the request to serve this tick.
         order = policy.order([_to_pending(i, r, t) for i, r in enumerate(pending)], now=t)
         chosen = pending[order[0]]
+        # Its delivered fidelity degrades with how long it waited (memory decoheres);
+        # the contract is met only if fidelity clears the bar and service beat the deadline.
         wait = t - chosen.arrival
         delivered = _age_fidelity(link_fidelity, wait, coherence_time)
         chosen.met = delivered >= chosen.min_fidelity and t <= chosen.deadline

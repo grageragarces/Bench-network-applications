@@ -57,12 +57,12 @@ class DistributedGate:
                 data.apply(Gate.X)
             e1 = epr.request(1, self._demand(host))[0].qubit
             assert e1 is not None
-            data.cnot(e1)
+            data.cnot(e1)  # entangle the control into the shared pair (cat-entangler)
             a = e1.measure(Basis.Z)
-            cls.send(bytes([a]))
+            cls.send(bytes([a]))  # Bob needs this to correct his half
             b = cls.recv()[0]
             if b:
-                data.apply(Gate.Z)
+                data.apply(Gate.Z)  # Z correction from Bob's X-basis measurement
             c_outputs.append(data.measure(Basis.Z))
 
         # Reconciliation for scoring (not part of the protocol).
@@ -96,10 +96,10 @@ class DistributedGate:
             assert e2 is not None
             a = cls.recv()[0]
             if a:
-                e2.apply(Gate.X)
-            e2.cnot(data)
-            b = e2.measure(Basis.X)
-            cls.send(bytes([b]))
+                e2.apply(Gate.X)  # X correction from Alice's Z-basis measurement
+            e2.cnot(data)  # the shared pair now acts as the control on Bob's target
+            b = e2.measure(Basis.X)  # disentangle the pair (cat-disentangler)
+            cls.send(bytes([b]))  # Alice needs this for her Z correction
             t_outputs.append(data.measure(Basis.Z))
 
         c_inputs = list(cls.recv())

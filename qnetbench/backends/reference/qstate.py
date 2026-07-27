@@ -95,6 +95,8 @@ class Register:
         return (index >> (self.n - 1 - pos)) & 1
 
     def cnot(self, control: int, target: int) -> None:
+        # CNOT just permutes basis amplitudes: where the control bit is set, the
+        # target bit flips. Build that permutation of indices and reorder the state.
         c, t, n = self._pos(control), self._pos(target), self.n
         perm = np.arange(2**n)
         for i in range(2**n):
@@ -120,6 +122,7 @@ class Register:
         elif basis != "Z":
             raise ValueError(f"unknown basis {basis!r}")
 
+        # Sample the outcome from the probability of the qubit being |1>.
         pos, n = self._pos(qid), self.n
         probs = np.abs(self._state) ** 2
         p1 = float(sum(probs[i] for i in range(2**n) if self._bit(i, pos)))
@@ -127,6 +130,8 @@ class Register:
         if (outcome == 1 and p1 == 0.0) or (outcome == 0 and p1 == 1.0):
             outcome = 1 - outcome  # guard a numerically impossible sample
 
+        # Project onto the outcome by slicing that qubit's axis, renormalize the
+        # surviving amplitudes, and drop the axis — the qubit is now gone.
         psi = self._state.reshape([2] * n)
         sl: list[int | slice] = [slice(None)] * n
         sl[pos] = outcome

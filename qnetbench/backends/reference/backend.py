@@ -116,11 +116,14 @@ class _ClassicalChannel:
 
     def recv(self) -> bytes:
         while True:
+            # A message whose delivery time has arrived: take it.
             if self._queue and self._queue[0][0] <= self._engine.now:
                 return self._queue.popleft()[1]
+            # A message still in flight: wait until it lands, then re-check.
             if self._queue:
                 self._engine.wait(self._queue[0][0] - self._engine.now)
                 continue
+            # Nothing queued: park until a send wakes us (see `send`).
             self._waiter = self._engine.current
             self._engine.park()
 
@@ -275,6 +278,10 @@ class ReferenceBackend:
     def _rendezvous(
         self, node: NodeId, peer: NodeId, n: int, demand: Demand
     ) -> list[EntanglementHandle]:
+        """An EPR request is a two-sided handshake: the first side to ask parks as
+        the edge's waiter; the second side matches it and generates the pairs for
+        both. This is what makes `epr.request` on each node return halves of the
+        same pairs."""
         key = frozenset((node, peer))
         other = self._waiting.get(key)
         if other is not None and other.side != node:
@@ -296,10 +303,10 @@ class ReferenceBackend:
     def _generate(
         self, matched: _Waiter, node: NodeId, peer: NodeId, n: int, demand: Demand
     ) -> list[EntanglementHandle]:
-        # In `policy` mode the arbiter would order contending requests here; with
-        # single-tenant Phase 0 workloads at most one request is ever pending, so
-        # ordering is pass-through. Contention (and thus ranking inversion) is a
-        # multi-tenant concern that arrives with the cross-policy evaluation.
+        # A single application drives one rendezvous at a time, so there is never a
+        # queue to order here and `self.policy` is not consulted. Arbitration only
+        # bites under multi-tenant contention, which is modelled separately in
+        # `qnetbench.contention` (the cross-policy ranking-inversion result).
         if n != matched.n:
             raise ValueError(
                 f"entanglement rendezvous size mismatch on {node!r}↔{peer!r}: "
@@ -342,6 +349,9 @@ class ReferenceBackend:
                 self._build_handle(matched.req_id, qb, fid, latency, pair_age, violations, gov)
             )
 
+        # Both sides observe delivery only after the generation latency elapses:
+        # hand the parked waiter its half (waking it at the delivery time) and block
+        # this (second) side for the same duration, so both resume together.
         matched.result = waiter_handles
         self.engine.schedule(matched.proc, total_latency)
         self.engine.wait(total_latency)
@@ -449,6 +459,7 @@ class ReferenceBackend:
 
 
 def _api_version() -> str:
+    # Imported lazily to keep `qnetbench.api` free of any dependency on backends.
     from qnetbench.api import API_VERSION
 
     return API_VERSION
