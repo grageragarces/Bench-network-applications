@@ -47,6 +47,11 @@ def _build_parser() -> argparse.ArgumentParser:
     co = sub.add_parser("corpus", help="write the published reference traces + manifest")
     co.add_argument("--out", default="traces", help="output directory (default: traces)")
     co.add_argument("--seed", type=int, default=0)
+
+    sub.add_parser(
+        "contention",
+        help="run the multi-tenant cross-policy evaluation (the ranking-inversion result)",
+    )
     return parser
 
 
@@ -99,6 +104,12 @@ def main(argv: list[str] | None = None) -> int:
         manifest = generate_reference_corpus(args.out, seed=args.seed)
         print(f"reference corpus v{manifest['spec_version']} written to {args.out}/ "
               f"({len(manifest['traces'])} traces)")
+        return 0
+
+    if args.command == "contention":
+        from qnetbench.contention import default_experiment, render_experiment
+
+        print(render_experiment(default_experiment()))
         return 0
 
     events = run_once(

@@ -11,13 +11,13 @@ be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
 founding problem statement and [docs/design.md](docs/design.md) for the full
 design and roadmap.
 
-> **Status: Phase 5.** Runnable end-to-end on **three backends** (reference,
-> **SeQUeNCe**, **NetSquid**) with **six applications** spanning every
-> demand-signature class, the portable API, demand-signature characterization, and
-> a **versioned, machine-readable trace + metric spec** with **published reference
-> traces** ([docs/specs/](docs/specs/), [traces/](traces/)). Deliverables 1 ✔
-> (≥2 sims, 6–8 apps), 2 ✔ (characterization), 3 ✔ (spec + traces). Next: the
-> cross-policy ranking-inversion result ([docs/design.md §11](docs/design.md)).
+> **Status: Phase 6.** Runnable on **three backends** (reference, **SeQUeNCe**,
+> **NetSquid**) with **six applications** spanning every demand-signature class,
+> the portable API, demand-signature characterization, a versioned machine-readable
+> spec with published reference traces, and the **cross-policy ranking-inversion
+> result** (`qnetbench contention`). Deliverables 1 ✔ (≥2 sims, 6–8 apps), 2 ✔
+> (characterization), 3 ✔ (spec + traces), 4 ✔ (discriminative power). Next: the
+> adoption docs ([docs/design.md §11](docs/design.md)).
 
 ## The two ideas
 
@@ -150,6 +150,32 @@ In Phase 0's single-tenant workloads there is no contention, so the arbiter is
 pass-through; the ranking-inversion demonstration under multi-tenant contention
 is Phase 6.
 
+## Cross-policy evaluation — the ranking inverts
+
+The point of a benchmark suite is to show that **single-workload evaluation is
+unreliable**. `qnetbench contention` runs several tenants (parameterized by real
+applications' demand contracts) competing for one link whose entanglement supply
+is below aggregate demand, under three published scheduling policies:
+
+```bash
+qnetbench contention
+```
+
+```
+policy              deadline_heavy    fidelity_heavy
+----------------------------------------------------
+fifo                       0.150             0.433
+fidelity_first             0.150             0.533*
+edf                        0.367*            0.367
+winner                         edf    fidelity_first
+```
+
+**EDF wins on deadline-heavy traffic and is *last* on fidelity-heavy traffic;
+fidelity_first does the exact opposite.** The best policy flips across workload
+classes — so a paper that evaluated on either workload alone would have crowned one
+policy and been wrong about the other. That inversion is the suite's reason to
+exist.
+
 ## Layout
 
 ```
@@ -161,6 +187,7 @@ qnetbench/
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report
   characterize/ demand-signature extraction (single-trace + fidelity/staleness curves)
+  contention.py multi-tenant scheduling: the cross-policy ranking-inversion result
   topology.py  network + link model
   harness/     run(app × backend × policy × topology) and the CLI
   spec.py      versioned JSON Schemas + reference-corpus generator
