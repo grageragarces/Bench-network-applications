@@ -102,6 +102,7 @@ print(render(compute_report(events)))
 | `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
 | `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
+| `entanglement_swap` | entanglement swapping (repeater line) | multi-hop / relay — two elementary pairs per end-to-end unit |
 | `dqc_ghz4`, `dqc_qft4`, `dqc_random4` | distributed circuits (teleported gates) | demand **derived from real circuits** — bursty, deadline-critical |
 
 The DQC benchmarks come from [`qnetbench.circuits`](qnetbench/circuits.py): a
@@ -139,6 +140,7 @@ distributed_gate               2   0.34   0.60      2.25     1.00       —     
 dqc_ghz4                       2   0.16   0.70      2.33     1.00   0.525        0.83
 dqc_qft4                       2   0.24   0.20      2.12     1.00   0.900        0.18
 dqc_random4                    2   0.25   0.20      2.10     1.00   0.725        0.40
+entanglement_swap              3   0.48   0.21      1.52     0.00       —           —
 qkd                            2   0.94   0.84      0.02     0.00   0.851        0.35
 ```
 

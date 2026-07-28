@@ -52,6 +52,12 @@
       "sha256": "e12c209cbbacc2a5b101d87a19ae180e20890bad322ce6b517d3881de1e6eb31"
     },
     {
+      "app": "entanglement_swap",
+      "file": "entanglement_swap.jsonl",
+      "n_events": 454,
+      "sha256": "e65fa35f26665e6add65026151e73fd726b49a84cd3c8cae890880f73e000f39"
+    },
+    {
       "app": "qkd",
       "file": "qkd.jsonl",
       "n_events": 1031,

@@ -333,10 +333,11 @@ free.
   Entanglement Demand Schedule). Registered as `dqc_ghz4`/`dqc_qft4`/`dqc_random4`;
   the shared teleported-gate primitive lives in `apps/telegate.py`. Optional MQT
   Bench / Qiskit circuits load behind the `mqt` extra.
-- **Entanglement swapping / repeater apps** *(planned)* — a middle node swaps to
-  create end-to-end entanglement (the anonymous hub already fuses two pairs; a
-  repeater is the same shape with a Bell measurement). Adds the multi-hop
-  relay/routing demand class; enables multi-hop QKD over a repeater chain.
+- **Entanglement swapping** ✅ — `apps/swap.py` (`entanglement_swap`): a 3-node line
+  alice—repeater—bob where the repeater does a Bell-state measurement to swap two
+  elementary links into one end-to-end pair (bob applies the Pauli correction). Adds
+  the multi-hop relay/routing demand class (two elementary pairs per end-to-end
+  unit). *Still planned:* multi-hop QKD over a repeater chain (key from swapped pairs).
 - **More protocol apps from the literature** *(planned)* — teleportation (clean
   primitive baseline), verified BQC (trap-based, vs. our plain UBQC), quantum
   secret sharing, leader election / Byzantine agreement (multipartite variety),

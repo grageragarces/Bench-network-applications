@@ -3,8 +3,8 @@
 The suite spans every demand-signature class: QKD (steady, fidelity-thresholded),
 BQC (bursty, latency-coupled), distributed gate (deadline-critical), CHSH/DIQKD and
 clock sync (correlation-quality-sensitive), anonymous transmission (multipartite),
-and a family of DQC benchmarks whose demand is derived from real distributed
-circuits (`qnetbench.circuits`).
+entanglement swapping (multi-hop / relay), and a family of DQC benchmarks whose
+demand is derived from real distributed circuits (`qnetbench.circuits`).
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ from qnetbench.apps.clock_sync import ClockSync
 from qnetbench.apps.distributed_gate import DistributedGate
 from qnetbench.apps.dqc import DQC
 from qnetbench.apps.qkd import QKD
+from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.circuits import ghz, qft, random_circuit
 
 _APPS: tuple[Application, ...] = (
@@ -26,6 +27,7 @@ _APPS: tuple[Application, ...] = (
     CHSH(),
     ClockSync(),
     AnonymousTransmission(),
+    EntanglementSwap(),
     # DQC benchmarks: demand derived from distributed circuits (GHZ, QFT, random).
     DQC(ghz(4)),
     DQC(qft(4)),
@@ -53,6 +55,7 @@ __all__ = [
     "AnonymousTransmission",
     "ClockSync",
     "DistributedGate",
+    "EntanglementSwap",
     "available_apps",
     "get_app",
 ]
