@@ -11,6 +11,7 @@ truth table |c,t> → |c, t⊕c>.
 from __future__ import annotations
 
 from qnetbench.api import AppOutcome, Basis, Demand, Gate, Host, Role
+from qnetbench.apps.telegate import telegate_control, telegate_target
 from qnetbench.apps.util import cfg_int
 
 
@@ -55,14 +56,7 @@ class DistributedGate:
             data = host.qalloc()
             if c:
                 data.apply(Gate.X)
-            e1 = epr.request(1, self._demand(host))[0].qubit
-            assert e1 is not None
-            data.cnot(e1)  # entangle the control into the shared pair (cat-entangler)
-            a = e1.measure(Basis.Z)
-            cls.send(bytes([a]))  # Bob needs this to correct his half
-            b = cls.recv()[0]
-            if b:
-                data.apply(Gate.Z)  # Z correction from Bob's X-basis measurement
+            telegate_control(data, epr, cls, self._demand(host))  # non-local CNOT
             c_outputs.append(data.measure(Basis.Z))
 
         # Reconciliation for scoring (not part of the protocol).
@@ -92,14 +86,7 @@ class DistributedGate:
             data = host.qalloc()
             if t:
                 data.apply(Gate.X)
-            e2 = epr.request(1, self._demand(host))[0].qubit
-            assert e2 is not None
-            a = cls.recv()[0]
-            if a:
-                e2.apply(Gate.X)  # X correction from Alice's Z-basis measurement
-            e2.cnot(data)  # the shared pair now acts as the control on Bob's target
-            b = e2.measure(Basis.X)  # disentangle the pair (cat-disentangler)
-            cls.send(bytes([b]))  # Alice needs this for her Z correction
+            telegate_target(data, epr, cls, self._demand(host))  # non-local CNOT
             t_outputs.append(data.measure(Basis.Z))
 
         c_inputs = list(cls.recv())

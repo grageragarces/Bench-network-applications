@@ -102,6 +102,14 @@ print(render(compute_report(events)))
 | `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
 | `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
+| `dqc_ghz4`, `dqc_qft4`, `dqc_random4` | distributed circuits (teleported gates) | demand **derived from real circuits** — bursty, deadline-critical |
+
+The DQC benchmarks come from [`qnetbench.circuits`](qnetbench/circuits.py): a
+distributed-circuit IR whose non-local gates compile to teleported gates, so each
+circuit's structure becomes an *Entanglement Demand Schedule*. Built-in circuits
+(GHZ / QFT / random) are mirror circuits (`U;U†`) verified by returning to |0…0>;
+an optional loader (`from_qiskit`, `pip install "qnetbench[mqt]"`) turns MQT Bench /
+Qiskit circuits into demand.
 
 Each is physically real: QKD sifts and estimates QBER, BQC delegates a verifiable
 blind computation, the distributed gate reproduces the CNOT truth table, CHSH
@@ -123,11 +131,14 @@ qnetbench characterize qkd --out sig/
 
 ```
 app                      parties     cv   fano  msg/pair deadline  F½util  stale½(ms)
-------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 anonymous_transmission         3   1.10   0.35      2.02     0.00       —           —
 bqc                            2   0.14   0.60      2.00     1.00       —           —
 chsh                           2   0.94   0.84      0.01     0.00   0.908        0.23
 distributed_gate               2   0.34   0.60      2.25     1.00       —        1.43
+dqc_ghz4                       2   0.16   0.70      2.33     1.00   0.525        0.83
+dqc_qft4                       2   0.24   0.20      2.12     1.00   0.900        0.18
+dqc_random4                    2   0.25   0.20      2.10     1.00   0.725        0.40
 qkd                            2   0.94   0.84      0.02     0.00   0.851        0.35
 ```
 
@@ -183,7 +194,8 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        qkd, bqc, distributed_gate, chsh, clock_sync, anonymous — written once
+  apps/        qkd, bqc, distributed_gate, chsh, clock_sync, anonymous, dqc — written once
+  circuits.py  distributed-circuit IR + library (GHZ/QFT/random) + optional Qiskit loader
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report

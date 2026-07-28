@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from qnetbench.apps import available_apps
 from qnetbench.spec import (
     SPEC_VERSION,
     metric_json_schema,
@@ -42,10 +43,7 @@ def test_reference_corpus_manifest_is_consistent() -> None:
         assert digest == entry["sha256"], f"{entry['file']} changed; run `qnetbench corpus`"
 
 
-@pytest.mark.parametrize(
-    "name",
-    ["qkd", "bqc", "distributed_gate", "chsh", "clock_sync", "anonymous_transmission"],
-)
+@pytest.mark.parametrize("name", available_apps())
 def test_published_traces_round_trip(name: str) -> None:
     events = list(read_trace(_TRACES / f"{name}.jsonl"))
     assert events, f"{name} trace is empty"

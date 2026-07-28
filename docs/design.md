@@ -318,3 +318,27 @@ pre-generated eagerly on the main thread in `SequenceBackend.__init__`.
 | **7. Adoption docs** ✅ | `docs/adopting.md` (add-an-app / add-a-backend / consume-traces, examples verified to run); released to PyPI | Deliverable 5 (the real success metric) |
 
 Each phase is independently reviewable and leaves the repo runnable.
+
+## 13. Future benchmarks (planned)
+
+The five deliverables are complete; these extend *coverage and realism*. An
+application is one file against the API, so the suite has no cap on size — new apps
+inherit cross-backend equivalence, a demand signature, and a published trace for
+free.
+
+- **DQC circuit-demand generator** ✅ — `qnetbench.circuits` (distributed-circuit IR,
+  ASAP layering, GHZ/QFT/random mirror circuits, `from_qiskit` loader) + `apps/dqc.py`
+  (executes a partitioned circuit; each non-local gate is a teleported gate whose
+  deadline is its layer × a per-layer budget, so the trace is the circuit's
+  Entanglement Demand Schedule). Registered as `dqc_ghz4`/`dqc_qft4`/`dqc_random4`;
+  the shared teleported-gate primitive lives in `apps/telegate.py`. Optional MQT
+  Bench / Qiskit circuits load behind the `mqt` extra.
+- **Entanglement swapping / repeater apps** *(planned)* — a middle node swaps to
+  create end-to-end entanglement (the anonymous hub already fuses two pairs; a
+  repeater is the same shape with a Bell measurement). Adds the multi-hop
+  relay/routing demand class; enables multi-hop QKD over a repeater chain.
+- **More protocol apps from the literature** *(planned)* — teleportation (clean
+  primitive baseline), verified BQC (trap-based, vs. our plain UBQC), quantum
+  secret sharing, leader election / Byzantine agreement (multipartite variety),
+  prepare-and-measure BB84 (exercises `purpose="measure"`, a demand shape no
+  current app uses).

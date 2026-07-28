@@ -55,6 +55,7 @@ def test_noiseless_invariants_are_exact() -> None:
     assert _report("qkd", topo=PERFECT).app_success
     assert _report("chsh", topo=PERFECT).app_success  # S > 2
     assert _report("clock_sync", topo=PERFECT).app_utility > 0.9
+    assert _report("dqc_ghz4", topo=PERFECT).app_utility == 1.0  # mirror circuit -> |0…0>
 
 
 def test_distributed_gate_truth_table_matches_across_backends() -> None:

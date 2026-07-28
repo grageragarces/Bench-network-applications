@@ -34,6 +34,24 @@
       "sha256": "afcebef4730dbff3f28a70ffbc646b1c79c5db0281a32d0f116da5b78c6f125f"
     },
     {
+      "app": "dqc_ghz4",
+      "file": "dqc_ghz4.jsonl",
+      "n_events": 29,
+      "sha256": "a6adcb67d982e82cf4b9f03fd5465ebb051bb24476f9a7221f139686dc3cc394"
+    },
+    {
+      "app": "dqc_qft4",
+      "file": "dqc_qft4.jsonl",
+      "n_events": 69,
+      "sha256": "b44d7a9761145d617bc17082be55bfed4420486054d41393eb6ce375dc099a43"
+    },
+    {
+      "app": "dqc_random4",
+      "file": "dqc_random4.jsonl",
+      "n_events": 85,
+      "sha256": "e12c209cbbacc2a5b101d87a19ae180e20890bad322ce6b517d3881de1e6eb31"
+    },
+    {
       "app": "qkd",
       "file": "qkd.jsonl",
       "n_events": 1031,
