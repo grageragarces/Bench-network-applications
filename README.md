@@ -1,37 +1,7 @@
 # qnetbench
 
 A benchmark suite and workload-characterization framework for **quantum-network
-applications** — a SPEC/TPC/YCSB-equivalent for the quantum internet.
-
-Every quantum-network scheduler, router, and API in the literature is evaluated on
-an idiosyncratic workload (typically QKD plus one hand-rolled protocol), which
-makes results incomparable and lets weak abstractions hide. qnetbench provides a
-shared, characterized, cross-simulator workload so that these systems can finally
-be compared on the same ground. See [docs/issue-4.md](docs/issue-4.md) for the
-founding problem statement and [docs/design.md](docs/design.md) for the full
-design and roadmap.
-
-> **Status: all five deliverables complete.** Three backends (reference,
-> **SeQUeNCe**, **NetSquid**), six applications spanning every demand-signature
-> class, the portable API, demand-signature characterization, a versioned
-> machine-readable spec with published reference traces, the **cross-policy
-> ranking-inversion result** (`qnetbench contention`), and
-> [adoption docs](docs/adopting.md). Deliverables 1 ✔ (≥2 sims, 6–8 apps), 2 ✔
-> (characterization), 3 ✔ (spec + traces), 4 ✔ (ranking inversion), 5 ✔ (adoption
-> docs). Roadmap and design in [docs/design.md](docs/design.md).
-
-## The two ideas
-
-1. **Write an application once, run it on any backend.** Applications program
-   against a small portable API (`qnetbench.api`) — classical sockets, EPR
-   sockets, local qubit ops — and never import a simulator. Backends adapt that
-   API to a simulator (or, here, to a dependency-free reference engine).
-
-2. **Demand is declarative.** Every request for entanglement carries a *contract*
-   — minimum fidelity, latency budget / deadline, staleness tolerance, priority.
-   Schedulers read it; the trace records requested-vs-delivered against it; the
-   characterizer mines its distribution. This is what makes the suite
-   *discriminative* rather than merely runnable.
+applications** for the quantum internet.
 
 ## Install
 
@@ -45,8 +15,8 @@ nothing else, so the whole suite runs and tests in CI without any simulator.
 ## Backends & environments
 
 Applications are written **once** against the portable API and never import a
-simulator. You choose the physics by naming a backend — the simulator is imported
-lazily behind an optional extra:
+simulator. You choose the backend and the relevant simulator is imported
+lazily behind:
 
 ```bash
 qnetbench run qkd --backend reference   # pure-Python, no simulator needed
@@ -65,10 +35,8 @@ Install the extra for the simulator you want:
 > ⚠️ **SeQUeNCe and NetSquid cannot live in the same environment.** SeQUeNCe pins
 > `numpy ≥ 2.3.5` and NetSquid pins `numpy < 2`, so the two extras conflict. Use a
 > **separate virtualenv per simulator** (e.g. `.venv` for SeQUeNCe, `.venv-ns` for
-> NetSquid). This incompatibility is inherent to the simulators — and is precisely
-> the kind of fragmentation this suite exists to paper over: the same applications,
-> traces, and metrics run unchanged across otherwise-incompatible tools, because
-> only the backend swaps.
+> NetSquid). This incompatibility is inherent to the simulators, and is 
+> the kind of fragmentation this suite exists to paper over. ⚠️
 
 Within a given environment you can of course still `import sequence` / `import
 netsquid` directly; qnetbench just spares you from writing to their APIs.
@@ -112,16 +80,9 @@ circuit's structure becomes an *Entanglement Demand Schedule*. Built-in circuits
 an optional loader (`from_qiskit`, `pip install "qnetbench[mqt]"`) turns MQT Bench /
 Qiskit circuits into demand.
 
-Each is physically real: QKD sifts and estimates QBER, BQC delegates a verifiable
-blind computation, the distributed gate reproduces the CNOT truth table, CHSH
-reaches S ≈ 2√2, clock-sync recovers the phase offset, and anonymous transmission
-recovers the broadcast bit from GHZ parity — all exact at fidelity 1.0 and
-degrading as fidelity drops, on every backend.
-
 ## Characterization
 
-`qnetbench characterize` measures each application's **demand signature** — the
-quantities that make workloads discriminative — and prints a cross-application
+`qnetbench characterize` measures each application's **demand signature** and prints a cross-application
 table (add `--out DIR` to also write per-app signature + curve JSON, so figures
 regenerate from source):
 
@@ -155,14 +116,10 @@ fidelity-thresholded ones (QKD, CHSH) separate cleanly.
 
 Borrowing MQT Bench's "pick your level" model, arbitration is a run-level choice:
 
-- `native` — the backend's own default scheduling (the opt-out; what most papers
+- `native`: the backend's own default scheduling (the opt-out; what most papers
   run today).
-- `policy:<name>` — a backend-agnostic arbiter applies a chosen policy
+- `policy:<name>`: a backend-agnostic arbiter applies a chosen policy
   (`fifo`, `fidelity_first`, `edf`) identically on every backend.
-
-In Phase 0's single-tenant workloads there is no contention, so the arbiter is
-pass-through; the ranking-inversion demonstration under multi-tenant contention
-is Phase 6.
 
 ## Cross-policy evaluation — the ranking inverts
 
@@ -186,7 +143,7 @@ winner                         edf    fidelity_first
 
 **EDF wins on deadline-heavy traffic and is *last* on fidelity-heavy traffic;
 fidelity_first does the exact opposite.** The best policy flips across workload
-classes — so a paper that evaluated on either workload alone would have crowned one
+classes, so a paper that evaluated on either workload alone would have crowned one
 policy and been wrong about the other. That inversion is the suite's reason to
 exist.
 
@@ -211,16 +168,15 @@ docs/          design.md (architecture + roadmap), issue-4.md, specs/ (versioned
 traces/        published reference traces (one per app) + checksummed manifest
 ```
 
-## Extending the suite
+## Contributing to the suite
 
-Each extension point is small and documented in
-[docs/adopting.md](docs/adopting.md):
+Instructions on how to extend the suite are documented in [docs/adopting.md](docs/adopting.md):
 
-- **Add an application** — one file against the portable API (a complete `Ping`
+- **Add an application**: one file against the portable API (a complete `Ping`
   example runs on every backend).
-- **Add a backend** — a ~1-method `ReplayBackend` subclass returning a delivered-pair
+- **Add a backend**: a ~1-method `ReplayBackend` subclass returning a delivered-pair
   supply.
-- **Consume traces** — read the JSONL in any language; the schema is the versioned
+- **Consume traces**: read the JSONL in any language; the schema is the versioned
   contract in [docs/specs/](docs/specs/).
 
 ## Develop
@@ -230,7 +186,6 @@ pytest            # physics, app invariants, trace round-trip, policies, metrics
 ruff check qnetbench tests
 mypy qnetbench    # strict
 ```
-
 The SeQUeNCe and NetSquid backends have conflicting numpy pins, so run the suite in
 one virtualenv per simulator (see [Backends & environments](#backends--environments));
 each shows the reference tests plus its own simulator's, skipping the other's.
@@ -242,3 +197,4 @@ Apache-2.0.
 ## AI usage
 
 Note that both Fable 5 and Opus 4.8 were used to help in the development of this library. 
+The commits they have contributed to are saved accordingly in the commit history.
