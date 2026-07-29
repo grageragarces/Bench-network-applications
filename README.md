@@ -67,18 +67,30 @@ print(render(compute_report(events)))
 | `qkd` | key distribution (E91/BBM92) | steady, rate-hungry, fidelity-thresholded |
 | `bqc` | universal blind quantum computation | bursty, latency-coupled, classical-heavy, high-fidelity |
 | `distributed_gate` | distributed gate (teleported CNOT) | deadline-critical, staleness-intolerant |
+| `teleportation` | quantum state teleportation | steady, latency-coupled, high-fidelity |
 | `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
 | `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
 | `entanglement_swap` | entanglement swapping (repeater line) | multi-hop / relay — two elementary pairs per end-to-end unit |
 | `dqc_ghz4`, `dqc_qft4`, `dqc_random4` | distributed circuits (teleported gates) | demand **derived from real circuits** — bursty, deadline-critical |
 
+The table above is the **core** — distinct protocols that CI, the reference corpus,
+and the cross-backend equivalence suite all iterate. Beyond it is a **catalog** of
+50+ parameterized benchmarks (`qnetbench list --all`, run any by name), generated
+mostly as DQC over a family of distributed circuits at a range of sizes:
+
+```bash
+qnetbench list --all          # the full catalog (50+)
+qnetbench run dqc_qft8        # any catalog entry, on demand
+```
+
 The DQC benchmarks come from [`qnetbench.circuits`](qnetbench/circuits.py): a
 distributed-circuit IR whose non-local gates compile to teleported gates, so each
-circuit's structure becomes an *Entanglement Demand Schedule*. Built-in circuits
-(GHZ / QFT / random) are mirror circuits (`U;U†`) verified by returning to |0…0>;
-an optional loader (`from_qiskit`, `pip install "qnetbench[mqt]"`) turns MQT Bench /
-Qiskit circuits into demand.
+circuit's structure becomes an *Entanglement Demand Schedule*. Built-in families
+(GHZ, QFT, random, graph state, IQP, hardware-efficient ansatz) are mirror circuits
+(`U;U†`) verified by returning to |0…0>; an optional loader (`from_qiskit`,
+`pip install "qnetbench[mqt]"`) turns MQT Bench / Qiskit circuits into demand. This
+is the SPEC / MQT Bench model: a curated core, and a generator for the long tail.
 
 ## Characterization
 
@@ -103,6 +115,7 @@ dqc_qft4                       2   0.24   0.20      2.12     1.00   0.900       
 dqc_random4                    2   0.25   0.20      2.10     1.00   0.725        0.40
 entanglement_swap              3   0.48   0.21      1.52     0.00       —           —
 qkd                            2   0.94   0.84      0.02     0.00   0.851        0.35
+teleportation                  2   0.55   0.27      1.02     1.00       —           —
 ```
 
 The signature spans burstiness (`cv`, `fano`), classical-communication coupling
@@ -153,8 +166,9 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        qkd, bqc, distributed_gate, chsh, clock_sync, anonymous, dqc — written once
-  circuits.py  distributed-circuit IR + library (GHZ/QFT/random) + optional Qiskit loader
+  apps/        11 core protocols (qkd, bqc, distributed_gate, teleportation, swap, …)
+  circuits.py  distributed-circuit IR + families (GHZ/QFT/random/graph/IQP/HEA) + Qiskit loader
+               (the core + circuits form a catalog of 50+ via `qnetbench list --all`)
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report

@@ -131,6 +131,37 @@ def random_circuit(n: int = 4, depth: int = 6, seed: int = 0) -> Circuit:
     return Circuit(n, _interleaved(n), mirror(fwd), name=f"random{n}")
 
 
+def graph_state(n: int = 4) -> Circuit:
+    """A ring graph state (H on all + CZ on nearest neighbours) mirrored to |0…0>."""
+    fwd = [Op("H", (q,)) for q in range(n)]
+    fwd += [Op("CZ", (i, i + 1)) for i in range(n - 1)]
+    if n > 2:
+        fwd.append(Op("CZ", (n - 1, 0)))  # close the ring
+    return Circuit(n, _interleaved(n), mirror(fwd), name=f"graph{n}")
+
+
+def iqp(n: int = 4, seed: int = 0) -> Circuit:
+    """An instantaneous-quantum-polynomial circuit (H · diagonal · H) mirrored to |0…0>."""
+    rng = np.random.default_rng(seed)
+    diag: list[Op] = []
+    for q in range(n):
+        diag.append(Op("RZ", (q,), (float(rng.uniform(0, 2 * math.pi)),)))
+    diag += [Op("CZ", (i, i + 1)) for i in range(n - 1)]
+    fwd = [Op("H", (q,)) for q in range(n)] + diag + [Op("H", (q,)) for q in range(n)]
+    return Circuit(n, _interleaved(n), mirror(fwd), name=f"iqp{n}")
+
+
+def hea(n: int = 4, depth: int = 3, seed: int = 0) -> Circuit:
+    """A hardware-efficient ansatz (RY rotations + CNOT entangling layers) mirrored to |0…0>."""
+    rng = np.random.default_rng(seed)
+    fwd: list[Op] = []
+    for _ in range(depth):
+        for q in range(n):
+            fwd.append(Op("RY", (q,), (float(rng.uniform(0, 2 * math.pi)),)))
+        fwd += [Op("CNOT", (i, i + 1)) for i in range(n - 1)]
+    return Circuit(n, _interleaved(n), mirror(fwd), name=f"hea{n}")
+
+
 def from_qiskit(qc: Any, partition: tuple[int, ...] | None = None, name: str = "qiskit") -> Circuit:
     """Convert a Qiskit `QuantumCircuit` (e.g. from MQT Bench) into this IR.
 

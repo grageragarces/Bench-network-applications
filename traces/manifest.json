@@ -62,6 +62,12 @@
       "file": "qkd.jsonl",
       "n_events": 1031,
       "sha256": "2cb57d5ec4a9ab6938dfacfb8ab43d71608ff0f5d8ac771235c4eb26fd9d96a3"
+    },
+    {
+      "app": "teleportation",
+      "file": "teleportation.jsonl",
+      "n_events": 196,
+      "sha256": "9f3b3a87ed71e71a6c1dbc8d1bafc89a0e5b357dc248d86da5730050c8afc943"
     }
   ]
 }

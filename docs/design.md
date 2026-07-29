@@ -338,8 +338,15 @@ free.
   elementary links into one end-to-end pair (bob applies the Pauli correction). Adds
   the multi-hop relay/routing demand class (two elementary pairs per end-to-end
   unit). *Still planned:* multi-hop QKD over a repeater chain (key from swapped pairs).
-- **More protocol apps from the literature** *(planned)* — teleportation (clean
-  primitive baseline), verified BQC (trap-based, vs. our plain UBQC), quantum
-  secret sharing, leader election / Byzantine agreement (multipartite variety),
-  prepare-and-measure BB84 (exercises `purpose="measure"`, a demand shape no
-  current app uses).
+- **Core / catalog split** ✅ — the suite is now a curated **core** (`available_apps()`,
+  ~11 distinct protocols, run in CI + corpus + cross-backend equivalence) plus a
+  **catalog** (`catalog_apps()`, 50+) generated as DQC over circuit families
+  (GHZ/QFT/random/graph/IQP/HEA) × sizes, resolvable on demand via `get_app` and
+  `qnetbench run <name>` / `list --all`, but not baked into CI. The MQT Bench / SPEC
+  model — coverage from the core, quantity from the generator.
+- **Teleportation** ✅ — `apps/teleport.py` (`teleportation`): moves a *state* (not a
+  gate) via one EPR pair + two classical bits; added to the core.
+- **More protocol apps from the literature** *(planned)* — verified BQC (trap-based,
+  vs. our plain UBQC), quantum secret sharing, leader election / Byzantine agreement,
+  prepare-and-measure BB84 (exercises `purpose="measure"`, a demand shape no current
+  app uses); multi-hop QKD over a repeater chain.

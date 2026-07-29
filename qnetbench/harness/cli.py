@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from qnetbench.apps import available_apps
+from qnetbench.apps import available_apps, catalog_apps
 from qnetbench.harness.runner import run_once
 from qnetbench.metrics import compute_report, render
 from qnetbench.policies import available_policies
@@ -19,7 +19,7 @@ def _build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
 
     run = sub.add_parser("run", help="run one application and print its report")
-    run.add_argument("app", choices=available_apps())
+    run.add_argument("app", metavar="APP", help="benchmark name (any from `list --all`)")
     run.add_argument("--backend", default="reference")
     run.add_argument(
         "--arbitration",
@@ -30,14 +30,13 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument("--out", help="write the JSONL trace to this path")
     run.add_argument("--json", action="store_true", help="print the report as JSON")
 
-    sub.add_parser("list", help="list available apps and policies")
+    ls = sub.add_parser("list", help="list available apps and policies")
+    ls.add_argument("--all", action="store_true", help="list the full catalog (50+), not just core")
 
     ch = sub.add_parser(
-        "characterize", help="measure demand signatures (one app, or all) and print the table"
+        "characterize", help="measure demand signatures (one app, or all core apps)"
     )
-    ch.add_argument(
-        "app", nargs="?", choices=available_apps(), help="omit to characterize all apps"
-    )
+    ch.add_argument("app", nargs="?", metavar="APP", help="omit to characterize all core apps")
     ch.add_argument("--seeds", type=int, default=8, help="seeds averaged per sweep point")
     ch.add_argument("--out", help="directory to write per-app signature+curve JSON")
 
@@ -82,8 +81,10 @@ def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
 
     if args.command == "list":
-        print("apps:     " + ", ".join(available_apps()))
-        print("policies: " + ", ".join(available_policies()))
+        apps = catalog_apps() if args.all else available_apps()
+        label = f"catalog ({len(apps)})" if args.all else "core"
+        print(f"apps [{label}]: " + ", ".join(apps))
+        print("policies:     " + ", ".join(available_policies()))
         return 0
 
     if args.command == "characterize":
@@ -112,9 +113,13 @@ def main(argv: list[str] | None = None) -> int:
         print(render_experiment(default_experiment()))
         return 0
 
-    events = run_once(
-        args.app, seed=args.seed, backend=args.backend, arbitration=args.arbitration
-    )
+    try:
+        events = run_once(
+            args.app, seed=args.seed, backend=args.backend, arbitration=args.arbitration
+        )
+    except KeyError as exc:
+        print(str(exc).strip('"'), file=sys.stderr)
+        return 2
     if args.out:
         write_trace(args.out, events)
     report = compute_report(events)
