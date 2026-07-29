@@ -71,6 +71,8 @@ print(render(compute_report(events)))
 | `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
 | `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
+| `secret_sharing` | (n,n) quantum secret sharing (GHZ) | multipartite, threshold reconstruction |
+| `conference_key` | conference key agreement (4-party GHZ) | 4-party, the most fidelity-demanding app |
 | `entanglement_swap` | entanglement swapping (repeater line) | multi-hop / relay — two elementary pairs per end-to-end unit |
 | `multihop_qkd` | QKD over a repeater chain | multi-hop **and** steady, fidelity-thresholded (QBER compounds both hops) |
 | `shared_randomness` | shared randomness from measured pairs | steady, rate-hungry, `purpose="measure"` (measured on delivery) |
@@ -111,6 +113,7 @@ app                      parties     cv   fano  msg/pair deadline  F½util  stal
 anonymous_transmission         3   1.10   0.35      2.02     0.00       —           —
 bqc                            2   0.14   0.60      2.00     1.00       —           —
 chsh                           2   0.94   0.84      0.01     0.00   0.908        0.23
+conference_key                 4   1.54   0.53      2.02     0.00   0.952        0.14
 distributed_gate               2   0.34   0.60      2.25     1.00       —        1.43
 dqc_ghz4                       2   0.16   0.70      2.33     1.00   0.525        0.83
 dqc_qft4                       2   0.24   0.20      2.12     1.00   0.900        0.18
@@ -118,6 +121,7 @@ dqc_random4                    2   0.25   0.20      2.10     1.00   0.725       
 entanglement_swap              3   0.48   0.21      1.52     0.00       —           —
 multihop_qkd                   3   1.12   0.25      0.54     0.00   0.866        0.10
 qkd                            2   0.94   0.84      0.02     0.00   0.851        0.35
+secret_sharing                 3   1.10   0.35      2.02     0.00       —           —
 shared_randomness              2   0.92   0.99      0.02     0.00       —           —
 teleportation                  2   0.55   0.27      1.02     1.00       —           —
 ```
@@ -170,7 +174,7 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        13 core protocols (qkd, bqc, distributed_gate, teleportation, swap, multihop_qkd, …)
+  apps/        15 core protocols (qkd, bqc, teleportation, swap, multihop_qkd, conference_key, …)
   circuits.py  distributed-circuit IR + families (GHZ/QFT/random/graph/IQP/HEA) + Qiskit loader
                (the core + circuits form a catalog of 50+ via `qnetbench list --all`)
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid

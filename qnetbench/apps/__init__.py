@@ -19,10 +19,12 @@ from qnetbench.apps.anonymous import AnonymousTransmission
 from qnetbench.apps.bqc import BQC
 from qnetbench.apps.chsh import CHSH
 from qnetbench.apps.clock_sync import ClockSync
+from qnetbench.apps.conference_key import ConferenceKey
 from qnetbench.apps.distributed_gate import DistributedGate
 from qnetbench.apps.dqc import DQC
 from qnetbench.apps.multihop_qkd import MultihopQKD
 from qnetbench.apps.qkd import QKD
+from qnetbench.apps.secret_sharing import SecretSharing
 from qnetbench.apps.shared_randomness import SharedRandomness
 from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.apps.teleport import Teleportation
@@ -41,6 +43,8 @@ _CORE: tuple[Application, ...] = (
     Teleportation(),
     MultihopQKD(),
     SharedRandomness(),
+    SecretSharing(),
+    ConferenceKey(),
     DQC(ghz(4)),
     DQC(qft(4)),
     DQC(random_circuit(4, depth=6, seed=0)),
@@ -97,9 +101,11 @@ __all__ = [
     "QKD",
     "AnonymousTransmission",
     "ClockSync",
+    "ConferenceKey",
     "DistributedGate",
     "EntanglementSwap",
     "MultihopQKD",
+    "SecretSharing",
     "SharedRandomness",
     "Teleportation",
     "available_apps",

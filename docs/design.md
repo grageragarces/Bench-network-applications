@@ -352,6 +352,12 @@ free.
 - **Shared randomness** ✅ — `apps/shared_randomness.py` (`shared_randomness`): the only
   app using `purpose="measure"` (the backend measures on delivery, no local qubit) —
   correlated shared random bits from Z-measured pairs.
+- **Quantum secret sharing** ✅ — `apps/secret_sharing.py` (`secret_sharing`): a dealer
+  splits a secret bit among two players over a GHZ; both together (neither alone)
+  reconstruct it via the GHZ X-parity.
+- **Conference key agreement** ✅ — `apps/conference_key.py` (`conference_key`): the
+  N-party generalization of QKD — a hub fuses three pairs into a 4-party GHZ and all
+  four measure Z for one shared key bit. The highest party count (4) and the most
+  fidelity-demanding app in the suite (a 4-party GHZ from 3 pairs is fragile).
 - **More protocol apps from the literature** *(planned)* — verified BQC (trap-based,
-  vs. our plain UBQC), quantum secret sharing, leader election / Byzantine agreement,
-  prepare-and-measure BB84.
+  vs. our plain UBQC), leader election / Byzantine agreement, prepare-and-measure BB84.

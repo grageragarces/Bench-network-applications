@@ -28,6 +28,12 @@
       "sha256": "d8b5dee9552ad8950caf30703073e76755105c67fce9b39f6b72f57bc2e4acbe"
     },
     {
+      "app": "conference_key",
+      "file": "conference_key.jsonl",
+      "n_events": 776,
+      "sha256": "aadc488eb058cc5deba21a1f116cd7563c5fd1d8cd04309a9f19bd43b469748a"
+    },
+    {
       "app": "distributed_gate",
       "file": "distributed_gate.jsonl",
       "n_events": 37,
@@ -68,6 +74,12 @@
       "file": "qkd.jsonl",
       "n_events": 1031,
       "sha256": "2cb57d5ec4a9ab6938dfacfb8ab43d71608ff0f5d8ac771235c4eb26fd9d96a3"
+    },
+    {
+      "app": "secret_sharing",
+      "file": "secret_sharing.jsonl",
+      "n_events": 518,
+      "sha256": "2f9fdfa05634c35220a71ec360fa02acb0676f94d64b250b0110a089dffb5931"
     },
     {
       "app": "shared_randomness",
