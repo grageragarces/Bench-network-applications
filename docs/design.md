@@ -359,5 +359,12 @@ free.
   N-party generalization of QKD — a hub fuses three pairs into a 4-party GHZ and all
   four measure Z for one shared key bit. The highest party count (4) and the most
   fidelity-demanding app in the suite (a 4-party GHZ from 3 pairs is fragile).
-- **More protocol apps from the literature** *(planned)* — verified BQC (trap-based,
-  vs. our plain UBQC), leader election / Byzantine agreement, prepare-and-measure BB84.
+- **Verified BQC** ✅ — `apps/verified_bqc.py` (`verified_bqc`): BQC with interleaved
+  trap rounds; an accept/reject verification (utility = trap pass rate, success =
+  every trap passed) rather than a plain computation. Shares the UBQC gadget in
+  `apps/ubqc.py`.
+- **Leader election** ✅ — `apps/leader_election.py` (`leader_election`): fair leader
+  election among five parties via shared 5-party GHZ randomness. The highest party
+  count (5) and the most fidelity-demanding app in the suite (F½util 0.97).
+- **More protocol apps from the literature** *(planned)* — prepare-and-measure BB84
+  (needs a single-qubit-transmission primitive in the api); Byzantine agreement.

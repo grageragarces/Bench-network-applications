@@ -64,6 +64,12 @@
       "sha256": "e65fa35f26665e6add65026151e73fd726b49a84cd3c8cae890880f73e000f39"
     },
     {
+      "app": "leader_election",
+      "file": "leader_election.jsonl",
+      "n_events": 1162,
+      "sha256": "8e24355189cc3a08799ed9866c3741363cf983ab7c6ebab43d83b0d3b01dafd5"
+    },
+    {
       "app": "multihop_qkd",
       "file": "multihop_qkd.jsonl",
       "n_events": 653,
@@ -92,6 +98,12 @@
       "file": "teleportation.jsonl",
       "n_events": 196,
       "sha256": "9f3b3a87ed71e71a6c1dbc8d1bafc89a0e5b357dc248d86da5730050c8afc943"
+    },
+    {
+      "app": "verified_bqc",
+      "file": "verified_bqc.jsonl",
+      "n_events": 109,
+      "sha256": "4b80b8611767aadc44ecc47c0dcedebb3e27c883e07b5a3a4e6c3376cdd07aa9"
     }
   ]
 }

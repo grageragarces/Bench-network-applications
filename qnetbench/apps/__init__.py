@@ -22,12 +22,14 @@ from qnetbench.apps.clock_sync import ClockSync
 from qnetbench.apps.conference_key import ConferenceKey
 from qnetbench.apps.distributed_gate import DistributedGate
 from qnetbench.apps.dqc import DQC
+from qnetbench.apps.leader_election import LeaderElection
 from qnetbench.apps.multihop_qkd import MultihopQKD
 from qnetbench.apps.qkd import QKD
 from qnetbench.apps.secret_sharing import SecretSharing
 from qnetbench.apps.shared_randomness import SharedRandomness
 from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.apps.teleport import Teleportation
+from qnetbench.apps.verified_bqc import VerifiedBQC
 from qnetbench.circuits import ghz, graph_state, hea, iqp, qft, random_circuit
 
 # --- core: distinct protocols, tested in CI + published in the corpus ----------
@@ -45,6 +47,8 @@ _CORE: tuple[Application, ...] = (
     SharedRandomness(),
     SecretSharing(),
     ConferenceKey(),
+    VerifiedBQC(),
+    LeaderElection(),
     DQC(ghz(4)),
     DQC(qft(4)),
     DQC(random_circuit(4, depth=6, seed=0)),
@@ -104,10 +108,12 @@ __all__ = [
     "ConferenceKey",
     "DistributedGate",
     "EntanglementSwap",
+    "LeaderElection",
     "MultihopQKD",
     "SecretSharing",
     "SharedRandomness",
     "Teleportation",
+    "VerifiedBQC",
     "available_apps",
     "catalog_apps",
     "get_app",

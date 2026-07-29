@@ -15,12 +15,9 @@ server only ever sees a uniformly random δ, so the computation stays blind.
 
 from __future__ import annotations
 
-import math
-
-from qnetbench.api import AppOutcome, Basis, Demand, Gate, Host, Role
+from qnetbench.api import AppOutcome, Demand, Host, Role
+from qnetbench.apps.ubqc import client_step, server_step
 from qnetbench.apps.util import cfg_int
-
-_QUARTER = math.pi / 4
 
 
 class BQC:
@@ -46,30 +43,15 @@ class BQC:
         cls = host.classical_socket("bob")
         correct = 0
         for _ in range(depth):
-            handle = epr.request(1, demand)[0]
-            assert handle.qubit is not None
-            q = handle.qubit
-            k = int(host.rng.integers(0, 8))  # secret θ = k·π/4
-            r = int(host.rng.integers(0, 2))  # secret one-time pad bit
-            e = int(host.rng.integers(0, 2))  # secret input bit (the computation)
-            theta = k * _QUARTER
-            # Remote state prep: measure our half in the θ basis → a.
-            q.apply(Gate.RZ, -theta)
-            q.apply(Gate.H)
-            a = q.measure(Basis.Z)
-            host.record_measurement(Basis.Z, a)
-            # Blinded angle δ = -θ + (a + e + r)π, encoded in units of π/4.
-            delta_index = (-k + 4 * ((a + e + r) % 2)) % 8
-            cls.send(bytes([delta_index]))
-            b = cls.recv()[0]
-            s = b ^ r  # decoded logical outcome; equals e noiselessly
+            qubit = epr.request(1, demand)[0].qubit
+            assert qubit is not None
+            s, e = client_step(host, qubit, cls)  # e is drawn randomly here
             if s == e:
                 correct += 1
-        utility = correct / depth if depth else 0.0
         return AppOutcome(
             role="alice",
             success=correct == depth,
-            utility=utility,
+            utility=correct / depth if depth else 0.0,
             payload={"depth": depth, "correct": correct},
         )
 
@@ -77,15 +59,8 @@ class BQC:
         epr = host.epr_socket("alice")
         cls = host.classical_socket("alice")
         for _ in range(depth):
-            handle = epr.request(1, demand)[0]
-            assert handle.qubit is not None
-            q = handle.qubit
-            delta_index = cls.recv()[0]
-            delta = delta_index * _QUARTER
-            q.apply(Gate.RZ, -delta)
-            q.apply(Gate.H)
-            b = q.measure(Basis.Z)
-            host.record_measurement(Basis.Z, b)
-            cls.send(bytes([b]))
+            qubit = epr.request(1, demand)[0].qubit
+            assert qubit is not None
+            server_step(host, qubit, cls)
         # The server is blind: it reports participation, not the computation.
         return AppOutcome(role="bob", success=True, utility=1.0, payload={"depth": depth})
