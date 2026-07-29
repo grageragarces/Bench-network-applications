@@ -346,7 +346,12 @@ free.
   model — coverage from the core, quantity from the generator.
 - **Teleportation** ✅ — `apps/teleport.py` (`teleportation`): moves a *state* (not a
   gate) via one EPR pair + two classical bits; added to the core.
+- **Multi-hop QKD** ✅ — `apps/multihop_qkd.py` (`multihop_qkd`): key distribution over
+  a repeater chain (swap → end-to-end pair → BBM92 sifting, classical relayed through
+  the repeater). Multi-hop *and* fidelity-thresholded — the only 3-party key app.
+- **Shared randomness** ✅ — `apps/shared_randomness.py` (`shared_randomness`): the only
+  app using `purpose="measure"` (the backend measures on delivery, no local qubit) —
+  correlated shared random bits from Z-measured pairs.
 - **More protocol apps from the literature** *(planned)* — verified BQC (trap-based,
   vs. our plain UBQC), quantum secret sharing, leader election / Byzantine agreement,
-  prepare-and-measure BB84 (exercises `purpose="measure"`, a demand shape no current
-  app uses); multi-hop QKD over a repeater chain.
+  prepare-and-measure BB84.

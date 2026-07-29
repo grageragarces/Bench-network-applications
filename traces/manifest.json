@@ -58,10 +58,22 @@
       "sha256": "e65fa35f26665e6add65026151e73fd726b49a84cd3c8cae890880f73e000f39"
     },
     {
+      "app": "multihop_qkd",
+      "file": "multihop_qkd.jsonl",
+      "n_events": 653,
+      "sha256": "8c56239586ef2178115570dc9412cebc386ed1c473cbb562a3e3ca94be185e8b"
+    },
+    {
       "app": "qkd",
       "file": "qkd.jsonl",
       "n_events": 1031,
       "sha256": "2cb57d5ec4a9ab6938dfacfb8ab43d71608ff0f5d8ac771235c4eb26fd9d96a3"
+    },
+    {
+      "app": "shared_randomness",
+      "file": "shared_randomness.jsonl",
+      "n_events": 261,
+      "sha256": "c65f70b74f9149cc92e60329ee15f2054944cc5020170e8f4ce390471bb3179f"
     },
     {
       "app": "teleportation",
