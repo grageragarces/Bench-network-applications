@@ -145,6 +145,13 @@ class Register:
         """Discard a qubit by measuring it out (result ignored)."""
         self.measure(qid, "Z")
 
+    def depolarize(self, qid: int, fidelity: float) -> None:
+        """Send a single qubit through a depolarizing channel of the given fidelity:
+        with probability (1 - fidelity) apply a random Pauli. Used for single-qubit
+        transmission (prepare-and-measure protocols)."""
+        if fidelity < 1.0 and self._rng.random() >= fidelity:
+            self.apply_1q(qid, _PAULIS[self._rng.integers(1, 4)])  # X, Y, or Z
+
     def make_bell_pair(self, fidelity: float) -> tuple[int, int]:
         """Create a Werner-noised Φ+ pair at the given fidelity; return (id_a, id_b).
 

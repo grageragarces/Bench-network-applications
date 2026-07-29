@@ -65,6 +65,7 @@ print(render(compute_report(events)))
 | App | Class | Demand signature |
 |---|---|---|
 | `qkd` | key distribution (E91/BBM92) | steady, rate-hungry, fidelity-thresholded |
+| `bb84` | prepare-and-measure BB84 | single-qubit **transmission** (no shared pairs), fidelity-thresholded |
 | `bqc` | universal blind quantum computation | bursty, latency-coupled, classical-heavy, high-fidelity |
 | `verified_bqc` | verified BQC (trap-based) | like BQC + trap overhead; accept/reject verification |
 | `distributed_gate` | distributed gate (teleported CNOT) | deadline-critical, staleness-intolerant |
@@ -113,6 +114,7 @@ qnetbench characterize qkd --out sig/
 app                      parties     cv   fano  msg/pair deadline  F½util  stale½(ms)
 -------------------------------------------------------------------------------------
 anonymous_transmission         3   1.10   0.35      2.02     0.00       —           —
+bb84                           2   0.00   0.01      0.02     0.00   0.788           —
 bqc                            2   0.14   0.60      2.00     1.00       —           —
 chsh                           2   0.94   0.84      0.01     0.00   0.908        0.23
 conference_key                 4   1.54   0.53      2.02     0.00   0.952        0.14
@@ -178,7 +180,7 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        17 core protocols (qkd, bqc, verified_bqc, teleportation, swap, leader_election, …)
+  apps/        18 core protocols (qkd, bb84, bqc, teleportation, swap, leader_election, …)
   circuits.py  distributed-circuit IR + families (GHZ/QFT/random/graph/IQP/HEA) + Qiskit loader
                (the core + circuits form a catalog of 50+ via `qnetbench list --all`)
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid

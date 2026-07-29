@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 from qnetbench.api.types import Demand, ViolationKind
 
-SCHEMA_VERSION = "0.1.0"
+SCHEMA_VERSION = "0.2.0"  # 0.2.0 adds the qubit_sent event (single-qubit transmission)
 
 
 class _Event(BaseModel):
@@ -69,6 +69,16 @@ class Measurement(_Event):
     result: int
 
 
+class QubitSent(_Event):
+    """A single qubit transmitted over a quantum channel (prepare-and-measure
+    protocols such as BB84), rather than a shared entangled pair."""
+
+    kind: Literal["qubit_sent"] = "qubit_sent"
+    src: str
+    dst: str
+    fidelity: float
+
+
 class AppOutcomeEvent(_Event):
     kind: Literal["app_outcome"] = "app_outcome"
     role: str
@@ -85,6 +95,7 @@ Event = Annotated[
     | ContractViolation
     | ClassicalMessage
     | Measurement
+    | QubitSent
     | AppOutcomeEvent,
     Field(discriminator="kind"),
 ]

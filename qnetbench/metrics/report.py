@@ -16,6 +16,7 @@ from qnetbench.trace.events import (
     EntanglementDelivered,
     EntanglementRequested,
     Event,
+    QubitSent,
     RunHeader,
 )
 
@@ -39,6 +40,7 @@ class Report(BaseModel):
     # entanglement supply
     n_requests: int = 0
     n_delivered: int = 0
+    qubits_sent: int = 0  # single-qubit transmissions (prepare-and-measure protocols)
     delivered_rate: float = 0.0  # pairs / sim second
     mean_fidelity: float = 0.0
     fidelity_throughput: float = 0.0  # fidelity-weighted pairs / sim second
@@ -94,6 +96,9 @@ def compute_report(events: Iterable[Event]) -> Report:
             latencies.append(ev.latency)
         elif isinstance(ev, ContractViolation):
             report.violations[ev.violation] = report.violations.get(ev.violation, 0) + 1
+        elif isinstance(ev, QubitSent):
+            report.qubits_sent += 1
+            fidelities.append(ev.fidelity)  # transmission fidelity (prepare-and-measure)
         elif isinstance(ev, ClassicalMessage):
             report.classical_msgs += 1
             report.classical_bytes += ev.n_bytes

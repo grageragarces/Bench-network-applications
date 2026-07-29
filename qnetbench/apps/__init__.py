@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from qnetbench.api import Application
 from qnetbench.apps.anonymous import AnonymousTransmission
+from qnetbench.apps.bb84 import BB84
 from qnetbench.apps.bqc import BQC
 from qnetbench.apps.chsh import CHSH
 from qnetbench.apps.clock_sync import ClockSync
@@ -36,6 +37,7 @@ from qnetbench.circuits import ghz, graph_state, hea, iqp, qft, random_circuit
 
 _CORE: tuple[Application, ...] = (
     QKD(),
+    BB84(),
     BQC(),
     DistributedGate(),
     CHSH(),
@@ -99,6 +101,7 @@ def catalog_apps() -> list[str]:
 
 
 __all__ = [
+    "BB84",
     "BQC",
     "CHSH",
     "DQC",

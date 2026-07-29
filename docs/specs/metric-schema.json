@@ -120,6 +120,11 @@
       "title": "N Requests",
       "type": "integer"
     },
+    "qubits_sent": {
+      "default": 0,
+      "title": "Qubits Sent",
+      "type": "integer"
+    },
     "roles": {
       "items": {
         "$ref": "#/$defs/RoleResult"

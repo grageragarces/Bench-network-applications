@@ -1,6 +1,8 @@
 # qnetbench trace & metric specification
 
-**Spec version: 0.1.0** (semantic-versioned; tracks the trace `schema_version`).
+**Spec version: 0.2.0** (semantic-versioned; tracks the trace `schema_version`).
+0.2.0 added the `qubit_sent` event (single-qubit transmission, for prepare-and-measure
+protocols such as BB84).
 
 This directory is the versioned, machine-readable contract a third-party tool —
 e.g. a scheduler or routing paper — can consume without importing qnetbench.
@@ -25,6 +27,7 @@ a `kind` discriminator and a simulated-time `t` (seconds). The event types:
 | `ent_delivered` | backend | `req_id`, `actual_fidelity`, `latency`, `pair_age` |
 | `contract_violation` | backend | `req_id`, `violation` ∈ {fidelity, deadline, staleness, dropped} |
 | `classical_msg` | backend | `src`, `dst`, `n_bytes` |
+| `qubit_sent` | backend | `src`, `dst`, `fidelity` (single-qubit transmission) |
 | `measurement` | app | `node`, `basis`, `result` |
 | `app_outcome` | app | `role`, `node`, `success`, `utility`, `payload` |
 

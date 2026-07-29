@@ -38,7 +38,7 @@ def test_all_apps_run_on_backend() -> None:
     for app in available_apps():  # default topology per app
         rep = _report(app)
         assert rep.backend == BACKEND
-        assert rep.n_delivered > 0
+        assert rep.n_delivered > 0 or rep.qubits_sent > 0  # bb84 transmits qubits, not pairs
 
 
 def test_backend_is_deterministic_per_seed() -> None:

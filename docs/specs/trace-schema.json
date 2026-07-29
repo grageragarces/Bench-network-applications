@@ -293,6 +293,41 @@
       "title": "Measurement",
       "type": "object"
     },
+    "QubitSent": {
+      "description": "A single qubit transmitted over a quantum channel (prepare-and-measure\nprotocols such as BB84), rather than a shared entangled pair.",
+      "properties": {
+        "dst": {
+          "title": "Dst",
+          "type": "string"
+        },
+        "fidelity": {
+          "title": "Fidelity",
+          "type": "number"
+        },
+        "kind": {
+          "const": "qubit_sent",
+          "default": "qubit_sent",
+          "title": "Kind",
+          "type": "string"
+        },
+        "src": {
+          "title": "Src",
+          "type": "string"
+        },
+        "t": {
+          "title": "T",
+          "type": "number"
+        }
+      },
+      "required": [
+        "t",
+        "src",
+        "dst",
+        "fidelity"
+      ],
+      "title": "QubitSent",
+      "type": "object"
+    },
     "RunHeader": {
       "properties": {
         "api_version": {
@@ -318,7 +353,7 @@
           "type": "string"
         },
         "schema_version": {
-          "default": "0.1.0",
+          "default": "0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -356,6 +391,7 @@
       "ent_delivered": "#/$defs/EntanglementDelivered",
       "ent_requested": "#/$defs/EntanglementRequested",
       "measurement": "#/$defs/Measurement",
+      "qubit_sent": "#/$defs/QubitSent",
       "run_header": "#/$defs/RunHeader"
     },
     "propertyName": "kind"
@@ -378,6 +414,9 @@
     },
     {
       "$ref": "#/$defs/Measurement"
+    },
+    {
+      "$ref": "#/$defs/QubitSent"
     },
     {
       "$ref": "#/$defs/AppOutcomeEvent"

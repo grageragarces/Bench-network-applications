@@ -43,6 +43,7 @@ from qnetbench.trace.events import (
     EntanglementRequested,
     Event,
     Measurement,
+    QubitSent,
     RunHeader,
 )
 
@@ -192,6 +193,12 @@ class _HostImpl:
     def qalloc(self) -> Qubit:
         return _Qubit(self._backend.register, self._backend.register.alloc())
 
+    def qsend(self, peer: NodeId, qubit: Qubit) -> None:
+        self._backend._qsend(self._node, peer, qubit)
+
+    def qrecv(self, peer: NodeId) -> Qubit:
+        return self._backend._qrecv(peer, self._node)
+
     def now(self) -> SimTime:
         return self._backend.now()
 
@@ -230,6 +237,10 @@ class ReferenceBackend:
         self._phys_rng = np.random.default_rng(seq.spawn(1)[0])
         self.register = Register(self._phys_rng)
         self._channels: dict[tuple[NodeId, NodeId], _ClassicalChannel] = {}
+        # Single-qubit transmission rendezvous (qsend blocks until qrecv), one
+        # sender/receiver in flight per directed edge — keeps the register small.
+        self._qsend_pending: dict[tuple[NodeId, NodeId], tuple[Process, int]] = {}
+        self._qrecv_waiting: dict[tuple[NodeId, NodeId], tuple[Process, list[int]]] = {}
         self._waiting: dict[frozenset[str], _Waiter] = {}
         self._req_ids = itertools.count()
         self._events: list[Event] = []
@@ -253,6 +264,36 @@ class ReferenceBackend:
         if key not in self._channels:
             self._channels[key] = _ClassicalChannel(self.engine, self._classical_latency(src, dst))
         return self._channels[key]
+
+    def _qsend(self, src: NodeId, dst: NodeId, qubit: Qubit) -> None:
+        assert isinstance(qubit, _Qubit)
+        link = self.topology.link(src, dst)
+        self.register.depolarize(qubit._qid, link.link_fidelity)  # transmission noise
+        self._emit(QubitSent(t=self.now(), src=src, dst=dst, fidelity=link.link_fidelity))
+        key = (src, dst)
+        waiter = self._qrecv_waiting.pop(key, None)
+        if waiter is not None:  # a receiver is already waiting — deliver to it
+            recv_proc, slot = waiter
+            slot.append(qubit._qid)
+            self.engine.schedule(recv_proc, link.attempt_latency)
+            self.engine.wait(link.attempt_latency)
+        else:  # park until a receiver arrives
+            self._qsend_pending[key] = (self.engine.current, qubit._qid)
+            self.engine.park()
+
+    def _qrecv(self, src: NodeId, dst: NodeId) -> Qubit:
+        key = (src, dst)
+        latency = self.topology.link(src, dst).attempt_latency
+        pending = self._qsend_pending.pop(key, None)
+        if pending is not None:  # a sender is already waiting — take its qubit
+            send_proc, qid = pending
+            self.engine.schedule(send_proc, latency)
+            self.engine.wait(latency)
+            return _Qubit(self.register, qid)
+        slot: list[int] = []  # park until a sender arrives
+        self._qrecv_waiting[key] = (self.engine.current, slot)
+        self.engine.park()
+        return _Qubit(self.register, slot[0])
 
     # --- physics hooks (overridden by other backends that reuse this engine) --
 

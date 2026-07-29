@@ -366,5 +366,11 @@ free.
 - **Leader election** ✅ — `apps/leader_election.py` (`leader_election`): fair leader
   election among five parties via shared 5-party GHZ randomness. The highest party
   count (5) and the most fidelity-demanding app in the suite (F½util 0.97).
-- **More protocol apps from the literature** *(planned)* — prepare-and-measure BB84
-  (needs a single-qubit-transmission primitive in the api); Byzantine agreement.
+- **Prepare-and-measure BB84** ✅ — `apps/bb84.py` (`bb84`): the original BB84, where
+  Alice *sends the qubit itself* (random bit, random basis) and Bob measures. Added a
+  single-qubit-transmission primitive to the api — `Host.qsend` / `Host.qrecv` (a
+  blocking rendezvous so the register stays small) — and a `qubit_sent` trace event
+  (schema/api bumped to 0.2.0). The only app in the single-qubit-transmission demand
+  class (no shared pairs); the characterizer now counts `qubit_sent` as demand.
+- **More protocol apps from the literature** *(planned)* — Byzantine agreement; B92 /
+  six-state and other prepare-and-measure variants now that `qsend`/`qrecv` exist.

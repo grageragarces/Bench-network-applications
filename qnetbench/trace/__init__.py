@@ -12,6 +12,7 @@ from qnetbench.trace.events import (
     EntanglementRequested,
     Event,
     Measurement,
+    QubitSent,
     RunHeader,
 )
 from qnetbench.trace.io import (
@@ -30,6 +31,7 @@ __all__ = [
     "EntanglementRequested",
     "Event",
     "Measurement",
+    "QubitSent",
     "RunHeader",
     "TraceWriter",
     "parse_event",

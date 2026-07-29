@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.1.0","api_version":"0.1.0","app":"shared_randomness","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"shared_randomness","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"measure"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 {"t":0.0032935277908098274,"kind":"ent_requested","req_id":1,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"measure"}}

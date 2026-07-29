@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.1.0","api_version":"0.1.0","app":"conference_key","backend":"reference","arbitration":"native","topology":"star4","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"conference_key","backend":"reference","arbitration":"native","topology":"star4","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"hub","dst":"leaf1","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":1,"src":"leaf2","dst":"hub","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":2,"src":"leaf3","dst":"hub","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}

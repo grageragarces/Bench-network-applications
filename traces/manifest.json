@@ -1,5 +1,5 @@
 {
-  "spec_version": "0.1.0",
+  "spec_version": "0.2.0",
   "backend": "reference",
   "seed": 0,
   "traces": [
@@ -7,103 +7,109 @@
       "app": "anonymous_transmission",
       "file": "anonymous_transmission.jsonl",
       "n_events": 518,
-      "sha256": "362dff962376bd3f762fcf1acdc2abccccda6416abcdab963234b1c4ddcc499a"
+      "sha256": "c23679393f479292b35d810a4da3e1f74e933bcc3eb7e29a819689cfc45f9046"
+    },
+    {
+      "app": "bb84",
+      "file": "bb84.jsonl",
+      "n_events": 519,
+      "sha256": "5c69ce73d9aa85db2e1ba8e19e2f26d4e28659b4e5938ec9ec2ec7388cee79ac"
     },
     {
       "app": "bqc",
       "file": "bqc.jsonl",
       "n_events": 56,
-      "sha256": "e9c7fa2906ac8d64772703401936e26ad5ed9f292054669ea0261ecf3bd47922"
+      "sha256": "1e39517724bc62d8e82ce3ccf64af01e67544bbba59b1bf0609c49fc4c00b203"
     },
     {
       "app": "chsh",
       "file": "chsh.jsonl",
       "n_events": 517,
-      "sha256": "b67f490e8d46b7cec08f1d02d5f867c9635b7061b42101dc45cb55e62622569a"
+      "sha256": "3e82f01973b1e18e707e5241853b6cbe445781902f55ebf7593c859b4ed31e3e"
     },
     {
       "app": "clock_sync",
       "file": "clock_sync.jsonl",
       "n_events": 517,
-      "sha256": "d8b5dee9552ad8950caf30703073e76755105c67fce9b39f6b72f57bc2e4acbe"
+      "sha256": "078dd7001e599f4ae3c0867296963de0707a030e1c59fab4dfb6f10fae8e0399"
     },
     {
       "app": "conference_key",
       "file": "conference_key.jsonl",
       "n_events": 776,
-      "sha256": "aadc488eb058cc5deba21a1f116cd7563c5fd1d8cd04309a9f19bd43b469748a"
+      "sha256": "1be003c6438c85ae5d03092d5b1e893ce5edb2a2048aea2abe7a2d1d1b5276bd"
     },
     {
       "app": "distributed_gate",
       "file": "distributed_gate.jsonl",
       "n_events": 37,
-      "sha256": "afcebef4730dbff3f28a70ffbc646b1c79c5db0281a32d0f116da5b78c6f125f"
+      "sha256": "7833aed1ec249bbf2c3e5c829efa9e2b71183bab97225fb3eefc976b271ab614"
     },
     {
       "app": "dqc_ghz4",
       "file": "dqc_ghz4.jsonl",
       "n_events": 29,
-      "sha256": "a6adcb67d982e82cf4b9f03fd5465ebb051bb24476f9a7221f139686dc3cc394"
+      "sha256": "a90b92775283ee8108f69ea340ca9c8f9fdeb2a6a1d47391b6a5834034052fae"
     },
     {
       "app": "dqc_qft4",
       "file": "dqc_qft4.jsonl",
       "n_events": 69,
-      "sha256": "b44d7a9761145d617bc17082be55bfed4420486054d41393eb6ce375dc099a43"
+      "sha256": "d6d6d7ec5a72d562ef6f867bc0450663eff2a77e7894de631d168c98b8c3c4f7"
     },
     {
       "app": "dqc_random4",
       "file": "dqc_random4.jsonl",
       "n_events": 85,
-      "sha256": "e12c209cbbacc2a5b101d87a19ae180e20890bad322ce6b517d3881de1e6eb31"
+      "sha256": "f2f3921ba26bca0db1bab38ef1d4e9d11be5eb58e7cd35a41f62039808ae6350"
     },
     {
       "app": "entanglement_swap",
       "file": "entanglement_swap.jsonl",
       "n_events": 454,
-      "sha256": "e65fa35f26665e6add65026151e73fd726b49a84cd3c8cae890880f73e000f39"
+      "sha256": "9cb8f0bee5b278886b853d96eab59f96f3a0fbd81a40d82c404d68103c50a2fa"
     },
     {
       "app": "leader_election",
       "file": "leader_election.jsonl",
       "n_events": 1162,
-      "sha256": "8e24355189cc3a08799ed9866c3741363cf983ab7c6ebab43d83b0d3b01dafd5"
+      "sha256": "08c1ea67bf7bf0252abde5f998ac745d24b097712c1ef06dab2eba4744dd0d3c"
     },
     {
       "app": "multihop_qkd",
       "file": "multihop_qkd.jsonl",
       "n_events": 653,
-      "sha256": "8c56239586ef2178115570dc9412cebc386ed1c473cbb562a3e3ca94be185e8b"
+      "sha256": "07b57d4d4d6ad91c4b7ea9ea8387f0e6bc2d3f945eff71f37eb98b1faeb5c403"
     },
     {
       "app": "qkd",
       "file": "qkd.jsonl",
       "n_events": 1031,
-      "sha256": "2cb57d5ec4a9ab6938dfacfb8ab43d71608ff0f5d8ac771235c4eb26fd9d96a3"
+      "sha256": "07247a6cc4e973f7c8ea33c343f50c57cad834287cbc954a0a05b7b77778567f"
     },
     {
       "app": "secret_sharing",
       "file": "secret_sharing.jsonl",
       "n_events": 518,
-      "sha256": "2f9fdfa05634c35220a71ec360fa02acb0676f94d64b250b0110a089dffb5931"
+      "sha256": "ca3a4d7633da1b4b7caa311bd8429989e784fbaa3d6122a20499035601d8e19b"
     },
     {
       "app": "shared_randomness",
       "file": "shared_randomness.jsonl",
       "n_events": 261,
-      "sha256": "c65f70b74f9149cc92e60329ee15f2054944cc5020170e8f4ce390471bb3179f"
+      "sha256": "7789196b6b44f28356e5fd84da36a2e87f6513c1f52dee7a392c30d19bd6bba2"
     },
     {
       "app": "teleportation",
       "file": "teleportation.jsonl",
       "n_events": 196,
-      "sha256": "9f3b3a87ed71e71a6c1dbc8d1bafc89a0e5b357dc248d86da5730050c8afc943"
+      "sha256": "9ae744be975ef707cc3f2db37440ef4763dc1be8d873f77e2b38c96679860951"
     },
     {
       "app": "verified_bqc",
       "file": "verified_bqc.jsonl",
       "n_events": 109,
-      "sha256": "4b80b8611767aadc44ecc47c0dcedebb3e27c883e07b5a3a4e6c3376cdd07aa9"
+      "sha256": "cb04baa18b12f4c6f8a193040ffe10584511d68952be131c1041b4f412c5af15"
     }
   ]
 }

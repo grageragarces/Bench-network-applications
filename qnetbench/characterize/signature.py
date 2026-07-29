@@ -17,6 +17,7 @@ from qnetbench.trace.events import (
     EntanglementDelivered,
     EntanglementRequested,
     Event,
+    QubitSent,
 )
 
 
@@ -41,21 +42,23 @@ class TraceSignature(BaseModel):
 def characterize_trace(events: list[Event]) -> TraceSignature:
     requests = [e for e in events if isinstance(e, EntanglementRequested)]
     delivered = sum(1 for e in events if isinstance(e, EntanglementDelivered))
+    sent = [e for e in events if isinstance(e, QubitSent)]  # single-qubit transmissions
     classical = [e for e in events if isinstance(e, ClassicalMessage)]
 
     sig = TraceSignature()
 
-    # --- burstiness ---
-    req_times = sorted(e.t for e in requests)
-    gaps = [b - a for a, b in zip(req_times, req_times[1:], strict=False)]
+    # --- burstiness (over the demand events: pair requests and qubit sends) ---
+    demand_times = sorted([e.t for e in requests] + [e.t for e in sent])
+    gaps = [b - a for a, b in zip(demand_times, demand_times[1:], strict=False)]
     if gaps and statistics.mean(gaps) > 0:
         sig.request_cv = statistics.pstdev(gaps) / statistics.mean(gaps)
-    sig.fano_factor = _fano_factor(req_times)
+    sig.fano_factor = _fano_factor(demand_times)
 
-    # --- classical coupling ---
-    if delivered:
-        sig.msgs_per_pair = len(classical) / delivered
-        sig.bytes_per_pair = sum(e.n_bytes for e in classical) / delivered
+    # --- classical coupling (per delivered pair or transmitted qubit) ---
+    demand_units = delivered + len(sent)
+    if demand_units:
+        sig.msgs_per_pair = len(classical) / demand_units
+        sig.bytes_per_pair = sum(e.n_bytes for e in classical) / demand_units
 
     # --- deadline-criticality & staleness ---
     if requests:
@@ -76,6 +79,7 @@ def characterize_trace(events: list[Event]) -> TraceSignature:
 
     # --- multipartiteness ---
     nodes = {e.src for e in requests} | {e.dst for e in requests}
+    nodes |= {e.src for e in sent} | {e.dst for e in sent}
     sig.n_parties = len(nodes)
     return sig
 

@@ -25,7 +25,7 @@ from qnetbench.api.types import (
     ViolationKind,
 )
 
-API_VERSION = "0.1.0"
+API_VERSION = "0.2.0"  # 0.2.0 adds Host.qsend / Host.qrecv (single-qubit transmission)
 
 __all__ = [
     "API_VERSION",
