@@ -5,9 +5,13 @@
 > internet, so that schedulers, routers, and APIs can be evaluated on a shared,
 > characterized, cross-simulator workload instead of one bespoke toy each.
 
-**Status:** design draft, pre-code. This document is the artifact to agree on
-before any implementation. Sections marked **[DECIDE]** are open questions for
-the maintainer.
+**Status:** all five deliverables complete, plus a large expansion — **18 core
+protocols + a 57-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
+published to GitHub. This document is the architecture + roadmap; the resolved
+`[DECIDE]` sections below are kept for the record. **New here? Start with
+[usage.md](usage.md)** — how to run benchmarks, what data you get, how to point them
+at different topologies, and what you can define vs. what ships predefined. What's
+still open is collected in [§14 Remaining work](#14-remaining-work-todo).
 
 ---
 
@@ -372,5 +376,56 @@ free.
   blocking rendezvous so the register stays small) — and a `qubit_sent` trace event
   (schema/api bumped to 0.2.0). The only app in the single-qubit-transmission demand
   class (no shared pairs); the characterizer now counts `qubit_sent` as demand.
-- **More protocol apps from the literature** *(planned)* — Byzantine agreement; B92 /
-  six-state and other prepare-and-measure variants now that `qsend`/`qrecv` exist.
+- **More protocol apps from the literature** *(planned)* — see [§14](#14-remaining-work-todo).
+
+---
+
+## 14. Remaining work (TODO)
+
+Deliverables 1–5 are complete; the suite is **18 core protocols + a 57-entry
+catalog** (42 generated DQC instances + 15 other protocols; unbounded via the DQC
+generator) across **3 backends**. What follows is optional/incremental, roughly in
+priority order.
+
+### Usage & docs
+- ✅ **Usage guide** — how to run, what data you get, topologies, definable vs.
+  predefined, and the benchmark count: [usage.md](usage.md).
+- **Characterization figures** — `scripts/plot_curves.py` (+ the `viz` extra) turns
+  `qnetbench characterize --out` JSON into fidelity/staleness figures; commit a
+  regenerated `figures/` set (or a make target) so the paper's plots track the code.
+
+### Release
+- **Publish a real PyPI release.** What's on PyPI is only the `v0.0.1` name
+  reservation; the current suite (api/schema **0.2.0**, 18 protocols) is unreleased.
+  Bump `pyproject` version → 0.2.0, `python -m build`, `twine upload` (needs the
+  maintainer's token).
+
+### Remaining algorithms
+- Byzantine agreement / detectable broadcast (multipartite consensus).
+- B92 / six-state and other prepare-and-measure variants (`qsend`/`qrecv` now exist).
+- Higher-N or threshold (k, n) secret sharing / conference key.
+
+### Bugs / known limitations
+*No functional bugs were found in audit — the suite is deterministic per seed, with
+no deadlocks over 20 seeds × all apps, no broken catalog entries, and no register
+leaks. These are constraints to be aware of:*
+- **Statevector scaling** — the reference register is O(2ⁿ) in live qubits, so DQC and
+  multipartite apps are practical to ~n ≤ 14 (the catalog caps DQC at n ≤ 10). *Fix:*
+  a stabilizer / density-matrix backend for Clifford circuits.
+- **`qsend`/`qrecv` single transfer in flight per edge** — fine for the 2-party
+  lockstep apps; a pipelined single-qubit protocol would need a queued quantum channel.
+- **BB84 on the simulator backends** uses the `LinkModel` transmission fidelity, not
+  the simulator's channel (single-qubit transmission isn't in the hybrid supply model).
+- **Prepare-and-measure metrics** — `delivered_rate` is pairs-only (0 for BB84); its
+  demand shows up in `qubits_sent`. A qubit-transmission rate could be added.
+- **Versioning** — a new event kind was treated as a minor bump (0.2.0), whereas the
+  stability policy calls additive changes a patch. Harmless; clarify the policy.
+
+### Coverage / infrastructure gaps
+- **CI runs the reference backend only.** Cross-backend equivalence (SeQUeNCe/NetSquid)
+  is exercised locally in the two venvs, not in GitHub CI. *Fix:* a CI job that
+  `pip install`s SeQUeNCe to cover one simulator. (The full catalog *is* now in CI.)
+- **The policy arbiter is a standalone contention sim** (`qnetbench.contention`), not
+  wired into the live cooperative backend — single-tenant runs never contend.
+- **General multi-hop routing / entanglement swapping in the backend** — apps do it at
+  the protocol level over star topologies; the backend models direct links + fusion.

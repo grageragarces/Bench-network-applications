@@ -3,6 +3,11 @@
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
+**18 core protocols + a 57-entry catalog** (unbounded via a circuit generator), on
+**3 backends** (reference, SeQUeNCe, NetSquid). New here? See **[docs/usage.md](docs/usage.md)** —
+how to run benchmarks, what data you get, how to use different topologies, and what
+you can define vs. what ships predefined.
+
 ## Install
 
 ```bash
@@ -192,7 +197,8 @@ qnetbench/
   harness/     run(app × backend × policy × topology) and the CLI
   spec.py      versioned JSON Schemas + reference-corpus generator
 tests/         statevector physics, cross-backend invariants, trace round-trip
-docs/          design.md (architecture + roadmap), issue-4.md, specs/ (versioned spec)
+docs/          usage.md (how to use), adopting.md (extend), design.md (+ TODO), specs/
+scripts/       plot_curves.py (characterization figures)
 traces/        published reference traces (one per app) + checksummed manifest
 ```
 

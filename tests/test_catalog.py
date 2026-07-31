@@ -7,12 +7,17 @@ import pytest
 from qnetbench.apps import available_apps, catalog_apps, get_app
 from qnetbench.harness.runner import run_once
 from qnetbench.metrics import compute_report
-from qnetbench.topology import LinkModel, line2
+from qnetbench.topology import LinkModel, Topology, line2, star
 
-PERFECT = line2(link=LinkModel(link_fidelity=1.0, fidelity_std=0.0))
+_PERFECT = LinkModel(link_fidelity=1.0, fidelity_std=0.0)
 
-# One representative catalog entry per DQC circuit family (small size for speed).
-_FAMILY_SAMPLES = ["dqc_ghz5", "dqc_qft5", "dqc_random5", "dqc_graph5", "dqc_iqp5", "dqc_hea5"]
+
+def _perfect_topology(app: str) -> Topology:
+    """A noiseless topology matching an app's role structure."""
+    roles = get_app(app).roles()
+    if len(roles) == 2:
+        return line2(roles[0], roles[1], link=_PERFECT)
+    return star(roles[0], list(roles[1:]), link=_PERFECT)
 
 
 def test_catalog_has_at_least_fifty() -> None:
@@ -36,7 +41,12 @@ def test_get_app_rejects_unknown() -> None:
         get_app("does_not_exist")
 
 
-@pytest.mark.parametrize("app", _FAMILY_SAMPLES)
-def test_catalog_dqc_families_verify_noiseless(app: str) -> None:
-    # Every DQC circuit is a mirror circuit, so a noiseless run returns |0…0>.
-    assert compute_report(run_once(app, seed=0, topology=PERFECT)).app_utility == 1.0
+@pytest.mark.parametrize("app", catalog_apps())
+def test_every_catalog_entry_runs(app: str) -> None:
+    """Run every catalog entry (all 50+) noiselessly — the full-catalog CI coverage.
+    DQC entries are mirror circuits, so they must return exactly |0…0>; every entry
+    must produce demand (a delivered pair or a transmitted qubit)."""
+    report = compute_report(run_once(app, seed=0, topology=_perfect_topology(app)))
+    if app.startswith("dqc_"):
+        assert report.app_utility == 1.0  # U;U† returns every qubit to |0>
+    assert report.n_delivered > 0 or report.qubits_sent > 0
