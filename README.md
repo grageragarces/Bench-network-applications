@@ -3,7 +3,7 @@
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
-**18 core protocols + a 57-entry catalog** (unbounded via a circuit generator), on
+**21 core protocols + a 60-entry catalog** (unbounded via a circuit generator), on
 **3 backends** (reference, SeQUeNCe, NetSquid). New here? See **[docs/usage.md](docs/usage.md)** —
 how to run benchmarks, what data you get, how to use different topologies, and what
 you can define vs. what ships predefined.
@@ -71,6 +71,8 @@ print(render(compute_report(events)))
 |---|---|---|
 | `qkd` | key distribution (E91/BBM92) | steady, rate-hungry, fidelity-thresholded |
 | `bb84` | prepare-and-measure BB84 | single-qubit **transmission** (no shared pairs), fidelity-thresholded |
+| `b92` | prepare-and-measure B92 (two non-orthogonal states) | single-qubit **transmission**, lower sifting yield, fidelity-thresholded |
+| `six_state` | prepare-and-measure six-state QKD (three bases) | single-qubit **transmission**, higher QBER tolerance, lower yield |
 | `bqc` | universal blind quantum computation | bursty, latency-coupled, classical-heavy, high-fidelity |
 | `verified_bqc` | verified BQC (trap-based) | like BQC + trap overhead; accept/reject verification |
 | `distributed_gate` | distributed gate (teleported CNOT) | deadline-critical, staleness-intolerant |
@@ -78,6 +80,7 @@ print(render(compute_report(events)))
 | `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
 | `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
+| `byzantine_agreement` | detectable broadcast / Byzantine agreement (GHZ) | 3-party GHZ, bursty (2 pairs/round), consensus / fault-detection |
 | `secret_sharing` | (n,n) quantum secret sharing (GHZ) | multipartite, threshold reconstruction |
 | `conference_key` | conference key agreement (4-party GHZ) | 4-party GHZ, highly fidelity-demanding |
 | `leader_election` | fair leader election (5-party GHZ) | 5-party — highest party count, the most fidelity-demanding app |
@@ -185,7 +188,7 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        18 core protocols (qkd, bb84, bqc, teleportation, swap, leader_election, …)
+  apps/        21 core protocols (qkd, bb84, b92, six_state, bqc, byzantine_agreement, …)
   circuits.py  distributed-circuit IR + families (GHZ/QFT/random/graph/IQP/HEA) + Qiskit loader
                (the core + circuits form a catalog of 50+ via `qnetbench list --all`)
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid

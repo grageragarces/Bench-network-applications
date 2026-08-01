@@ -10,6 +10,12 @@
       "sha256": "c23679393f479292b35d810a4da3e1f74e933bcc3eb7e29a819689cfc45f9046"
     },
     {
+      "app": "b92",
+      "file": "b92.jsonl",
+      "n_events": 518,
+      "sha256": "8f4633122e5bd464e35267b004de29424b4584509570b914a64cde29acdf1dc1"
+    },
+    {
       "app": "bb84",
       "file": "bb84.jsonl",
       "n_events": 519,
@@ -20,6 +26,12 @@
       "file": "bqc.jsonl",
       "n_events": 56,
       "sha256": "1e39517724bc62d8e82ce3ccf64af01e67544bbba59b1bf0609c49fc4c00b203"
+    },
+    {
+      "app": "byzantine_agreement",
+      "file": "byzantine_agreement.jsonl",
+      "n_events": 518,
+      "sha256": "1c22fab8a68dc5b05a5dfdc047d7decf0d4e4e987fa25b9191d0b04b751e874f"
     },
     {
       "app": "chsh",
@@ -98,6 +110,12 @@
       "file": "shared_randomness.jsonl",
       "n_events": 261,
       "sha256": "7789196b6b44f28356e5fd84da36a2e87f6513c1f52dee7a392c30d19bd6bba2"
+    },
+    {
+      "app": "six_state",
+      "file": "six_state.jsonl",
+      "n_events": 607,
+      "sha256": "7b1fbdacdc90bb223359d853c0a6ad0b865f20703c03716ff622386bf341a4fc"
     },
     {
       "app": "teleportation",

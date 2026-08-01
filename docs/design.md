@@ -5,8 +5,8 @@
 > internet, so that schedulers, routers, and APIs can be evaluated on a shared,
 > characterized, cross-simulator workload instead of one bespoke toy each.
 
-**Status:** all five deliverables complete, plus a large expansion — **18 core
-protocols + a 57-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
+**Status:** all five deliverables complete, plus a large expansion — **21 core
+protocols + a 60-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
 published to GitHub. This document is the architecture + roadmap; the resolved
 `[DECIDE]` sections below are kept for the record. **New here? Start with
 [usage.md](usage.md)** — how to run benchmarks, what data you get, how to point them
@@ -382,8 +382,8 @@ free.
 
 ## 14. Remaining work (TODO)
 
-Deliverables 1–5 are complete; the suite is **18 core protocols + a 57-entry
-catalog** (42 generated DQC instances + 15 other protocols; unbounded via the DQC
+Deliverables 1–5 are complete; the suite is **21 core protocols + a 60-entry
+catalog** (42 generated DQC instances, 3 overlapping the core; unbounded via the DQC
 generator) across **3 backends**. What follows is optional/incremental, roughly in
 priority order.
 
@@ -396,13 +396,15 @@ priority order.
 
 ### Release
 - **Publish a real PyPI release.** What's on PyPI is only the `v0.0.1` name
-  reservation; the current suite (api/schema **0.2.0**, 18 protocols) is unreleased.
+  reservation; the current suite (api/schema **0.2.0**, 21 protocols) is unreleased.
   Bump `pyproject` version → 0.2.0, `python -m build`, `twine upload` (needs the
   maintainer's token).
 
 ### Remaining algorithms
-- Byzantine agreement / detectable broadcast (multipartite consensus).
-- B92 / six-state and other prepare-and-measure variants (`qsend`/`qrecv` now exist).
+- ✅ **Byzantine agreement / detectable broadcast** (`byzantine_agreement`) — 3-party
+  GHZ; an honest general reaches consensus, a faulty one's equivocation is detected.
+- ✅ **B92 and six-state QKD** (`b92`, `six_state`) — prepare-and-measure variants over
+  `qsend`/`qrecv`, with lower sifting yield / higher QBER tolerance than BB84.
 - Higher-N or threshold (k, n) secret sharing / conference key.
 
 ### Bugs / known limitations

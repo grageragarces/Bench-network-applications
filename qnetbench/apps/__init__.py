@@ -16,8 +16,10 @@ from __future__ import annotations
 
 from qnetbench.api import Application
 from qnetbench.apps.anonymous import AnonymousTransmission
+from qnetbench.apps.b92 import B92
 from qnetbench.apps.bb84 import BB84
 from qnetbench.apps.bqc import BQC
+from qnetbench.apps.byzantine import ByzantineAgreement
 from qnetbench.apps.chsh import CHSH
 from qnetbench.apps.clock_sync import ClockSync
 from qnetbench.apps.conference_key import ConferenceKey
@@ -28,6 +30,7 @@ from qnetbench.apps.multihop_qkd import MultihopQKD
 from qnetbench.apps.qkd import QKD
 from qnetbench.apps.secret_sharing import SecretSharing
 from qnetbench.apps.shared_randomness import SharedRandomness
+from qnetbench.apps.six_state import SixState
 from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.apps.teleport import Teleportation
 from qnetbench.apps.verified_bqc import VerifiedBQC
@@ -38,11 +41,14 @@ from qnetbench.circuits import ghz, graph_state, hea, iqp, qft, random_circuit
 _CORE: tuple[Application, ...] = (
     QKD(),
     BB84(),
+    B92(),
+    SixState(),
     BQC(),
     DistributedGate(),
     CHSH(),
     ClockSync(),
     AnonymousTransmission(),
+    ByzantineAgreement(),
     EntanglementSwap(),
     Teleportation(),
     MultihopQKD(),
@@ -101,12 +107,14 @@ def catalog_apps() -> list[str]:
 
 
 __all__ = [
+    "B92",
     "BB84",
     "BQC",
     "CHSH",
     "DQC",
     "QKD",
     "AnonymousTransmission",
+    "ByzantineAgreement",
     "ClockSync",
     "ConferenceKey",
     "DistributedGate",
@@ -115,6 +123,7 @@ __all__ = [
     "MultihopQKD",
     "SecretSharing",
     "SharedRandomness",
+    "SixState",
     "Teleportation",
     "VerifiedBQC",
     "available_apps",
