@@ -124,6 +124,12 @@
       "sha256": "9ae744be975ef707cc3f2db37440ef4763dc1be8d873f77e2b38c96679860951"
     },
     {
+      "app": "threshold_secret_sharing",
+      "file": "threshold_secret_sharing.jsonl",
+      "n_events": 937,
+      "sha256": "8d1b804b6b45284977f186aa24f12432f49d7bec41b9fbabd0926b53f56f6afa"
+    },
+    {
       "app": "verified_bqc",
       "file": "verified_bqc.jsonl",
       "n_events": 109,

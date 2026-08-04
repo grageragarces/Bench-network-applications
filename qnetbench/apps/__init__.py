@@ -33,6 +33,7 @@ from qnetbench.apps.shared_randomness import SharedRandomness
 from qnetbench.apps.six_state import SixState
 from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.apps.teleport import Teleportation
+from qnetbench.apps.threshold_secret_sharing import ThresholdSecretSharing
 from qnetbench.apps.verified_bqc import VerifiedBQC
 from qnetbench.circuits import ghz, graph_state, hea, iqp, qft, random_circuit
 
@@ -54,6 +55,7 @@ _CORE: tuple[Application, ...] = (
     MultihopQKD(),
     SharedRandomness(),
     SecretSharing(),
+    ThresholdSecretSharing(),
     ConferenceKey(),
     VerifiedBQC(),
     LeaderElection(),
@@ -125,6 +127,7 @@ __all__ = [
     "SharedRandomness",
     "SixState",
     "Teleportation",
+    "ThresholdSecretSharing",
     "VerifiedBQC",
     "available_apps",
     "catalog_apps",

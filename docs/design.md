@@ -5,8 +5,8 @@
 > internet, so that schedulers, routers, and APIs can be evaluated on a shared,
 > characterized, cross-simulator workload instead of one bespoke toy each.
 
-**Status:** all five deliverables complete, plus a large expansion — **21 core
-protocols + a 60-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
+**Status:** all five deliverables complete, plus a large expansion — **22 core
+protocols + a 61-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
 published to GitHub. This document is the architecture + roadmap; the resolved
 `[DECIDE]` sections below are kept for the record. **New here? Start with
 [usage.md](usage.md)** — how to run benchmarks, what data you get, how to point them
@@ -382,7 +382,7 @@ free.
 
 ## 14. Remaining work (TODO)
 
-Deliverables 1–5 are complete; the suite is **21 core protocols + a 60-entry
+Deliverables 1–5 are complete; the suite is **22 core protocols + a 61-entry
 catalog** (42 generated DQC instances, 3 overlapping the core; unbounded via the DQC
 generator) across **3 backends**. What follows is optional/incremental, roughly in
 priority order.
@@ -396,7 +396,7 @@ priority order.
 
 ### Release
 - **Publish a real PyPI release.** What's on PyPI is only the `v0.0.1` name
-  reservation; the current suite (api/schema **0.2.0**, 21 protocols) is unreleased.
+  reservation; the current suite (api/schema **0.2.0**, 22 protocols) is unreleased.
   Bump `pyproject` version → 0.2.0, `python -m build`, `twine upload` (needs the
   maintainer's token).
 
@@ -405,7 +405,12 @@ priority order.
   GHZ; an honest general reaches consensus, a faulty one's equivocation is detected.
 - ✅ **B92 and six-state QKD** (`b92`, `six_state`) — prepare-and-measure variants over
   `qsend`/`qrecv`, with lower sifting yield / higher QBER tolerance than BB84.
-- Higher-N or threshold (k, n) secret sharing / conference key.
+- ✅ **((3,5)) threshold secret sharing** (`threshold_secret_sharing`) — the canonical
+  Cleve–Gottesman–Lo scheme over the [[5,1,3]] five-qubit code: any 3 of 5 reconstruct,
+  any 2 learn nothing. A GHZ can't do this, so it needs a distance-3 code with
+  redundancy; the encoder + per-subset reconstruction table are synthesised and
+  numerically verified against the code's stabilisers.
+- Higher-N conference key / a general ((k,n)) generator remain open.
 
 ### Bugs / known limitations
 *No functional bugs were found in audit — the suite is deterministic per seed, with

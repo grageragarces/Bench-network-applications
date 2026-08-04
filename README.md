@@ -3,7 +3,7 @@
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
-**21 core protocols + a 60-entry catalog** (unbounded via a circuit generator), on
+**22 core protocols + a 61-entry catalog** (unbounded via a circuit generator), on
 **3 backends** (reference, SeQUeNCe, NetSquid). New here? See **[docs/usage.md](docs/usage.md)** —
 how to run benchmarks, what data you get, how to use different topologies, and what
 you can define vs. what ships predefined.
@@ -82,6 +82,7 @@ print(render(compute_report(events)))
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
 | `byzantine_agreement` | detectable broadcast / Byzantine agreement (GHZ) | 3-party GHZ, bursty (2 pairs/round), consensus / fault-detection |
 | `secret_sharing` | (n,n) quantum secret sharing (GHZ) | multipartite, threshold reconstruction |
+| `threshold_secret_sharing` | ((3,5)) threshold QSS (five-qubit code) | 5-party single-qubit **transmission**; any 3 reconstruct, any 2 learn nothing |
 | `conference_key` | conference key agreement (4-party GHZ) | 4-party GHZ, highly fidelity-demanding |
 | `leader_election` | fair leader election (5-party GHZ) | 5-party — highest party count, the most fidelity-demanding app |
 | `entanglement_swap` | entanglement swapping (repeater line) | multi-hop / relay — two elementary pairs per end-to-end unit |
@@ -188,7 +189,7 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        21 core protocols (qkd, bb84, b92, six_state, bqc, byzantine_agreement, …)
+  apps/        22 core protocols (qkd, bb84, b92, six_state, bqc, byzantine_agreement, …)
   circuits.py  distributed-circuit IR + families (GHZ/QFT/random/graph/IQP/HEA) + Qiskit loader
                (the core + circuits form a catalog of 50+ via `qnetbench list --all`)
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid

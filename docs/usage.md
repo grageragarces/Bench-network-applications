@@ -27,18 +27,18 @@ pip install "qnetbench[viz]"     # optional: scripts/plot_curves.py
 
 | Layer | Count | What it is |
 |---|---|---|
-| Distinct protocols (**core**) | **21** | hand-written protocols spanning every demand class (`qnetbench list`) |
-| Predefined runnable **catalog** | **60** | the 21 core + 39 generated DQC instances — `qnetbench list --all` |
+| Distinct protocols (**core**) | **22** | hand-written protocols spanning every demand class (`qnetbench list`) |
+| Predefined runnable **catalog** | **61** | the 22 core + 39 generated DQC instances — `qnetbench list --all` |
 | DQC instances in the catalog | 42 | 6 circuit families (GHZ, QFT, random, graph, IQP, HEA) × 7 sizes (4–10); 3 overlap the core |
 | **Generatable (unbounded)** | ∞ | any circuit family × any size × any partition, or any MQT Bench / Qiskit circuit |
 
 Each benchmark also runs across **3 backends** × **4 arbitration modes** (native +
 `fifo`/`fidelity_first`/`edf`), so the predefined evaluation matrix is already
-**60 × 3 × 4 = 720** runnable configurations — before the unbounded circuit generator.
+**61 × 3 × 4 = 732** runnable configurations — before the unbounded circuit generator.
 
 ```bash
-qnetbench list          # the 21 core protocols + the 3 policies
-qnetbench list --all    # the full 60-entry catalog
+qnetbench list          # the 22 core protocols + the 3 policies
+qnetbench list --all    # the full 61-entry catalog
 ```
 
 ## Run one benchmark
@@ -80,7 +80,7 @@ for line in open("run.jsonl"):
         ...  # e["actual_fidelity"], e["latency"], e["pair_age"]
 ```
 
-**Published reference traces** for all 21 core apps live in [../traces/](../traces/)
+**Published reference traces** for all 22 core apps live in [../traces/](../traces/)
 with a checksummed manifest — regenerate with `qnetbench corpus`.
 
 **The demand signature** (`qnetbench characterize`) — burstiness, classical coupling,
@@ -127,7 +127,7 @@ star/GHZ fusion; general multi-hop routing is on the roadmap).
 | **Backend** — `backend="reference"|"sequence"|"netsquid"` | 3 backends behind extras |
 | **Arbitration** — `native` or `policy:<fifo|fidelity_first|edf>` | 3 published policies |
 | **Circuits** — any `qnetbench.circuits` family × size × partition, or `from_qiskit` (MQT Bench) | 6 families × 7 sizes = 42 DQC entries |
-| **New applications** — one file against the api ([adopting.md](adopting.md)) | 21 core protocols |
+| **New applications** — one file against the api ([adopting.md](adopting.md)) | 22 core protocols |
 | **New backends** — a `ReplayBackend` subclass ([adopting.md](adopting.md)) | reference + SeQUeNCe + NetSquid |
 
 ## Reproducibility
