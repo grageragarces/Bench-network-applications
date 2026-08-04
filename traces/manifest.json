@@ -52,6 +52,18 @@
       "sha256": "1be003c6438c85ae5d03092d5b1e893ce5edb2a2048aea2abe7a2d1d1b5276bd"
     },
     {
+      "app": "distillation",
+      "file": "distillation.jsonl",
+      "n_events": 459,
+      "sha256": "58249bf07af42f57d9b84ed52706e3ffe8e1e7162ddefbdb605974f306fd5583"
+    },
+    {
+      "app": "distilled_gate",
+      "file": "distilled_gate.jsonl",
+      "n_events": 91,
+      "sha256": "df57d90b4c1ae689f9256a0da748951971dd9121f368c92d92021ea386d47bae"
+    },
+    {
       "app": "distributed_gate",
       "file": "distributed_gate.jsonl",
       "n_events": 37,
@@ -82,6 +94,12 @@
       "sha256": "9cb8f0bee5b278886b853d96eab59f96f3a0fbd81a40d82c404d68103c50a2fa"
     },
     {
+      "app": "heralded_teleport",
+      "file": "heralded_teleport.jsonl",
+      "n_events": 241,
+      "sha256": "14d7fe2630d0e0359bd18e6a4d719a42b4907c114e61e42ec129eb39e547a175"
+    },
+    {
       "app": "leader_election",
       "file": "leader_election.jsonl",
       "n_events": 1162,
@@ -92,6 +110,18 @@
       "file": "multihop_qkd.jsonl",
       "n_events": 653,
       "sha256": "07b57d4d4d6ad91c4b7ea9ea8387f0e6bc2d3f945eff71f37eb98b1faeb5c403"
+    },
+    {
+      "app": "oblivious_transfer",
+      "file": "oblivious_transfer.jsonl",
+      "n_events": 1076,
+      "sha256": "5ab279d6f0e18b9479a07f5b55d41f9f39cbed4caf1ba28996599e9f7e597b02"
+    },
+    {
+      "app": "position_verification",
+      "file": "position_verification.jsonl",
+      "n_events": 292,
+      "sha256": "cb01abd3c5a763a35114eeebefde35a6794b7774caf8b3bf9e5ffa76516b4d9d"
     },
     {
       "app": "qkd",

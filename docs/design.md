@@ -6,7 +6,7 @@
 > characterized, cross-simulator workload instead of one bespoke toy each.
 
 **Status:** all five deliverables complete, plus a large expansion — **22 core
-protocols + a 61-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
+protocols + a 66-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
 published to GitHub. This document is the architecture + roadmap; the resolved
 `[DECIDE]` sections below are kept for the record. **New here? Start with
 [usage.md](usage.md)** — how to run benchmarks, what data you get, how to point them
@@ -382,7 +382,7 @@ free.
 
 ## 14. Remaining work (TODO)
 
-Deliverables 1–5 are complete; the suite is **22 core protocols + a 61-entry
+Deliverables 1–5 are complete; the suite is **27 core protocols + a 66-entry
 catalog** (42 generated DQC instances, 3 overlapping the core; unbounded via the DQC
 generator) across **3 backends**. What follows is optional/incremental, roughly in
 priority order.
@@ -412,6 +412,34 @@ priority order.
   numerically verified against the code's stabilisers.
 - Higher-N conference key / a general ((k,n)) generator remain open.
 
+### Demand-space gaps found by the characterizer (and closed)
+Running `characterize` over the 21-protocol core exposed three empty regions of the
+demand space — visible by inspection of the table, not by argument. Each is now
+closed by a protocol chosen for that purpose:
+- ✅ **Nothing was bursty.** Every app had Fano ≤ 0.99 — the whole suite was
+  *sub*-Poissonian (more regular than random), despite several docstrings calling
+  their apps "bursty" on the strength of `cv` alone. `heralded_teleport` (probabilistic
+  BSM → geometric retry bursts after an idle session) is the first app above Poisson,
+  at **Fano 2.10**.
+- ✅ **Nothing mixed criticality.** Deadline fraction was exactly 0.00 or 1.00 for all
+  21 apps, so the urgent-vs-best-effort trade-off only ever arose *between* tenants.
+  `distilled_gate` (bulk best-effort pairs distilled, then consumed by a
+  deadline-bearing non-local gate, with an urgent fallback when distillation fails) is
+  the first app strictly between, at **0.08** — and the only one whose deadline
+  fraction moves with link quality.
+- ✅ **Nothing wanted rate over fidelity.** Every app consumed network-supplied
+  quality; none produced it. `distillation` asks for many pairs at `min_fidelity=0.5`
+  and returns **0.71 utility at F=0.5**, where `qkd` returns exactly 0. Its `F½util`
+  is undefined because utility never halves across the swept range.
+
+Two further protocols extend coverage without closing a measured gap:
+`position_verification` (deadline is a propagation bound — a late pair is *insecure*,
+not slow) and `oblivious_transfer` (secure two-party computation). The latter was
+expected to raise the top of the classical-coupling range and did the opposite,
+landing at **0.10 msg/qubit** — the lowest in the suite — because its classical phase
+is batched after the quantum phase rather than interleaved. **The top of the coupling
+axis is still 2.33 (`dqc_ghz4`) and no protocol found so far exceeds it.**
+
 ### Bugs / known limitations
 *No functional bugs were found in audit — the suite is deterministic per seed, with
 no deadlocks over 20 seeds × all apps, no broken catalog entries, and no register
@@ -434,5 +462,19 @@ leaks. These are constraints to be aware of:*
   `pip install`s SeQUeNCe to cover one simulator. (The full catalog *is* now in CI.)
 - **The policy arbiter is a standalone contention sim** (`qnetbench.contention`), not
   wired into the live cooperative backend — single-tenant runs never contend.
+- **The contention sim scores *binary* contracts**, so it cannot represent a
+  throughput-sensitive tenant. A `distillation`-heavy mix gives fifo 0.800 /
+  fidelity_first 1.000 / edf 0.800 — `fidelity_first` *wins* and no inversion appears,
+  because a tenant declaring `min_fidelity=0.5` and no deadline is met however long it
+  waits, and the sim drains its queue. `staleness_tolerance` (what distillation
+  actually depends on — its two input pairs must be co-temporal) and `priority` are
+  read by the sim not at all. *Fix:* a finite service horizon plus utility functions
+  over delivered count and pair age, so tenants can be scored on throughput and
+  staleness instead of pass/fail. The workload now exists; the evaluation model
+  doesn't.
+- **`Demand.priority` is set by no application** and read by no policy — a contract
+  field the api offers and the trace records, but nothing exercises. Either a
+  weighted-fair-queueing policy or a protocol class that genuinely needs weighted
+  service would close this.
 - **General multi-hop routing / entanglement swapping in the backend** — apps do it at
   the protocol level over star topologies; the backend models direct links + fusion.

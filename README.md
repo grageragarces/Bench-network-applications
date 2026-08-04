@@ -3,7 +3,7 @@
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
-**22 core protocols + a 61-entry catalog** (unbounded via a circuit generator), on
+**27 core protocols + a 66-entry catalog** (unbounded via a circuit generator), on
 **3 backends** (reference, SeQUeNCe, NetSquid). New here? See **[docs/usage.md](docs/usage.md)** —
 how to run benchmarks, what data you get, how to use different topologies, and what
 you can define vs. what ships predefined.
@@ -77,6 +77,11 @@ print(render(compute_report(events)))
 | `verified_bqc` | verified BQC (trap-based) | like BQC + trap overhead; accept/reject verification |
 | `distributed_gate` | distributed gate (teleported CNOT) | deadline-critical, staleness-intolerant |
 | `teleportation` | quantum state teleportation | steady, latency-coupled, high-fidelity |
+| `heralded_teleport` | teleportation over a probabilistic (heralded) BSM | **on/off duty cycle** — the only super-Poissonian app (Fano 2.10); geometric retry bursts |
+| `distillation` | entanglement distillation (BBPSSW/DEJMPS) | **produces** entanglement — rate-hungry, deliberately *low* `min_fidelity`, staleness-critical |
+| `distilled_gate` | distil-then-consume distributed gate | **mixed criticality** — the only app emitting both best-effort and deadline demand (fraction 0.08) |
+| `position_verification` | quantum position verification (distance bounding) | deadline set by **physics** (propagation bound) — a late pair is insecure, not slow |
+| `oblivious_transfer` | 1-out-of-2 quantum OT (BBCS) | secure two-party computation; single-qubit **transmission**, lowest classical coupling in the suite |
 | `chsh` | device-independent QKD (CHSH test) | correlation-quality-sensitive |
 | `clock_sync` | sensing (entanglement phase estimation) | steady, correlation-quality-sensitive |
 | `anonymous_transmission` | multipartite broadcast (GHZ) | multipartite, GHZ-demand |
@@ -189,7 +194,7 @@ exist.
 qnetbench/
   api/         portable shim (the frozen contract applications program against)
   trace/       versioned JSONL event schema + I/O (the frozen wire contract)
-  apps/        22 core protocols (qkd, bb84, b92, six_state, bqc, byzantine_agreement, …)
+  apps/        27 core protocols (qkd, bb84, b92, six_state, bqc, byzantine_agreement, …)
   circuits.py  distributed-circuit IR + families (GHZ/QFT/random/graph/IQP/HEA) + Qiskit loader
                (the core + circuits form a catalog of 50+ via `qnetbench list --all`)
   backends/    reference (pure-Python); replay base + sequence (SeQUeNCe) + netsquid

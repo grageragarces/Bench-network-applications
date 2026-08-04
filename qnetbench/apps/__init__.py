@@ -23,10 +23,15 @@ from qnetbench.apps.byzantine import ByzantineAgreement
 from qnetbench.apps.chsh import CHSH
 from qnetbench.apps.clock_sync import ClockSync
 from qnetbench.apps.conference_key import ConferenceKey
+from qnetbench.apps.distillation import Distillation
+from qnetbench.apps.distilled_gate import DistilledGate
 from qnetbench.apps.distributed_gate import DistributedGate
 from qnetbench.apps.dqc import DQC
+from qnetbench.apps.heralded_teleport import HeraldedTeleport
 from qnetbench.apps.leader_election import LeaderElection
 from qnetbench.apps.multihop_qkd import MultihopQKD
+from qnetbench.apps.oblivious_transfer import ObliviousTransfer
+from qnetbench.apps.position_verification import PositionVerification
 from qnetbench.apps.qkd import QKD
 from qnetbench.apps.secret_sharing import SecretSharing
 from qnetbench.apps.shared_randomness import SharedRandomness
@@ -46,6 +51,11 @@ _CORE: tuple[Application, ...] = (
     SixState(),
     BQC(),
     DistributedGate(),
+    Distillation(),
+    DistilledGate(),
+    HeraldedTeleport(),
+    PositionVerification(),
+    ObliviousTransfer(),
     CHSH(),
     ClockSync(),
     AnonymousTransmission(),
@@ -119,10 +129,15 @@ __all__ = [
     "ByzantineAgreement",
     "ClockSync",
     "ConferenceKey",
+    "Distillation",
+    "DistilledGate",
     "DistributedGate",
     "EntanglementSwap",
+    "HeraldedTeleport",
     "LeaderElection",
     "MultihopQKD",
+    "ObliviousTransfer",
+    "PositionVerification",
     "SecretSharing",
     "SharedRandomness",
     "SixState",
