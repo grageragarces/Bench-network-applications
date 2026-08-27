@@ -1,5 +1,10 @@
 # qnetbench
 
+[![CI](https://github.com/grageragarces/Bench-network-applications/actions/workflows/ci.yml/badge.svg)](https://github.com/grageragarces/Bench-network-applications/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/qnetbench.svg)](https://pypi.org/project/qnetbench/)
+[![Python](https://img.shields.io/pypi/pyversions/qnetbench.svg)](https://pypi.org/project/qnetbench/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
