@@ -13,4 +13,9 @@ runs/
 *.jsonl
 !traces/*.jsonl
 .claude
-paper/
+# The LaTeX working directory for the TQE manuscript stays private: it holds the
+# draft, the built PDF and the reviewing TODOs. Anchored to the repo root so it
+# does not also swallow scripts/paper/, which is the *published* reproduction
+# code for the paper's tables and figures.
+/paper/
+.DS_Store

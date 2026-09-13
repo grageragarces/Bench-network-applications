@@ -1,0 +1,18 @@
+capacity   bursty   smooth    cost   winners (bursty / smooth)
+--------------------------------------------------------------
+      20    0.033    0.033   0.000   fifo / fifo
+      30    0.033    0.033   0.000   fifo / fifo
+      40    0.050    0.050   0.000   fifo / fifo
+      50    0.050    0.050   0.000   fifo / fifo
+      60    0.067    0.067   0.000   fifo / fifo
+      70    0.067    0.083   0.017   fifo / fifo
+      80    0.100    0.117   0.017   fifo / fifo
+      90    0.117    0.150   0.033   fifo / fifo
+     100    0.117    0.183   0.067   fifo / fifo
+     110    0.167    0.233   0.067   fifo / fifo
+     120    0.300    0.300   0.000   fifo / fifo
+     130    0.350    0.417   0.067   fifo / fifo
+     140    0.433    0.600   0.167   fifo / fifo
+     150    0.450    0.900   0.450   fifo / fifo
+     160    0.533    1.000   0.467   fifo / fifo
+     170    0.617    1.000   0.383   fifo / fifo

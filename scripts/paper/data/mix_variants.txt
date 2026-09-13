@@ -1,0 +1,10 @@
+variant                                                dh_win          fh_win  inversion
+----------------------------------------------------------------------------------------
+default (Table IV)                                        edf  fidelity_first  True
+dh: 3 distributed_gate + 2 qkd                            edf  fidelity_first  True
+dh: 5 distributed_gate + 0 qkd (homogeneous)             fifo  fidelity_first  True
+dh: 2 distributed_gate + 3 dqc_ghz4                      fifo  fidelity_first  True
+dh: 4 distributed_gate + 1 multihop_qkd                  fifo  fidelity_first  True
+fh: 3 bqc + 2 chsh (no qkd)                               edf            fifo  True
+fh: 1 bqc + 3 chsh + 1 qkd                                edf  fidelity_first  True
+fh: 2 bqc + 2 verified_bqc + 1 qkd                        edf            fifo  True

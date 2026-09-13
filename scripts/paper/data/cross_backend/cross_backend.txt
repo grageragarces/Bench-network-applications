@@ -1,0 +1,31 @@
+app                            reference      sequence      netsquid   max|du|
+------------------------------------------------------------------------------
+anonymous_transmission            0.9219        0.9219        0.9219    0.0000
+b92                               0.1523        0.1523        0.1523    0.0000
+bb84                              0.2539        0.2539        0.2539    0.0000
+bqc                               0.9375        0.9375        0.9375    0.0000
+byzantine_agreement               0.9531        0.9531        0.9531    0.0000
+chsh                              1.0000        1.0000        1.0000    0.0000
+clock_sync                        1.0000        0.9971        0.9971    0.0029
+conference_key                    0.3125        0.2969        0.2969    0.0156
+distillation                      0.9556        0.9348        0.9348    0.0208
+distilled_gate                    1.0000        1.0000        1.0000    0.0000
+distributed_gate                  1.0000        1.0000        1.0000    0.0000
+dqc_ghz4                          0.7500        0.7500        0.7500    0.0000
+dqc_qft4                          0.2500        0.2500        0.2500    0.0000
+dqc_random4                       0.5000        0.5000        0.5000    0.0000
+entanglement_swap                 0.9531        0.9688        0.9688    0.0156
+heralded_teleport                 0.9583        0.9583        0.9583    0.0000
+leader_election                   0.0833        0.0833        0.0833    0.0000
+multihop_qkd                      0.2425        0.0000        0.0000    0.2425
+oblivious_transfer                0.5000        0.5000        0.5000    0.0000
+position_verification             0.9792        0.9792        0.9792    0.0000
+qkd                               0.2227        0.2227        0.2227    0.0000
+secret_sharing                    0.9219        0.9219        0.9219    0.0000
+shared_randomness                 0.9375        0.9375        0.9375    0.0000
+six_state                         0.1467        0.1467        0.1467    0.0000
+teleportation                     0.9844        1.0000        1.0000    0.0156
+threshold_secret_sharing          0.9062        0.9062        0.9062    0.0000
+verified_bqc                      0.9375        0.9375        0.9375    0.0000
+
+21/27 identical (tolerance 1e-06); 25/27 agree within 0.02 utility.

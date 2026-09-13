@@ -1,0 +1,142 @@
+{
+  "signature": {
+    "app": "position_verification",
+    "trace": {
+      "request_cv": 0.3648064461316052,
+      "fano_factor": 0.22500000000000003,
+      "msgs_per_pair": 2.0208333333333335,
+      "bytes_per_pair": 2.0416666666666665,
+      "deadline_fraction": 1.0,
+      "min_latency_budget": null,
+      "min_staleness_tolerance": null,
+      "n_parties": 2
+    },
+    "fidelity_threshold": 0.8472690615835778,
+    "fidelity_range": 1.0,
+    "staleness_halflife": 0.00022284640762463347,
+    "staleness_halflife_range": 0.00022284640762463347,
+    "fidelity_threshold_std": 8.194653495402821e-05,
+    "staleness_halflife_std": 1.2291980243104587e-07,
+    "fidelity_threshold_bracket": 0.006249999999999978,
+    "staleness_halflife_bracket": 9.374999999999997e-06
+  },
+  "fidelity_curve": [
+    {
+      "delivered_fidelity": 0.5,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.6,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.7,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8250000000000001,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8375000000000001,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8437500000000001,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8500000000000001,
+      "utility": 0.8880208333333334,
+      "utility_std": 0.02066993211769211
+    },
+    {
+      "delivered_fidelity": 0.9,
+      "utility": 0.9348958333333334,
+      "utility_std": 0.03025768239224545
+    },
+    {
+      "delivered_fidelity": 0.95,
+      "utility": 0.9557291666666666,
+      "utility_std": 0.019313016893478273
+    },
+    {
+      "delivered_fidelity": 1.0,
+      "utility": 1.0,
+      "utility_std": 0.0
+    }
+  ],
+  "staleness_curve": [
+    {
+      "pair_age_s": 0.0,
+      "utility": 1.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.0002,
+      "utility": 0.890625,
+      "utility_std": 0.022702598664274334
+    },
+    {
+      "pair_age_s": 0.00021875000000000003,
+      "utility": 0.8880208333333334,
+      "utility_std": 0.02066993211769211
+    },
+    {
+      "pair_age_s": 0.00022812500000000003,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.00023750000000000003,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.000275,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.00035,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.0005,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.001,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.002,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.005,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.01,
+      "utility": 0.0,
+      "utility_std": 0.0
+    }
+  ]
+}

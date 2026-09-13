@@ -1,0 +1,137 @@
+{
+  "signature": {
+    "app": "shared_randomness",
+    "trace": {
+      "request_cv": 0.9868084328940867,
+      "fano_factor": 0.975,
+      "msgs_per_pair": 0.015625,
+      "bytes_per_pair": 1.0,
+      "deadline_fraction": 0.0,
+      "min_latency_budget": null,
+      "min_staleness_tolerance": null,
+      "n_parties": 2
+    },
+    "fidelity_threshold": 0.6612499999999999,
+    "fidelity_range": 0.3515625,
+    "staleness_halflife": null,
+    "staleness_halflife_range": 0.0006830357142857143,
+    "fidelity_threshold_std": 0.06902491722796518,
+    "staleness_halflife_std": null,
+    "fidelity_threshold_bracket": 0.006249999999999978,
+    "staleness_halflife_bracket": null
+  },
+  "fidelity_curve": [
+    {
+      "delivered_fidelity": 0.5,
+      "utility": 0.6484375,
+      "utility_std": 0.04621937330546575
+    },
+    {
+      "delivered_fidelity": 0.6,
+      "utility": 0.736328125,
+      "utility_std": 0.07178896855269182
+    },
+    {
+      "delivered_fidelity": 0.6499999999999999,
+      "utility": 0.810546875,
+      "utility_std": 0.039402814456703156
+    },
+    {
+      "delivered_fidelity": 0.6562499999999999,
+      "utility": 0.81640625,
+      "utility_std": 0.04115489747208101
+    },
+    {
+      "delivered_fidelity": 0.6624999999999999,
+      "utility": 0.826171875,
+      "utility_std": 0.053238332697027387
+    },
+    {
+      "delivered_fidelity": 0.6749999999999999,
+      "utility": 0.82421875,
+      "utility_std": 0.05108084699461727
+    },
+    {
+      "delivered_fidelity": 0.7,
+      "utility": 0.82421875,
+      "utility_std": 0.040406564190580474
+    },
+    {
+      "delivered_fidelity": 0.8,
+      "utility": 0.859375,
+      "utility_std": 0.03221176270013797
+    },
+    {
+      "delivered_fidelity": 0.9,
+      "utility": 0.951171875,
+      "utility_std": 0.026421385270446646
+    },
+    {
+      "delivered_fidelity": 0.95,
+      "utility": 0.96484375,
+      "utility_std": 0.02029747040119778
+    },
+    {
+      "delivered_fidelity": 1.0,
+      "utility": 1.0,
+      "utility_std": 0.0
+    }
+  ],
+  "staleness_curve": [
+    {
+      "pair_age_s": 0.0,
+      "utility": 1.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 0.0002,
+      "utility": 0.900390625,
+      "utility_std": 0.013389950391408289
+    },
+    {
+      "pair_age_s": 0.0005,
+      "utility": 0.822265625,
+      "utility_std": 0.04998626520339737
+    },
+    {
+      "pair_age_s": 0.000625,
+      "utility": 0.810546875,
+      "utility_std": 0.039402814456703156
+    },
+    {
+      "pair_age_s": 0.0006562499999999999,
+      "utility": 0.775390625,
+      "utility_std": 0.04551242264738689
+    },
+    {
+      "pair_age_s": 0.0006875,
+      "utility": 0.76171875,
+      "utility_std": 0.040406564190580474
+    },
+    {
+      "pair_age_s": 0.00075,
+      "utility": 0.751953125,
+      "utility_std": 0.056031204249144734
+    },
+    {
+      "pair_age_s": 0.001,
+      "utility": 0.65234375,
+      "utility_std": 0.06754537681949446
+    },
+    {
+      "pair_age_s": 0.002,
+      "utility": 0.556640625,
+      "utility_std": 0.020577448736040505
+    },
+    {
+      "pair_age_s": 0.005,
+      "utility": 0.53515625,
+      "utility_std": 0.031004898176538172
+    },
+    {
+      "pair_age_s": 0.01,
+      "utility": 0.52734375,
+      "utility_std": 0.01873371688794031
+    }
+  ]
+}

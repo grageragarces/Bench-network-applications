@@ -1,0 +1,117 @@
+{
+  "signature": {
+    "app": "b92",
+    "trace": {
+      "request_cv": 1.9852865507219815e-15,
+      "fano_factor": 0.012499999999999999,
+      "msgs_per_pair": 0.01171875,
+      "bytes_per_pair": 1.3046875,
+      "deadline_fraction": 0.0,
+      "min_latency_budget": null,
+      "min_staleness_tolerance": null,
+      "n_parties": 2
+    },
+    "fidelity_threshold": 0.8933178191489362,
+    "fidelity_range": 0.123779296875,
+    "staleness_halflife": null,
+    "staleness_halflife_range": null,
+    "fidelity_threshold_std": 0.03853119267518975,
+    "staleness_halflife_std": null,
+    "fidelity_threshold_bracket": 0.006250000000000089,
+    "staleness_halflife_bracket": null
+  },
+  "fidelity_curve": [
+    {
+      "delivered_fidelity": 0.5,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.6,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.7,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8,
+      "utility": 0.0,
+      "utility_std": 0.0
+    },
+    {
+      "delivered_fidelity": 0.8500000000000001,
+      "utility": 0.0338134765625,
+      "utility_std": 0.06421304552122395
+    },
+    {
+      "delivered_fidelity": 0.875,
+      "utility": 0.0257568359375,
+      "utility_std": 0.05378066651882823
+    },
+    {
+      "delivered_fidelity": 0.8875,
+      "utility": 0.051513671875,
+      "utility_std": 0.06718748225721968
+    },
+    {
+      "delivered_fidelity": 0.89375,
+      "utility": 0.06298828125,
+      "utility_std": 0.06776210899106515
+    },
+    {
+      "delivered_fidelity": 0.9,
+      "utility": 0.067626953125,
+      "utility_std": 0.0683345204537094
+    },
+    {
+      "delivered_fidelity": 0.95,
+      "utility": 0.1243896484375,
+      "utility_std": 0.026041634877503383
+    },
+    {
+      "delivered_fidelity": 1.0,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    }
+  ],
+  "staleness_curve": [
+    {
+      "pair_age_s": 0.0,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    },
+    {
+      "pair_age_s": 0.0002,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    },
+    {
+      "pair_age_s": 0.0005,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    },
+    {
+      "pair_age_s": 0.001,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    },
+    {
+      "pair_age_s": 0.002,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    },
+    {
+      "pair_age_s": 0.005,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    },
+    {
+      "pair_age_s": 0.01,
+      "utility": 0.123779296875,
+      "utility_std": 0.011238427037581938
+    }
+  ]
+}

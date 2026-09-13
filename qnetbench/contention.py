@@ -19,14 +19,14 @@ inversion is the proof that single-workload evaluation produces unreliable ranki
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from qnetbench.api.types import Demand
 from qnetbench.backends.reference.backend import _age_fidelity
 from qnetbench.harness.runner import run_once
 from qnetbench.policies import Policy, get_policy
 from qnetbench.policies.base import PendingRequest
-from qnetbench.trace.events import EntanglementRequested
+from qnetbench.trace.events import EntanglementRequested, Event
 
 
 @dataclass(frozen=True)
@@ -38,7 +38,13 @@ class Tenant:
     min_fidelity: float
     budget: float | None  # relative deadline (s) from each request's arrival, or None
     n_requests: int
-    interval: float  # seconds between this tenant's requests
+    interval: float  # MEAN seconds between this tenant's requests
+    # The application's own measured inter-arrival pattern, rescaled to mean 1.0.
+    # Arrivals replay this shape at `interval`, so a tenant carries its real
+    # burstiness (Section VI's cv and Fano) and not just its contract. Empty means
+    # a perfectly regular stream, which is what the earlier fixed-cadence model
+    # assumed for every tenant regardless of how the application actually behaves.
+    pattern: tuple[float, ...] = ()
 
 
 @dataclass
@@ -58,9 +64,27 @@ class _Req:
     met: bool = False
 
 
+def _arrival_pattern(events: list[Event]) -> tuple[float, ...]:
+    """The application's inter-request gaps, normalised to mean 1.0.
+
+    Normalising removes the application's absolute rate (which is a property of the
+    backend's link model, not of the workload) while preserving the *shape* of its
+    demand process. Two mixes built this way differ in burstiness at identical
+    aggregate load, which is what makes burstiness separately testable.
+    """
+    ts = [ev.t for ev in events if isinstance(ev, EntanglementRequested)]
+    gaps = [b - a for a, b in zip(ts, ts[1:], strict=False) if b > a]
+    if not gaps:
+        return ()
+    mean = sum(gaps) / len(gaps)
+    return tuple(g / mean for g in gaps) if mean > 0 else ()
+
+
 def app_profile(app: str, n_requests: int, interval: float) -> Tenant:
-    """Build a tenant from an application's real demand contract (read from a run)."""
+    """Build a tenant from an application's real demand contract and real arrival
+    pattern, both read from an actual run."""
     events = run_once(app, seed=0)
+    pattern = _arrival_pattern(events)
     for ev in events:
         if isinstance(ev, EntanglementRequested):
             d = ev.demand
@@ -70,7 +94,7 @@ def app_profile(app: str, n_requests: int, interval: float) -> Tenant:
                 budget = d.deadline - ev.t
             else:
                 budget = None
-            return Tenant(app, d.min_fidelity, budget, n_requests, interval)
+            return Tenant(app, d.min_fidelity, budget, n_requests, interval, pattern)
     raise ValueError(f"application {app!r} issued no entanglement requests")
 
 
@@ -85,8 +109,12 @@ def simulate(
     """Discrete-event contention simulation over one shared link."""
     requests: list[_Req] = []
     for tenant in tenants:
+        arrival = 0.0
         for k in range(tenant.n_requests):
-            arrival = k * tenant.interval
+            if k:
+                # Replay the application's own gap sequence, scaled to `interval`.
+                gap = tenant.pattern[(k - 1) % len(tenant.pattern)] if tenant.pattern else 1.0
+                arrival += gap * tenant.interval
             deadline = arrival + tenant.budget if tenant.budget is not None else math.inf
             requests.append(_Req(tenant.app, arrival, tenant.min_fidelity, deadline))
     requests.sort(key=lambda r: r.arrival)
@@ -178,7 +206,10 @@ def has_inversion(experiment: dict[str, dict[str, ContentionResult]]) -> bool:
 
 # The canonical contention operating point (moderate overload; entanglement supply
 # below aggregate demand) at which the policy ranking cleanly inverts.
-CAPACITY = 110.0
+# Moderate overload: below aggregate demand, and representative of the contended
+# regime rather than special within it (Section VIII reports the inversion across
+# the whole capacity sweep, not at this point alone).
+CAPACITY = 120.0
 LINK_FIDELITY = 0.99
 COHERENCE_TIME = 0.25
 
@@ -194,6 +225,22 @@ def default_mixes(n_requests: int = 12, interval: float = 0.03) -> dict[str, lis
         "deadline_heavy": group("distributed_gate", 4) + group("qkd", 1),
         "fidelity_heavy": group("bqc", 2) + group("chsh", 2) + group("qkd", 1),
     }
+
+
+def burstiness_mixes(
+    app: str = "heralded_teleport", count: int = 5, n_requests: int = 12, interval: float = 0.03
+) -> dict[str, list[Tenant]]:
+    """Two mixes that differ *only* in burstiness.
+
+    Both use the same application, so contracts, tenant count and mean arrival rate
+    are identical; the only difference is whether each tenant replays its measured
+    inter-arrival pattern or issues on a perfectly regular cadence. This isolates
+    the burstiness axis of Section VI, which the fixed-cadence arrival model could
+    not express: under it every tenant was smooth regardless of the workload.
+    """
+    bursty = app_profile(app, n_requests, interval)
+    smooth = replace(bursty, pattern=())
+    return {"bursty": [bursty] * count, "smooth": [smooth] * count}
 
 
 def default_experiment() -> dict[str, dict[str, ContentionResult]]:

@@ -1,0 +1,152 @@
+{
+  "signature": {
+    "app": "conference_key",
+    "trace": {
+      "request_cv": 1.521765362054139,
+      "fano_factor": 0.43124999999999997,
+      "msgs_per_pair": 2.015625,
+      "bytes_per_pair": 2.03125,
+      "deadline_fraction": 0.0,
+      "min_latency_budget": null,
+      "min_staleness_tolerance": null,
+      "n_parties": 4
+    },
+    "fidelity_threshold": 0.9756397637795275,
+    "fidelity_range": 0.8330078125,
+    "staleness_halflife": 5.123355263157895e-05,
+    "staleness_halflife_range": 4.5601851851851854e-05,
+    "fidelity_threshold_std": 0.026828831713714044,
+    "staleness_halflife_std": 1.9692665885602206e-05,
+    "fidelity_threshold_bracket": 0.006249999999999978,
+    "staleness_halflife_bracket": 6.249999999999996e-06
+  },
+  "fidelity_curve": [
+    {
+      "delivered_fidelity": 0.5,
+      "utility": 0.1669921875,
+      "utility_std": 0.03755641508404182
+    },
+    {
+      "delivered_fidelity": 0.6,
+      "utility": 0.18408203125,
+      "utility_std": 0.05829800035243725
+    },
+    {
+      "delivered_fidelity": 0.7,
+      "utility": 0.20458984375,
+      "utility_std": 0.05113449478587655
+    },
+    {
+      "delivered_fidelity": 0.8,
+      "utility": 0.24853515625,
+      "utility_std": 0.06540599792694349
+    },
+    {
+      "delivered_fidelity": 0.9,
+      "utility": 0.32421875,
+      "utility_std": 0.12008145428858905
+    },
+    {
+      "delivered_fidelity": 0.95,
+      "utility": 0.44091796875,
+      "utility_std": 0.1513758503065475
+    },
+    {
+      "delivered_fidelity": 0.975,
+      "utility": 0.5771484375,
+      "utility_std": 0.2270313541756041
+    },
+    {
+      "delivered_fidelity": 0.98125,
+      "utility": 0.63916015625,
+      "utility_std": 0.23979282894786352
+    },
+    {
+      "delivered_fidelity": 0.9875,
+      "utility": 0.69287109375,
+      "utility_std": 0.24346341623195664
+    },
+    {
+      "delivered_fidelity": 1.0,
+      "utility": 1.0,
+      "utility_std": 0.0
+    }
+  ],
+  "staleness_curve": [
+    {
+      "pair_age_s": 0.0,
+      "utility": 1.0,
+      "utility_std": 0.0
+    },
+    {
+      "pair_age_s": 2.5e-05,
+      "utility": 0.63916015625,
+      "utility_std": 0.23979282894786352
+    },
+    {
+      "pair_age_s": 3.7500000000000003e-05,
+      "utility": 0.564453125,
+      "utility_std": 0.22483005463415445
+    },
+    {
+      "pair_age_s": 4.3750000000000006e-05,
+      "utility": 0.5732421875,
+      "utility_std": 0.23985893872407557
+    },
+    {
+      "pair_age_s": 5e-05,
+      "utility": 0.50732421875,
+      "utility_std": 0.19925644461860173
+    },
+    {
+      "pair_age_s": 5.625e-05,
+      "utility": 0.47021484375,
+      "utility_std": 0.18571576914352034
+    },
+    {
+      "pair_age_s": 6.25e-05,
+      "utility": 0.4296875,
+      "utility_std": 0.14709508112314634
+    },
+    {
+      "pair_age_s": 7.500000000000001e-05,
+      "utility": 0.40283203125,
+      "utility_std": 0.12307690450778234
+    },
+    {
+      "pair_age_s": 0.0001,
+      "utility": 0.357421875,
+      "utility_std": 0.08671083156415278
+    },
+    {
+      "pair_age_s": 0.0002,
+      "utility": 0.29296875,
+      "utility_std": 0.07928821535228296
+    },
+    {
+      "pair_age_s": 0.0005,
+      "utility": 0.2109375,
+      "utility_std": 0.04752158226795484
+    },
+    {
+      "pair_age_s": 0.001,
+      "utility": 0.1630859375,
+      "utility_std": 0.0376578505559743
+    },
+    {
+      "pair_age_s": 0.002,
+      "utility": 0.14111328125,
+      "utility_std": 0.041795848227750426
+    },
+    {
+      "pair_age_s": 0.005,
+      "utility": 0.107421875,
+      "utility_std": 0.03700643617479769
+    },
+    {
+      "pair_age_s": 0.01,
+      "utility": 0.12060546875,
+      "utility_std": 0.0415670475587216
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "anonymous_transmission": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.953125,
+      "delivered": 128,
+      "rate": 659.7938144329892
+    }
+  },
+  "b92": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.14453125,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "bb84": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.21484375,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "bqc": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 8,
+      "rate": 390.24390243902417
+    }
+  },
+  "byzantine_agreement": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.984375,
+      "delivered": 128,
+      "rate": 659.7938144329892
+    }
+  },
+  "chsh": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.984191476742686,
+      "delivered": 256,
+      "rate": 1976.8339768339756
+    }
+  },
+  "clock_sync": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.9883891596873317,
+      "delivered": 256,
+      "rate": 1976.8339768339756
+    }
+  },
+  "conference_key": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.5,
+      "delivered": 192,
+      "rate": 847.6821192052973
+    }
+  },
+  "distillation": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.9767441860465116,
+      "delivered": 128,
+      "rate": 682.6666666666662
+    }
+  },
+  "distilled_gate": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 25,
+      "rate": 490.1960784313722
+    }
+  },
+  "distributed_gate": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 8,
+      "rate": 355.5555555555554
+    }
+  },
+  "dqc_ghz4": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 6,
+      "rate": 363.63636363636346
+    }
+  },
+  "dqc_qft4": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 16,
+      "rate": 385.54216867469853
+    }
+  },
+  "dqc_random4": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 20,
+      "rate": 388.3495145631065
+    }
+  },
+  "entanglement_swap": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.953125,
+      "delivered": 128,
+      "rate": 659.7938144329892
+    }
+  },
+  "heralded_teleport": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.9583333333333334,
+      "delivered": 63,
+      "rate": 111.52811216541576
+    }
+  },
+  "leader_election": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.08333333333333333,
+      "delivered": 288,
+      "rate": 989.6907216494839
+    }
+  },
+  "multihop_qkd": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.2503267973856209,
+      "delivered": 256,
+      "rate": 1276.8079800498745
+    }
+  },
+  "oblivious_transfer": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.625,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "position_verification": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 48,
+      "rate": 395.06172839506144
+    }
+  },
+  "qkd": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.2734375,
+      "delivered": 256,
+      "rate": 1961.6858237547879
+    }
+  },
+  "secret_sharing": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.953125,
+      "delivered": 128,
+      "rate": 659.7938144329892
+    }
+  },
+  "shared_randomness": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.953125,
+      "delivered": 128,
+      "rate": 1954.1984732824415
+    }
+  },
+  "six_state": {
+    "netsquid": {
+      "success": true,
+      "utility": 0.17666666666666667,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "teleportation": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.96875,
+      "delivered": 64,
+      "rate": 656.4102564102559
+    }
+  },
+  "threshold_secret_sharing": {
+    "netsquid": {
+      "success": false,
+      "utility": 0.890625,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "verified_bqc": {
+    "netsquid": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 16,
+      "rate": 395.06172839506144
+    }
+  }
+}

@@ -41,8 +41,14 @@ def test_bb84_reports_qubits_sent() -> None:
 
 def test_bb84_fails_below_threshold() -> None:
     noisy = line2(link=LinkModel(link_fidelity=0.75, fidelity_std=0.0))
+    # 2048 rounds so the protocol's finite-key QBER estimate concentrates well
+    # clear of the threshold; at the 256-round default a single unlucky test
+    # subset can put the estimate under it (see test_app_invariants._QBER_ROUNDS).
     assert not any(
-        compute_report(run_once("bb84", seed=s, topology=noisy)).app_success for s in range(6)
+        compute_report(
+            run_once("bb84", seed=s, topology=noisy, cfg={"rounds": 2048})
+        ).app_success
+        for s in range(6)
     )
 
 

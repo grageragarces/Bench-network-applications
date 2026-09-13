@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from qnetbench.apps import available_apps, catalog_apps
+from qnetbench.characterize.curves import SEEDS
 from qnetbench.harness.runner import run_once
 from qnetbench.metrics import compute_report, render
 from qnetbench.policies import available_policies
@@ -37,7 +38,9 @@ def _build_parser() -> argparse.ArgumentParser:
         "characterize", help="measure demand signatures (one app, or all core apps)"
     )
     ch.add_argument("app", nargs="?", metavar="APP", help="omit to characterize all core apps")
-    ch.add_argument("--seeds", type=int, default=8, help="seeds averaged per sweep point")
+    ch.add_argument(
+        "--seeds", type=int, default=SEEDS, help="seeds averaged per sweep point"
+    )
     ch.add_argument("--out", help="directory to write per-app signature+curve JSON")
 
     sp = sub.add_parser("spec", help="write the versioned trace + metric JSON Schemas")

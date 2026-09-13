@@ -49,8 +49,13 @@ def test_six_state_is_prepare_and_measure() -> None:
 
 def test_six_state_fails_below_threshold() -> None:
     noisy = line2(link=LinkModel(link_fidelity=0.7, fidelity_std=0.0))
+    # See test_app_invariants._QBER_ROUNDS: the default 256 rounds leave the
+    # finite-key QBER estimate loose enough to dip under the threshold by chance.
     assert not any(
-        compute_report(run_once("six_state", seed=s, topology=noisy)).app_success for s in range(6)
+        compute_report(
+            run_once("six_state", seed=s, topology=noisy, cfg={"rounds": 2048})
+        ).app_success
+        for s in range(6)
     )
 
 

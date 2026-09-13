@@ -31,8 +31,17 @@ def test_qkd_noiseless_sifts_without_errors(seed: int) -> None:
     assert all(u > 0 for u in qbers)
 
 
+# Enough rounds that the protocol's own QBER estimate concentrates. The estimate
+# is taken on half the sifted rounds, so at the default 256 rounds it rests on
+# ~58 bits: at a true QBER of 0.24 a 2.5-sigma downward fluctuation lands under
+# the 0.11 threshold and the protocol correctly (given its estimate) declares
+# success. That is real finite-key behaviour, not a modelling error, but it makes
+# any "no seed may succeed" assertion flaky at roughly 6% per ten seeds.
+_QBER_ROUNDS = {"rounds": 2048}
+
+
 def _max_qber(seed: int, topo) -> float:
-    events = run_once("qkd", seed=seed, topology=topo)
+    events = run_once("qkd", seed=seed, topology=topo, cfg=_QBER_ROUNDS)
     qbers = [e.payload["qber"] for e in events if isinstance(e, AppOutcomeEvent)]
     return max(float(q) for q in qbers)  # type: ignore[arg-type]
 
@@ -42,7 +51,10 @@ def test_qkd_fails_below_qber_threshold() -> None:
     # Werner F=0.7 → QBER ≈ 2(1-F)/3 ≈ 0.20, comfortably above the 0.11 threshold.
     qbers = [_max_qber(s, noisy) for s in range(10)]
     assert sum(qbers) / len(qbers) > 0.15
-    assert not any(_report("qkd", s, noisy).app_success for s in range(10))
+    assert not any(
+        compute_report(run_once("qkd", seed=s, topology=noisy, cfg=_QBER_ROUNDS)).app_success
+        for s in range(10)
+    )
 
 
 @pytest.mark.parametrize("seed", range(10))

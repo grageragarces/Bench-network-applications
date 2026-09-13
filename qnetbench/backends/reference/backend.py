@@ -234,8 +234,16 @@ class ReferenceBackend:
         self.coherence_time = coherence_time
         self.engine = Engine()
         seq = np.random.SeedSequence(seed)
-        self._phys_rng = np.random.default_rng(seq.spawn(1)[0])
-        self.register = Register(self._phys_rng)
+        # Link sampling and quantum measurement must not share a stream. Link
+        # sampling draws two values per delivered pair (_sample_pairs), while a
+        # backend that replays a pre-generated supply draws none; sharing one
+        # generator therefore leaves every subsequent measurement at a different
+        # position in the stream, and outcomes stop being comparable across
+        # backends at a fixed seed. Separate streams make replay outcome-preserving,
+        # which is what Goal G4 asserts.
+        phys_seed, register_seed = seq.spawn(2)
+        self._phys_rng = np.random.default_rng(phys_seed)
+        self.register = Register(np.random.default_rng(register_seed))
         self._channels: dict[tuple[NodeId, NodeId], _ClassicalChannel] = {}
         # Single-qubit transmission rendezvous (qsend blocks until qrecv), one
         # sender/receiver in flight per directed edge — keeps the register small.
