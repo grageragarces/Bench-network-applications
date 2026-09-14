@@ -11,11 +11,11 @@
       "min_staleness_tolerance": null,
       "n_parties": 2
     },
-    "fidelity_threshold": 0.8217361111111112,
-    "fidelity_range": 0.15916666666666668,
+    "fidelity_threshold": 0.7935088087248323,
+    "fidelity_range": 0.1609375,
     "staleness_halflife": null,
     "staleness_halflife_range": null,
-    "fidelity_threshold_std": 0.0758880323842759,
+    "fidelity_threshold_std": 0.06613692165054208,
     "staleness_halflife_std": null,
     "fidelity_threshold_bracket": 0.006249999999999978,
     "staleness_halflife_bracket": null
@@ -33,85 +33,85 @@
     },
     {
       "delivered_fidelity": 0.7,
-      "utility": 0.06166666666666667,
-      "utility_std": 0.08025999418556337
+      "utility": 0.034687499999999996,
+      "utility_std": 0.06582731710379311
+    },
+    {
+      "delivered_fidelity": 0.75,
+      "utility": 0.03979166666666667,
+      "utility_std": 0.06897029100755388
+    },
+    {
+      "delivered_fidelity": 0.775,
+      "utility": 0.04541666666666667,
+      "utility_std": 0.07274742263475731
+    },
+    {
+      "delivered_fidelity": 0.7875000000000001,
+      "utility": 0.050625,
+      "utility_std": 0.07523314456851227
+    },
+    {
+      "delivered_fidelity": 0.7937500000000001,
+      "utility": 0.08166666666666667,
+      "utility_std": 0.08195103551647302
     },
     {
       "delivered_fidelity": 0.8,
-      "utility": 0.03833333333333333,
-      "utility_std": 0.06641619615057091
-    },
-    {
-      "delivered_fidelity": 0.8125,
-      "utility": 0.06041666666666667,
-      "utility_std": 0.07830562453191554
-    },
-    {
-      "delivered_fidelity": 0.8187500000000001,
-      "utility": 0.06166666666666667,
-      "utility_std": 0.07979139469057216
-    },
-    {
-      "delivered_fidelity": 0.8250000000000001,
-      "utility": 0.09916666666666667,
-      "utility_std": 0.07722172262028634
-    },
-    {
-      "delivered_fidelity": 0.8500000000000001,
-      "utility": 0.11708333333333333,
-      "utility_std": 0.06872726896945637
+      "utility": 0.09135416666666667,
+      "utility_std": 0.08076397099212412
     },
     {
       "delivered_fidelity": 0.9,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.15041666666666667,
+      "utility_std": 0.04014513599982499
     },
     {
       "delivered_fidelity": 0.95,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "delivered_fidelity": 1.0,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     }
   ],
   "staleness_curve": [
     {
       "pair_age_s": 0.0,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "pair_age_s": 0.0002,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "pair_age_s": 0.0005,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "pair_age_s": 0.001,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "pair_age_s": 0.002,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "pair_age_s": 0.005,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     },
     {
       "pair_age_s": 0.01,
-      "utility": 0.15916666666666668,
-      "utility_std": 0.014117561955081182
+      "utility": 0.1609375,
+      "utility_std": 0.010349261078024419
     }
   ]
 }

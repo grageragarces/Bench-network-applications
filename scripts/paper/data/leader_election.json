@@ -11,12 +11,12 @@
       "min_staleness_tolerance": null,
       "n_parties": 5
     },
-    "fidelity_threshold": 0.993939393939394,
+    "fidelity_threshold": 0.9923986486486487,
     "fidelity_range": 1.0,
-    "staleness_halflife": 9.051724137931034e-06,
-    "staleness_halflife_range": 9.051724137931034e-06,
-    "fidelity_threshold_std": 0.007325442931799765,
-    "staleness_halflife_std": 6.1843730198830624e-06,
+    "staleness_halflife": 1.0152582159624413e-05,
+    "staleness_halflife_range": 1.0152582159624413e-05,
+    "fidelity_threshold_std": 0.006509616510293719,
+    "staleness_halflife_std": 1.1538259526932136e-05,
     "fidelity_threshold_bracket": 0.006249999999999978,
     "staleness_halflife_bracket": 6.25e-06
   },
@@ -28,13 +28,13 @@
     },
     {
       "delivered_fidelity": 0.6,
-      "utility": 0.0,
-      "utility_std": 0.0
+      "utility": 0.0013020833333333333,
+      "utility_std": 0.007249693180768257
     },
     {
       "delivered_fidelity": 0.7,
-      "utility": 0.0,
-      "utility_std": 0.0
+      "utility": 0.00390625,
+      "utility_std": 0.012145024808709394
     },
     {
       "delivered_fidelity": 0.8,
@@ -43,28 +43,28 @@
     },
     {
       "delivered_fidelity": 0.9,
-      "utility": 0.06770833333333333,
-      "utility_std": 0.058694935779086695
+      "utility": 0.049479166666666664,
+      "utility_std": 0.05253708594227087
     },
     {
       "delivered_fidelity": 0.95,
-      "utility": 0.125,
-      "utility_std": 0.12147816447594376
+      "utility": 0.08723958333333333,
+      "utility_std": 0.09337853200128646
     },
     {
       "delivered_fidelity": 0.975,
-      "utility": 0.203125,
-      "utility_std": 0.141968887192073
+      "utility": 0.19401041666666666,
+      "utility_std": 0.1536623843486599
     },
     {
       "delivered_fidelity": 0.9875,
-      "utility": 0.2708333333333333,
-      "utility_std": 0.1767766952966369
+      "utility": 0.3111979166666667,
+      "utility_std": 0.22170239153497284
     },
     {
       "delivered_fidelity": 0.99375,
-      "utility": 0.484375,
-      "utility_std": 0.39689413777129817
+      "utility": 0.5520833333333334,
+      "utility_std": 0.36129469158384636
     },
     {
       "delivered_fidelity": 1.0,
@@ -80,38 +80,38 @@
     },
     {
       "pair_age_s": 6.25e-06,
-      "utility": 0.6354166666666666,
-      "utility_std": 0.34595253969615863
+      "utility": 0.6731770833333334,
+      "utility_std": 0.32710810929915946
     },
     {
       "pair_age_s": 1.25e-05,
-      "utility": 0.3333333333333333,
-      "utility_std": 0.24650332429581734
+      "utility": 0.3958333333333333,
+      "utility_std": 0.27618903299089276
     },
     {
       "pair_age_s": 2.5e-05,
-      "utility": 0.1875,
-      "utility_std": 0.136613302589625
+      "utility": 0.22916666666666666,
+      "utility_std": 0.2093724087733519
     },
     {
       "pair_age_s": 5e-05,
-      "utility": 0.13541666666666666,
-      "utility_std": 0.13621559198564603
+      "utility": 0.13020833333333334,
+      "utility_std": 0.13451220385567664
     },
     {
       "pair_age_s": 0.0001,
-      "utility": 0.11458333333333333,
-      "utility_std": 0.06505206248331664
+      "utility": 0.07161458333333333,
+      "utility_std": 0.061831823284290446
     },
     {
       "pair_age_s": 0.0002,
-      "utility": 0.020833333333333332,
-      "utility_std": 0.03608439182435161
+      "utility": 0.0234375,
+      "utility_std": 0.031141304018493222
     },
     {
       "pair_age_s": 0.0005,
-      "utility": 0.0,
-      "utility_std": 0.0
+      "utility": 0.005208333333333333,
+      "utility_std": 0.013779954745128076
     },
     {
       "pair_age_s": 0.001,

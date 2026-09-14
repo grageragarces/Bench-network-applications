@@ -10,7 +10,6 @@ the characterization figures never drift from the code.
 from __future__ import annotations
 
 import bisect
-
 import statistics
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field

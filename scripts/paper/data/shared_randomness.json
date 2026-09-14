@@ -11,65 +11,65 @@
       "min_staleness_tolerance": null,
       "n_parties": 2
     },
-    "fidelity_threshold": 0.6612499999999999,
-    "fidelity_range": 0.3515625,
+    "fidelity_threshold": 0.7575,
+    "fidelity_range": 0.3330078125,
     "staleness_halflife": null,
-    "staleness_halflife_range": 0.0006830357142857143,
-    "fidelity_threshold_std": 0.06902491722796518,
-    "staleness_halflife_std": null,
+    "staleness_halflife_range": 0.0006467161016949152,
+    "fidelity_threshold_std": 0.04613636998475678,
+    "staleness_halflife_std": 0.0018054292831610691,
     "fidelity_threshold_bracket": 0.006249999999999978,
     "staleness_halflife_bracket": null
   },
   "fidelity_curve": [
     {
       "delivered_fidelity": 0.5,
-      "utility": 0.6484375,
-      "utility_std": 0.04621937330546575
+      "utility": 0.6669921875,
+      "utility_std": 0.04444164161321388
     },
     {
       "delivered_fidelity": 0.6,
-      "utility": 0.736328125,
-      "utility_std": 0.07178896855269182
-    },
-    {
-      "delivered_fidelity": 0.6499999999999999,
-      "utility": 0.810546875,
-      "utility_std": 0.039402814456703156
-    },
-    {
-      "delivered_fidelity": 0.6562499999999999,
-      "utility": 0.81640625,
-      "utility_std": 0.04115489747208101
-    },
-    {
-      "delivered_fidelity": 0.6624999999999999,
-      "utility": 0.826171875,
-      "utility_std": 0.053238332697027387
-    },
-    {
-      "delivered_fidelity": 0.6749999999999999,
-      "utility": 0.82421875,
-      "utility_std": 0.05108084699461727
+      "utility": 0.72021484375,
+      "utility_std": 0.05705791529342652
     },
     {
       "delivered_fidelity": 0.7,
-      "utility": 0.82421875,
-      "utility_std": 0.040406564190580474
+      "utility": 0.79638671875,
+      "utility_std": 0.04839406681107353
+    },
+    {
+      "delivered_fidelity": 0.75,
+      "utility": 0.8310546875,
+      "utility_std": 0.05404724258602231
+    },
+    {
+      "delivered_fidelity": 0.75625,
+      "utility": 0.83203125,
+      "utility_std": 0.05182226234930312
+    },
+    {
+      "delivered_fidelity": 0.7625,
+      "utility": 0.83935546875,
+      "utility_std": 0.04851216130323945
+    },
+    {
+      "delivered_fidelity": 0.775,
+      "utility": 0.83642578125,
+      "utility_std": 0.04487673938323615
     },
     {
       "delivered_fidelity": 0.8,
-      "utility": 0.859375,
-      "utility_std": 0.03221176270013797
+      "utility": 0.8564453125,
+      "utility_std": 0.036941953748784645
     },
     {
       "delivered_fidelity": 0.9,
-      "utility": 0.951171875,
-      "utility_std": 0.026421385270446646
+      "utility": 0.93408203125,
+      "utility_std": 0.030442289942903007
     },
     {
       "delivered_fidelity": 0.95,
-      "utility": 0.96484375,
-      "utility_std": 0.02029747040119778
+      "utility": 0.97119140625,
+      "utility_std": 0.019959895933564155
     },
     {
       "delivered_fidelity": 1.0,
@@ -85,53 +85,53 @@
     },
     {
       "pair_age_s": 0.0002,
-      "utility": 0.900390625,
-      "utility_std": 0.013389950391408289
+      "utility": 0.90625,
+      "utility_std": 0.030757843257858637
     },
     {
       "pair_age_s": 0.0005,
-      "utility": 0.822265625,
-      "utility_std": 0.04998626520339737
+      "utility": 0.796875,
+      "utility_std": 0.05412658773652741
     },
     {
       "pair_age_s": 0.000625,
-      "utility": 0.810546875,
-      "utility_std": 0.039402814456703156
+      "utility": 0.77197265625,
+      "utility_std": 0.07062208051470578
     },
     {
       "pair_age_s": 0.0006562499999999999,
-      "utility": 0.775390625,
-      "utility_std": 0.04551242264738689
+      "utility": 0.7431640625,
+      "utility_std": 0.0602547767613373
     },
     {
       "pair_age_s": 0.0006875,
-      "utility": 0.76171875,
-      "utility_std": 0.040406564190580474
+      "utility": 0.72802734375,
+      "utility_std": 0.06087478932181684
     },
     {
       "pair_age_s": 0.00075,
-      "utility": 0.751953125,
-      "utility_std": 0.056031204249144734
+      "utility": 0.72705078125,
+      "utility_std": 0.05646989016709169
     },
     {
       "pair_age_s": 0.001,
-      "utility": 0.65234375,
-      "utility_std": 0.06754537681949446
+      "utility": 0.669921875,
+      "utility_std": 0.059849818148611574
     },
     {
       "pair_age_s": 0.002,
-      "utility": 0.556640625,
-      "utility_std": 0.020577448736040505
+      "utility": 0.57861328125,
+      "utility_std": 0.059560305896227135
     },
     {
       "pair_age_s": 0.005,
-      "utility": 0.53515625,
-      "utility_std": 0.031004898176538172
+      "utility": 0.50390625,
+      "utility_std": 0.059626318447163075
     },
     {
       "pair_age_s": 0.01,
-      "utility": 0.52734375,
-      "utility_std": 0.01873371688794031
+      "utility": 0.51416015625,
+      "utility_std": 0.052314499610593965
     }
   ]
 }

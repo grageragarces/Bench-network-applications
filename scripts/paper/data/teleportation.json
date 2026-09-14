@@ -11,65 +11,65 @@
       "min_staleness_tolerance": null,
       "n_parties": 2
     },
-    "fidelity_threshold": 0.7540178571428571,
-    "fidelity_range": 0.349609375,
+    "fidelity_threshold": 0.7451704545454546,
+    "fidelity_range": 0.35595703125,
     "staleness_halflife": null,
-    "staleness_halflife_range": 0.0006875,
-    "fidelity_threshold_std": 0.03534266067913039,
-    "staleness_halflife_std": 0.001721204556325759,
+    "staleness_halflife_range": 0.000665625,
+    "fidelity_threshold_std": 0.04201051535093464,
+    "staleness_halflife_std": 0.0014721565600018189,
     "fidelity_threshold_bracket": 0.006249999999999978,
     "staleness_halflife_bracket": null
   },
   "fidelity_curve": [
     {
       "delivered_fidelity": 0.5,
-      "utility": 0.650390625,
-      "utility_std": 0.013389950391408289
+      "utility": 0.64404296875,
+      "utility_std": 0.05548172919782037
     },
     {
       "delivered_fidelity": 0.6,
-      "utility": 0.73046875,
-      "utility_std": 0.04188986443267034
+      "utility": 0.7216796875,
+      "utility_std": 0.04612642843210759
     },
     {
       "delivered_fidelity": 0.7,
-      "utility": 0.787109375,
-      "utility_std": 0.03901364131921519
+      "utility": 0.7900390625,
+      "utility_std": 0.043662283019742495
+    },
+    {
+      "delivered_fidelity": 0.725,
+      "utility": 0.802734375,
+      "utility_std": 0.0474814288325907
+    },
+    {
+      "delivered_fidelity": 0.7375,
+      "utility": 0.8115234375,
+      "utility_std": 0.048465449975302964
+    },
+    {
+      "delivered_fidelity": 0.74375,
+      "utility": 0.82080078125,
+      "utility_std": 0.04862996901200327
     },
     {
       "delivered_fidelity": 0.75,
-      "utility": 0.81640625,
-      "utility_std": 0.03807341540941001
-    },
-    {
-      "delivered_fidelity": 0.75625,
-      "utility": 0.830078125,
-      "utility_std": 0.025239937467422043
-    },
-    {
-      "delivered_fidelity": 0.7625,
-      "utility": 0.83203125,
-      "utility_std": 0.023109686652732876
-    },
-    {
-      "delivered_fidelity": 0.775,
-      "utility": 0.84765625,
-      "utility_std": 0.03291464755147015
+      "utility": 0.826171875,
+      "utility_std": 0.051043493536609294
     },
     {
       "delivered_fidelity": 0.8,
-      "utility": 0.87890625,
-      "utility_std": 0.03807341540941001
+      "utility": 0.87255859375,
+      "utility_std": 0.04369230553388332
     },
     {
       "delivered_fidelity": 0.9,
-      "utility": 0.931640625,
-      "utility_std": 0.03215249537725455
+      "utility": 0.939453125,
+      "utility_std": 0.03167436472700558
     },
     {
       "delivered_fidelity": 0.95,
-      "utility": 0.96484375,
-      "utility_std": 0.031004898176538172
+      "utility": 0.97021484375,
+      "utility_std": 0.02322802713333261
     },
     {
       "delivered_fidelity": 1.0,
@@ -85,53 +85,53 @@
     },
     {
       "pair_age_s": 0.0002,
-      "utility": 0.923828125,
-      "utility_std": 0.03262361931345716
+      "utility": 0.91845703125,
+      "utility_std": 0.02889948585343299
     },
     {
       "pair_age_s": 0.0005,
-      "utility": 0.783203125,
-      "utility_std": 0.03262361931345716
+      "utility": 0.7861328125,
+      "utility_std": 0.04160431328933749
     },
     {
       "pair_age_s": 0.000625,
-      "utility": 0.771484375,
-      "utility_std": 0.03741649230599222
+      "utility": 0.75732421875,
+      "utility_std": 0.04654577991929986
+    },
+    {
+      "pair_age_s": 0.0006562499999999999,
+      "utility": 0.751953125,
+      "utility_std": 0.04054792869536464
     },
     {
       "pair_age_s": 0.0006875,
-      "utility": 0.751953125,
-      "utility_std": 0.028638434176982773
-    },
-    {
-      "pair_age_s": 0.00071875,
-      "utility": 0.74609375,
-      "utility_std": 0.02789620479899551
+      "utility": 0.7470703125,
+      "utility_std": 0.04612642843210759
     },
     {
       "pair_age_s": 0.00075,
-      "utility": 0.7421875,
-      "utility_std": 0.034053897996411515
+      "utility": 0.7265625,
+      "utility_std": 0.04487939567607835
     },
     {
       "pair_age_s": 0.001,
-      "utility": 0.662109375,
-      "utility_std": 0.013389950391408289
+      "utility": 0.66796875,
+      "utility_std": 0.06489549892904746
     },
     {
       "pair_age_s": 0.002,
-      "utility": 0.58984375,
-      "utility_std": 0.06617607166444303
+      "utility": 0.57666015625,
+      "utility_std": 0.058900159121235286
     },
     {
       "pair_age_s": 0.005,
-      "utility": 0.54296875,
-      "utility_std": 0.06709204702077214
+      "utility": 0.51318359375,
+      "utility_std": 0.06537682974535941
     },
     {
       "pair_age_s": 0.01,
-      "utility": 0.50390625,
-      "utility_std": 0.09001342673283526
+      "utility": 0.5009765625,
+      "utility_std": 0.07533469225352682
     }
   ]
 }
