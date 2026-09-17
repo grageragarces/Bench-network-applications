@@ -1,0 +1,123 @@
+site_name: qnetbench
+site_description: >-
+  A benchmark suite and workload-characterization framework for quantum-network
+  applications.
+site_url: https://grageragarces.github.io/Bench-network-applications/
+repo_url: https://github.com/grageragarces/Bench-network-applications
+repo_name: grageragarces/Bench-network-applications
+edit_uri: edit/main/docs/
+docs_dir: docs
+site_dir: site
+strict: true
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.sections
+    - navigation.tracking
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - content.code.copy
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            docstring_style: google
+            docstring_section_style: table
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_if_no_docstring: true
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            merge_init_into_class: true
+            filters: ["!^_"]
+            heading_level: 2
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Install: install.md
+      - Quickstart: quickstart.md
+      - Usage overview: usage.md
+  - Utilities:
+      - Command line: guide/cli.md
+      - Running benchmarks: guide/running.md
+      - Applications: guide/applications.md
+      - Backends: guide/backends.md
+      - Topologies and links: guide/topologies.md
+      - Arbitration and policies: guide/policies.md
+      - Metrics and reports: guide/metrics.md
+      - Traces: guide/traces.md
+      - Characterization: guide/characterization.md
+      - Contention: guide/contention.md
+      - Circuits: guide/circuits.md
+  - Tutorials:
+      - Load any distributed circuit: tutorials/distributed-circuits.md
+      - Extending the suite: adopting.md
+  - Specification:
+      - Trace and metric spec: specs/README.md
+  - API reference:
+      - Overview: reference/index.md
+      - qnetbench.api: reference/api.md
+      - qnetbench.apps: reference/apps.md
+      - qnetbench.circuits: reference/circuits.md
+      - qnetbench.harness: reference/harness.md
+      - qnetbench.backends: reference/backends.md
+      - qnetbench.topology: reference/topology.md
+      - qnetbench.policies: reference/policies.md
+      - qnetbench.metrics: reference/metrics.md
+      - qnetbench.trace: reference/trace.md
+      - qnetbench.characterize: reference/characterize.md
+      - qnetbench.contention: reference/contention.md
+      - qnetbench.spec: reference/spec.md
+  - Design notes: design.md
+
+not_in_nav: |
+  issue-4.md

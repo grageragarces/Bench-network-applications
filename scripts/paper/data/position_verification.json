@@ -1,4 +1,5 @@
 {
+  "run_id": "e6c319467bb747948a07443f45636ed5",
   "signature": {
     "app": "position_verification",
     "trace": {
@@ -18,7 +19,12 @@
     "fidelity_threshold_std": 0.00014224124868056717,
     "staleness_halflife_std": 2.1118977392458387e-07,
     "fidelity_threshold_bracket": 0.006249999999999978,
-    "staleness_halflife_bracket": 9.374999999999997e-06
+    "staleness_halflife_bracket": 9.374999999999997e-06,
+    "fidelity_threshold_seed_median": 0.8472383720930233,
+    "staleness_halflife_seed_median": 0.00022289244186046513,
+    "fidelity_threshold_seed_count": 32,
+    "staleness_halflife_seed_count": 32,
+    "n_seeds": 32
   },
   "fidelity_curve": [
     {

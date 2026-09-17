@@ -70,8 +70,8 @@ class Ping:
         return AppOutcome(role=role, success=agree, utility=1.0 if agree else 0.0)
 ```
 
-Register it in [`qnetbench/apps/__init__.py`](../qnetbench/apps/__init__.py) by
-adding `Ping()` to the `_REGISTRY` tuple. Then it runs on every backend:
+Register it in [`qnetbench/apps/__init__.py`](https://github.com/grageragarces/Bench-network-applications/blob/main/qnetbench/apps/__init__.py) by
+adding `Ping()` to the `_CORE` tuple. Then it runs on every backend:
 
 ```bash
 qnetbench run ping                  # reference
@@ -88,7 +88,7 @@ qnetbench run ping --backend sequence
   what the characterization curves are plotted against). If your app has a security
   or correctness threshold, collapse utility to 0 below it (see QKD).
 - **Test it** by asserting an invariant on the reference backend at fidelity 1.0
-  (see [`tests/test_app_invariants.py`](../tests/test_app_invariants.py)); the same
+  (see [`tests/test_app_invariants.py`](https://github.com/grageragarces/Bench-network-applications/blob/main/tests/test_app_invariants.py)); the same
   assertion becomes your cross-backend equivalence test for free.
 
 ---
@@ -122,11 +122,11 @@ between deliveries, each pair's fidelity, and the classical delay. The base clas
 pre-generates one supply per edge (eagerly, on the main thread) and replays it; the
 application, local quantum ops, and classical protocol are all handled for you.
 
-Wire it into [`qnetbench/harness/runner.py`](../qnetbench/harness/runner.py) with a
+Wire it into [`qnetbench/harness/runner.py`](https://github.com/grageragarces/Bench-network-applications/blob/main/qnetbench/harness/runner.py) with a
 name → class branch (guard the import if it needs an optional dependency, as the
 `sequence`/`netsquid` backends do). See
-[`qnetbench/backends/sequence/`](../qnetbench/backends/sequence/) and
-[`netsquid/`](../qnetbench/backends/netsquid/) for real examples that drive a
+[`qnetbench/backends/sequence/`](https://github.com/grageragarces/Bench-network-applications/tree/main/qnetbench/backends/sequence) and
+[`netsquid/`](https://github.com/grageragarces/Bench-network-applications/tree/main/qnetbench/backends/netsquid) for real examples that drive a
 simulator inside `_make_supply` and extract its delivered-pair stream.
 
 A backend that models physics more deeply than a replayed supply can instead
@@ -144,7 +144,7 @@ hold on it. Add it to the skip-guarded test files alongside `sequence`/`netsquid
 ## Consume traces
 
 A run is JSONL — one event per line — and the schema is the versioned contract in
-[`docs/specs/`](specs/). You need nothing from qnetbench to read it:
+[`docs/specs/`](specs/README.md). You need nothing from qnetbench to read it:
 
 ```python
 import json
@@ -160,5 +160,5 @@ print("delivered pairs:", pairs, "mean fidelity:", fidelity_sum / pairs)
 
 Every event carries a simulated time `t` and a `kind` discriminator; the full event
 list and the demand-contract layout are in [`docs/specs/README.md`](specs/README.md).
-Published reference traces for all six applications, with a checksummed manifest,
-live in [`traces/`](../traces/) — regenerate them with `qnetbench corpus`.
+Published reference traces for all 27 core applications, with a checksummed manifest,
+live in [`traces/`](https://github.com/grageragarces/Bench-network-applications/tree/main/traces) — regenerate them with `qnetbench corpus`.

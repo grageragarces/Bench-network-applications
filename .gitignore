@@ -6,6 +6,8 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+# MkDocs build output (the site is generated; docs/ is the source)
+site/
 .venv/
 .venv-ns/
 venv/

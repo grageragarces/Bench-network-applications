@@ -1,0 +1,245 @@
+{
+  "anonymous_transmission": {
+    "netsquid": {
+      "request_cv": 1.0079052613579391,
+      "fano_factor": 0.09999999999999999,
+      "msgs_per_pair": 2.015625,
+      "bytes_per_pair": 3.015625,
+      "n_parties": 3
+    }
+  },
+  "b92": {
+    "netsquid": {
+      "request_cv": 1.9852865507219815e-15,
+      "fano_factor": 0.012499999999999999,
+      "msgs_per_pair": 0.01171875,
+      "bytes_per_pair": 1.3046875,
+      "n_parties": 2
+    }
+  },
+  "bb84": {
+    "netsquid": {
+      "request_cv": 1.9852865507219815e-15,
+      "fano_factor": 0.012499999999999999,
+      "msgs_per_pair": 0.015625,
+      "bytes_per_pair": 2.515625,
+      "n_parties": 2
+    }
+  },
+  "bqc": {
+    "netsquid": {
+      "request_cv": 0.07204381596421128,
+      "fano_factor": 0.6,
+      "msgs_per_pair": 2.0,
+      "bytes_per_pair": 2.0,
+      "n_parties": 2
+    }
+  },
+  "byzantine_agreement": {
+    "netsquid": {
+      "request_cv": 1.0079052613579391,
+      "fano_factor": 0.09999999999999999,
+      "msgs_per_pair": 2.015625,
+      "bytes_per_pair": 3.03125,
+      "n_parties": 3
+    }
+  },
+  "chsh": {
+    "netsquid": {
+      "request_cv": 0.06225538066605159,
+      "fano_factor": 0.012499999999999999,
+      "msgs_per_pair": 0.0078125,
+      "bytes_per_pair": 4.0,
+      "n_parties": 2
+    }
+  },
+  "clock_sync": {
+    "netsquid": {
+      "request_cv": 0.06225538066605159,
+      "fano_factor": 0.012499999999999999,
+      "msgs_per_pair": 0.0078125,
+      "bytes_per_pair": 2.0,
+      "n_parties": 2
+    }
+  },
+  "conference_key": {
+    "netsquid": {
+      "request_cv": 1.42573075140725,
+      "fano_factor": 0.15,
+      "msgs_per_pair": 2.015625,
+      "bytes_per_pair": 2.03125,
+      "n_parties": 4
+    }
+  },
+  "distillation": {
+    "netsquid": {
+      "request_cv": 0.30623738069238593,
+      "fano_factor": 0.45,
+      "msgs_per_pair": 1.96875,
+      "bytes_per_pair": 1.96875,
+      "n_parties": 2
+    }
+  },
+  "distilled_gate": {
+    "netsquid": {
+      "request_cv": 0.1955073924327872,
+      "fano_factor": 0.35,
+      "msgs_per_pair": 2.0,
+      "bytes_per_pair": 3.36,
+      "n_parties": 2
+    }
+  },
+  "distributed_gate": {
+    "netsquid": {
+      "request_cv": 0.07204381596421128,
+      "fano_factor": 0.6,
+      "msgs_per_pair": 2.25,
+      "bytes_per_pair": 5.0,
+      "n_parties": 2
+    }
+  },
+  "dqc_ghz4": {
+    "netsquid": {
+      "request_cv": 0.08333333333333347,
+      "fano_factor": 0.7,
+      "msgs_per_pair": 2.3333333333333335,
+      "bytes_per_pair": 2.6666666666666665,
+      "n_parties": 2
+    }
+  },
+  "dqc_qft4": {
+    "netsquid": {
+      "request_cv": 0.050562937659107465,
+      "fano_factor": 0.19999999999999998,
+      "msgs_per_pair": 2.125,
+      "bytes_per_pair": 2.25,
+      "n_parties": 2
+    }
+  },
+  "dqc_random4": {
+    "netsquid": {
+      "request_cv": 0.04513447539488615,
+      "fano_factor": 0.1,
+      "msgs_per_pair": 2.1,
+      "bytes_per_pair": 2.2,
+      "n_parties": 2
+    }
+  },
+  "entanglement_swap": {
+    "netsquid": {
+      "request_cv": 0.09856050799046115,
+      "fano_factor": 0.053125,
+      "msgs_per_pair": 1.515625,
+      "bytes_per_pair": 2.03125,
+      "n_parties": 3
+    }
+  },
+  "heralded_teleport": {
+    "netsquid": {
+      "request_cv": 1.6571210802527199,
+      "fano_factor": 3.103424657534247,
+      "msgs_per_pair": 1.6712328767123288,
+      "bytes_per_pair": 2.671232876712329,
+      "n_parties": 2
+    }
+  },
+  "leader_election": {
+    "netsquid": {
+      "request_cv": 1.7452040424810717,
+      "fano_factor": 0.26666666666666666,
+      "msgs_per_pair": 2.013888888888889,
+      "bytes_per_pair": 2.0277777777777777,
+      "n_parties": 5
+    }
+  },
+  "multihop_qkd": {
+    "netsquid": {
+      "request_cv": 0.9969514986339468,
+      "fano_factor": 0.0671875,
+      "msgs_per_pair": 0.53515625,
+      "bytes_per_pair": 3.5078125,
+      "n_parties": 3
+    }
+  },
+  "oblivious_transfer": {
+    "netsquid": {
+      "request_cv": 0.3426719223607492,
+      "fano_factor": 0.040625,
+      "msgs_per_pair": 0.095703125,
+      "bytes_per_pair": 2.12890625,
+      "n_parties": 2
+    }
+  },
+  "position_verification": {
+    "netsquid": {
+      "request_cv": 0.028984316167202092,
+      "fano_factor": 0.1,
+      "msgs_per_pair": 2.0208333333333335,
+      "bytes_per_pair": 2.0416666666666665,
+      "n_parties": 2
+    }
+  },
+  "qkd": {
+    "netsquid": {
+      "request_cv": 0.06225538066605159,
+      "fano_factor": 0.012499999999999999,
+      "msgs_per_pair": 0.015625,
+      "bytes_per_pair": 2.453125,
+      "n_parties": 2
+    }
+  },
+  "secret_sharing": {
+    "netsquid": {
+      "request_cv": 1.0079052613579391,
+      "fano_factor": 0.09999999999999999,
+      "msgs_per_pair": 2.015625,
+      "bytes_per_pair": 2.03125,
+      "n_parties": 3
+    }
+  },
+  "shared_randomness": {
+    "netsquid": {
+      "request_cv": 0.08769509500251413,
+      "fano_factor": 0.0375,
+      "msgs_per_pair": 0.015625,
+      "bytes_per_pair": 1.0,
+      "n_parties": 2
+    }
+  },
+  "six_state": {
+    "netsquid": {
+      "request_cv": 1.83502323556502e-15,
+      "fano_factor": 0.0,
+      "msgs_per_pair": 0.013333333333333334,
+      "bytes_per_pair": 2.3,
+      "n_parties": 2
+    }
+  },
+  "teleportation": {
+    "netsquid": {
+      "request_cv": 0.041883020606445866,
+      "fano_factor": 0.049999999999999996,
+      "msgs_per_pair": 1.015625,
+      "bytes_per_pair": 3.03125,
+      "n_parties": 2
+    }
+  },
+  "threshold_secret_sharing": {
+    "netsquid": {
+      "request_cv": 0.5773323710180585,
+      "fano_factor": 0.028124999999999997,
+      "msgs_per_pair": 2.015625,
+      "bytes_per_pair": 2.03125,
+      "n_parties": 5
+    }
+  },
+  "verified_bqc": {
+    "netsquid": {
+      "request_cv": 0.050562937659107465,
+      "fano_factor": 0.19999999999999998,
+      "msgs_per_pair": 2.0,
+      "bytes_per_pair": 2.0,
+      "n_parties": 2
+    }
+  }
+}

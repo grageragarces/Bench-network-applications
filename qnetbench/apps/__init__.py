@@ -108,6 +108,21 @@ def get_app(name: str) -> Application:
         raise KeyError(f"unknown app {name!r}; try `qnetbench list --all`") from None
 
 
+def register_app(app: Application, *, replace: bool = False) -> str:
+    """Add a benchmark instance to the catalog under its own `name`, and return that name.
+
+    Everything name-addressed then resolves it — `get_app`, `run_once`,
+    `characterize_app`, `catalog_apps()` — which is how a benchmark built at runtime
+    (typically `DQC(circuit)` over a circuit you loaded or generated) reaches the
+    harness without being baked into this module. The registration lives in the
+    importing process only; to expose one on the command line, add it to `_CORE`.
+    """
+    if not replace and app.name in _CATALOG:
+        raise KeyError(f"app {app.name!r} is already registered; pass replace=True to override")
+    _CATALOG[app.name] = app
+    return app.name
+
+
 def available_apps() -> list[str]:
     """The core protocol set (CI, corpus, cross-backend equivalence)."""
     return sorted(_CORE_REGISTRY)
@@ -147,4 +162,5 @@ __all__ = [
     "available_apps",
     "catalog_apps",
     "get_app",
+    "register_app",
 ]

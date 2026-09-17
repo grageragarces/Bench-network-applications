@@ -1,24 +1,27 @@
-coherence_s  dh_fifo   dh_ff  dh_edf          dh_win  fh_fifo   fh_ff  fh_edf          fh_win  inversion
---------------------------------------------------------------------------------------------------------
-       0.05    0.117   0.117   0.100            fifo    0.050   0.183   0.117  fidelity_first  True
-       0.06    0.133   0.133   0.117            fifo    0.117   0.233   0.183  fidelity_first  True
-       0.07    0.150   0.150   0.133            fifo    0.133   0.233   0.200  fidelity_first  True
-       0.08    0.150   0.150   0.133            fifo    0.183   0.250   0.233  fidelity_first  True
-       0.09    0.150   0.150   0.167             edf    0.233   0.300   0.283  fidelity_first  True
-       0.10    0.150   0.150   0.183             edf    0.267   0.317   0.317  fidelity_first  True
-       0.11    0.183   0.183   0.217             edf    0.317   0.317   0.350             edf  False
-       0.12    0.217   0.217   0.250             edf    0.333   0.383   0.400             edf  False
-       0.13    0.233   0.233   0.267             edf    0.350   0.450   0.433  fidelity_first  True
-       0.14    0.233   0.233   0.267             edf    0.367   0.450   0.433  fidelity_first  True
-       0.15    0.233   0.233   0.283             edf    0.383   0.483   0.467  fidelity_first  True
-       0.20    0.333   0.333   0.383             edf    0.433   0.633   0.583  fidelity_first  True
-       0.25    0.467   0.467   0.517             edf    0.533   0.767   0.683  fidelity_first  True
-       0.30    0.617   0.617   0.667             edf    0.683   0.817   0.783  fidelity_first  True
-       0.35    0.750   0.750   0.767             edf    0.700   0.850   0.817  fidelity_first  True
-       0.40    0.783   0.783   0.767            fifo    0.700   0.867   0.817  fidelity_first  True
-       0.50    0.783   0.783   0.767            fifo    0.767   0.883   0.867  fidelity_first  True
-       0.75    0.783   0.783   0.783            fifo    0.900   1.000   0.950  fidelity_first  True
-       1.00    0.783   0.783   0.800             edf    0.933   1.000   0.950  fidelity_first  True
-       2.00    0.783   0.783   0.867             edf    0.933   1.000   1.000  fidelity_first  True
-       5.00    0.783   0.783   0.867             edf    0.933   1.000   1.000  fidelity_first  True
-      50.00    0.783   0.783   0.867             edf    0.933   1.000   1.000  fidelity_first  True
+coherence sweep at capacity 160 pairs/s: 32 independent arrival draws, 100 requests/tenant.
+winner = every policy tied for the top score; support = draws agreeing.
+
+coherence_s       dh winner   sup       fh winner   sup  inversion  dh rate fh rate
+-----------------------------------------------------------------------------------
+       0.05             edf  32/32             ff  32/32     32/32    0.407   0.258
+       0.06             edf  32/32             ff  32/32     32/32    0.479   0.304
+       0.07             edf  32/32             ff  32/32     32/32    0.550   0.350
+       0.08             edf  32/32             ff  32/32     32/32    0.616   0.397
+       0.09             edf  32/32             ff  32/32     32/32    0.672   0.447
+       0.10             edf  32/32             ff  32/32     32/32    0.714   0.492
+       0.11             edf  32/32             ff  32/32     32/32    0.747   0.542
+       0.12             edf  32/32             ff  32/32     32/32    0.772   0.564
+       0.13             edf  32/32             ff  32/32     32/32    0.788   0.581
+       0.14             edf  32/32             ff  32/32     32/32    0.799   0.598
+       0.15             edf  32/32             ff  32/32     32/32    0.804   0.612
+       0.20             edf  32/32             ff  32/32     32/32    0.808   0.660
+       0.25             edf  32/32             ff  32/32     32/32    0.809   0.683
+       0.30             edf  31/32             ff  30/32     31/32    0.810   0.702
+       0.35         ff/fifo  31/32             ff  21/32      1/32    0.870   0.726
+       0.40         ff/fifo  32/32           fifo  16/32      2/32    0.957   0.755
+       0.50         ff/fifo  32/32           fifo  23/32      1/32    0.965   0.811
+       0.75         ff/fifo  32/32           fifo  23/32      1/32    0.965   0.914
+       1.00         ff/fifo  32/32           fifo  19/32      0/32    0.965   0.963
+       2.00         ff/fifo  31/32             ff  17/32      1/32    0.966   0.995
+       5.00             edf  23/32         edf/ff  32/32      0/32    0.983   1.000
+      50.00             edf  32/32         edf/ff  32/32      0/32    1.000   1.000

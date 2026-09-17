@@ -13,9 +13,15 @@ from qnetbench.characterize.curves import (
     fidelity_curve,
     staleness_curve,
 )
+from qnetbench.characterize.provenance import (
+    RunConsistencyError,
+    RunManifest,
+    verify_run,
+)
 from qnetbench.characterize.report import (
     AppSignature,
     characterize_app,
+    render_latex,
     render_table,
 )
 from qnetbench.characterize.signature import TraceSignature, characterize_trace
@@ -24,11 +30,15 @@ __all__ = [
     "AppSignature",
     "CharacterizationCurves",
     "Curve",
+    "RunConsistencyError",
+    "RunManifest",
     "TraceSignature",
     "characterize_app",
     "characterize_curves",
     "characterize_trace",
     "fidelity_curve",
+    "render_latex",
     "render_table",
     "staleness_curve",
+    "verify_run",
 ]

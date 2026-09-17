@@ -61,6 +61,40 @@ def correlation_test(qubit: Qubit, cls: ClassicalSocket, basis: Basis) -> bool:
 
 
 def test_basis(index: int) -> Basis:
-    """Alternate Z/X across rounds so both error types are sampled, without
-    spending a classical message to agree on a basis."""
-    return Basis.Z if index % 2 == 0 else Basis.X
+    """Cycle Z/X/Y across rounds, without spending a classical message to agree.
+
+    Three bases rather than two because two do not identify the state. Agreement
+    rates in Z and X alone give p(Phi+) + p(Phi-) and p(Phi+) + p(Psi+), which
+    leaves the weight on Phi+ — the quantity that says whether the pair is
+    entangled at all — undetermined. Adding Y closes the system; see
+    `singlet_fraction`.
+    """
+    return (Basis.Z, Basis.X, Basis.Y)[index % 3]
+
+
+def singlet_fraction(agree: dict[Basis, tuple[int, int]]) -> float:
+    """Fidelity to Phi+ estimated from same-basis agreement rates.
+
+    For a Bell-diagonal state with weights (p1, p2, p3, p4) on
+    (Phi+, Phi-, Psi+, Psi-), measuring both halves in the same basis and
+    comparing gives
+
+        a_Z = p1 + p2,   a_X = p1 + p3,   a_Y = p2 + p3,
+
+    so p1 = (a_Z + a_X - a_Y) / 2. This is the quantity that matters for a
+    distillation protocol: a two-qubit state is entangled exactly when its
+    singlet fraction exceeds 1/2, so an output at 0.5 is a classically
+    correlated pair and not a distilled one, however well it agrees in any
+    single basis.
+
+    `agree` maps each basis to (agreements, trials). Returns 0.0 if any basis
+    went unsampled; clamps to [0, 1], since the estimator is unbiased but noisy.
+    """
+    rates = {}
+    for basis in (Basis.Z, Basis.X, Basis.Y):
+        ok, n = agree.get(basis, (0, 0))
+        if n == 0:
+            return 0.0
+        rates[basis] = ok / n
+    p1 = (rates[Basis.Z] + rates[Basis.X] - rates[Basis.Y]) / 2
+    return min(1.0, max(0.0, p1))

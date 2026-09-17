@@ -89,3 +89,79 @@ def test_distilled_gate_falls_back_when_distillation_fails() -> None:
         fallback += int(p["fallback_pairs"])
     assert distilled > 0
     assert fallback > 0
+
+
+def test_singlet_fraction_is_zero_knowledge_of_basis_agreement_alone() -> None:
+    """Two bases cannot tell an entangled pair from a classically correlated one.
+
+    A Werner state at F=0.5 is separable, yet agrees with itself in Z and in X
+    two times in three. The singlet fraction uses Y as well, which is what makes
+    it able to say so.
+    """
+    from qnetbench.api import Basis
+    from qnetbench.apps.purify import singlet_fraction
+
+    # Werner at F: a_Z = a_X = F + (1-F)/3, a_Y = 2(1-F)/3.
+    for f in (0.5, 0.75, 1.0):
+        zx, y = f + (1 - f) / 3, 2 * (1 - f) / 3
+        agree = {
+            Basis.Z: (round(zx * 1000), 1000),
+            Basis.X: (round(zx * 1000), 1000),
+            Basis.Y: (round(y * 1000), 1000),
+        }
+        assert abs(singlet_fraction(agree) - f) < 2e-3
+
+
+def test_distillation_claims_nothing_from_separable_pairs() -> None:
+    """The regression this metric exists to prevent.
+
+    At F=0.5 the input pairs are separable, so no protocol can distil
+    entanglement from them. Scoring by single-basis agreement reported about 0.75
+    here and called it a success; the singlet fraction sits at the 1/2 boundary
+    and shows no gain over the raw pairs.
+
+    The assertion is on the mean over seeds, not on any single run: the estimator
+    is unbiased, so at exactly the boundary it straddles 1/2 and a per-run verdict
+    is a coin flip. That is the honest behaviour — one run at F=0.5 genuinely
+    cannot tell you whether anything was distilled.
+    """
+    from qnetbench.apps import get_app
+    from qnetbench.characterize.curves import _topology_for
+    from qnetbench.harness.runner import run_once
+    from qnetbench.metrics import compute_report
+    from qnetbench.topology import LinkModel
+
+    roles = get_app("distillation").roles()
+    link = LinkModel(attempt_latency=1e-3, link_fidelity=0.5, fidelity_std=0.0)
+    utilities, gains = [], []
+    for seed in range(12):
+        events = run_once("distillation", seed=seed, topology=_topology_for(roles, link))
+        utilities.append(compute_report(events).app_utility)
+        payload = next(
+            e.payload for e in events if getattr(e, "kind", "") == "app_outcome"
+        )
+        gains.append(payload["distilled_quality"] - payload["raw_quality"])
+
+    mean_utility = sum(utilities) / len(utilities)
+    assert mean_utility < 0.60, "must not credit distillation of separable pairs"
+    assert mean_utility < 0.70, "single-basis agreement would have reported ~0.75"
+    assert sum(gains) / len(gains) < 0.05, "no quality is manufactured at the boundary"
+
+
+def test_distillation_manufactures_quality_above_the_threshold() -> None:
+    """The other half of the claim: above threshold the output beats the input."""
+    from qnetbench.apps import get_app
+    from qnetbench.characterize.curves import _topology_for
+    from qnetbench.harness.runner import run_once
+    from qnetbench.metrics import compute_report
+    from qnetbench.topology import LinkModel
+
+    roles = get_app("distillation").roles()
+    link = LinkModel(attempt_latency=1e-3, link_fidelity=0.9, fidelity_std=0.0)
+    utilities = [
+        compute_report(
+            run_once("distillation", seed=s, topology=_topology_for(roles, link))
+        ).app_utility
+        for s in range(12)
+    ]
+    assert sum(utilities) / len(utilities) > 0.9  # better than the 0.9 it was given

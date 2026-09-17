@@ -6,6 +6,7 @@ from qnetbench.characterize import (
     characterize_app,
     characterize_trace,
     fidelity_curve,
+    render_latex,
     render_table,
     staleness_curve,
 )
@@ -49,3 +50,48 @@ def test_characterize_app_produces_signature_and_table() -> None:
     assert len(curves.fidelity.x) == len(curves.fidelity.y) > 0
     table = render_table([sig])
     assert "qkd" in table
+
+
+def test_seed_crossings_are_reported_when_the_mean_curve_does_not_cross() -> None:
+    """A plateauing staleness curve used to yield a spread with no location: the
+    aggregate half-life was None while `staleness_halflife_std` was not, so the
+    table showed a dash and silently dropped what the seeds did resolve.
+
+    Which applications plateau depends on the seed count, since the level is
+    taken from the mean curve; `distilled_gate` does so at both 6 and 32 seeds.
+    """
+    sig, _ = characterize_app("distilled_gate", seeds=range(6))
+    assert sig.staleness_halflife is None  # the mean curve plateaus above the level
+    assert sig.staleness_halflife_seed_median is not None
+    assert 0 < sig.staleness_halflife_seed_count <= sig.n_seeds == 6
+    table = render_table([sig])
+    assert "~" in table and f"/{sig.n_seeds}" in table
+
+
+def test_signature_never_reports_a_spread_without_a_location() -> None:
+    """The invariant the old code violated, over the apps that exercise both axes."""
+    for app in ("qkd", "distillation", "teleportation"):
+        sig, _ = characterize_app(app, seeds=range(4))
+        for value, median, std in (
+            (
+                sig.fidelity_threshold,
+                sig.fidelity_threshold_seed_median,
+                sig.fidelity_threshold_std,
+            ),
+            (
+                sig.staleness_halflife,
+                sig.staleness_halflife_seed_median,
+                sig.staleness_halflife_std,
+            ),
+        ):
+            if std is not None:
+                assert value is not None or median is not None, f"{app}: orphaned spread"
+
+
+def test_render_latex_emits_a_row_per_app() -> None:
+    sigs = [characterize_app(a, seeds=range(2))[0] for a in ("qkd", "six_state")]
+    tex = render_latex(sigs)
+    assert tex.count(r"\\") >= 3  # header + two rows
+    assert r"\begin{tabular}" in tex and r"\bottomrule" in tex
+    assert r"\code{six\_state}" in tex  # app names escaped for LaTeX
+    assert "—" not in tex  # empty cells are ---, not a Unicode dash

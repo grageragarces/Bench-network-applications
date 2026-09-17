@@ -55,9 +55,20 @@ class CharacterizationCurves:
     staleness_halflife: float | None = field(default=None)  # age at which utility halves
     # Std across seeds of the per-seed crossing point (each seed's own realization of
     # the curve, crossed against the aggregate curve's half-maximum level). None when
-    # the threshold itself is undefined, or fewer than two seeds cross it.
+    # fewer than two seeds cross it.
     fidelity_threshold_std: float | None = field(default=None)
     staleness_halflife_std: float | None = field(default=None)
+    # Median of those same per-seed crossings, and how many of `n_seeds` produced
+    # one. These are what make a missing aggregate crossing reportable: where the
+    # mean curve plateaus just above the level, `staleness_halflife` is None while a
+    # minority of seeds still cross, and the median plus the count say so instead of
+    # leaving a std attached to nothing. Where the aggregate does cross, the median
+    # simply corroborates it.
+    fidelity_threshold_seed_median: float | None = field(default=None)
+    staleness_halflife_seed_median: float | None = field(default=None)
+    fidelity_threshold_seed_count: int = field(default=0)
+    staleness_halflife_seed_count: int = field(default=0)
+    n_seeds: int = field(default=0)
     # Utility gained across the swept fidelity range, u(F_max) - u(F_min). Reported
     # alongside the threshold because a threshold alone cannot distinguish an
     # application that is genuinely fidelity-insensitive from one whose utility
@@ -238,14 +249,33 @@ def _refine_crossing(
     return None if br is None else br[1] - br[0]
 
 
-def _crossing_spread(
+@dataclass
+class CrossingStats:
+    """Where the individual seeds cross, as distinct from where the mean curve does.
+
+    The two can disagree, and the disagreement is informative. A curve that
+    plateaus just above the level never crosses *in the mean* while a minority of
+    seeds dip below it; reporting only the mean crossing then yields a spread with
+    no location to be a spread of. `median` carries the location the crossing seeds
+    agree on and `n_crossing` says how many of them resolved one at all, so a
+    missing aggregate crossing can be reported as what it is — a curve that mostly
+    plateaus — rather than as a bare dash.
+    """
+
+    median: float | None = None
+    std: float | None = None
+    n_crossing: int = 0
+    n_seeds: int = 0
+
+
+def _crossing_stats(
     x: list[float], seed_utils: list[list[float]], level: float, rising: bool
-) -> float | None:
-    """Std across seeds of the crossing point: each seed's own realization of the
-    curve (one utility value per x, at that seed) is crossed against the same
-    `level` used for the aggregate curve, giving one crossing point per seed."""
+) -> CrossingStats:
+    """Per-seed crossing statistics: each seed's own realization of the curve (one
+    utility value per x, at that seed) is crossed against the same `level` used for
+    the aggregate curve, giving one crossing point per seed."""
     if not seed_utils or not seed_utils[0]:
-        return None
+        return CrossingStats()
     n_seeds = len(seed_utils[0])
     crossings = []
     for s in range(n_seeds):
@@ -253,7 +283,12 @@ def _crossing_spread(
         c = _first_crossing(x, row, level, rising)
         if c is not None:
             crossings.append(c)
-    return _stdev(crossings) if len(crossings) > 1 else None
+    return CrossingStats(
+        median=statistics.median(crossings) if crossings else None,
+        std=_stdev(crossings) if len(crossings) > 1 else None,
+        n_crossing=len(crossings),
+        n_seeds=n_seeds,
+    )
 
 
 def characterize_curves(
@@ -285,17 +320,20 @@ def characterize_curves(
     threshold = None
     threshold_std = None
     threshold_bracket = None
+    fid_stats = CrossingStats()
     if resolved:
         threshold_bracket = _refine_crossing(
             fid, _fidelity_evaluator(app, seeds), level, rising=True, abs_tol=FIDELITY_TOL
         )
         threshold = _first_crossing(fid.x, fid.y, level, rising=True)
-        threshold_std = _crossing_spread(fid.x, fid.seed_utils, level, rising=True)
+        fid_stats = _crossing_stats(fid.x, fid.seed_utils, level, rising=True)
+        threshold_std = fid_stats.std
 
     half = None
     half_std = None
     half_range = None
     half_bracket = None
+    stale_stats = CrossingStats()
     if stale.y and stale.y[0] > 0:
         stale_eval = _staleness_evaluator(app, coherence_time, 1.0, seeds)
         smin = min(stale.y)
@@ -304,7 +342,8 @@ def characterize_curves(
             abs_tol=STALENESS_ABS_TOL, rel_tol=STALENESS_REL_TOL,
         )
         half = _first_crossing(stale.x, stale.y, stale.y[0] / 2, rising=False)
-        half_std = _crossing_spread(stale.x, stale.seed_utils, stale.y[0] / 2, rising=False)
+        stale_stats = _crossing_stats(stale.x, stale.seed_utils, stale.y[0] / 2, rising=False)
+        half_std = stale_stats.std
         if stale.y[0] > smin:
             # Refined to the same tolerance, on the same (now denser) curve.
             _refine_crossing(
@@ -324,4 +363,9 @@ def characterize_curves(
         staleness_halflife_std=half_std,
         fidelity_threshold_bracket=threshold_bracket,
         staleness_halflife_bracket=half_bracket,
+        fidelity_threshold_seed_median=fid_stats.median,
+        staleness_halflife_seed_median=stale_stats.median,
+        fidelity_threshold_seed_count=fid_stats.n_crossing,
+        staleness_halflife_seed_count=stale_stats.n_crossing,
+        n_seeds=len(seeds),
     )

@@ -1,4 +1,5 @@
 {
+  "run_id": "e6c319467bb747948a07443f45636ed5",
   "signature": {
     "app": "heralded_teleport",
     "trace": {
@@ -18,7 +19,12 @@
     "fidelity_threshold_std": 0.08146769348444573,
     "staleness_halflife_std": 0.0013249839882436016,
     "fidelity_threshold_bracket": 0.006250000000000089,
-    "staleness_halflife_bracket": 0.00018750000000000017
+    "staleness_halflife_bracket": 0.00018750000000000017,
+    "fidelity_threshold_seed_median": 0.731827445652174,
+    "staleness_halflife_seed_median": 0.0027500000000000003,
+    "fidelity_threshold_seed_count": 32,
+    "staleness_halflife_seed_count": 22,
+    "n_seeds": 32
   },
   "fidelity_curve": [
     {

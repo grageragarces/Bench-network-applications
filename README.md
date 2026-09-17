@@ -4,14 +4,18 @@
 [![PyPI](https://img.shields.io/pypi/v/qnetbench.svg)](https://pypi.org/project/qnetbench/)
 [![Python](https://img.shields.io/pypi/pyversions/qnetbench.svg)](https://pypi.org/project/qnetbench/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-qnetbench-blue.svg)](https://grageragarces.github.io/Bench-network-applications/)
 
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
 **27 core protocols + a 66-entry catalog** (unbounded via a circuit generator), on
-**3 backends** (reference, SeQUeNCe, NetSquid). New here? See **[docs/usage.md](docs/usage.md)** —
-how to run benchmarks, what data you get, how to use different topologies, and what
-you can define vs. what ships predefined.
+**3 backends** (reference, SeQUeNCe, NetSquid).
+
+📖 **New here? Read the docs: [grageragarces.github.io/Bench-network-applications](https://grageragarces.github.io/Bench-network-applications/)**
+— install, a page per utility, a tutorial on loading any distributed circuit, and
+the full API reference. Build them locally with `mkdocs serve` (see
+[Documentation](#documentation)); the sources are in [docs/](docs/).
 
 ## Install
 
@@ -216,6 +220,47 @@ scripts/       plot_curves.py (characterization figures)
 traces/        published reference traces (one per app) + checksummed manifest
 ```
 
+## Documentation
+
+The documentation site — installation, a page per utility, the API reference
+generated from the source docstrings, and a tutorial on loading any distributed
+circuit — is built with [MkDocs](https://www.mkdocs.org/) and
+[mkdocstrings](https://mkdocstrings.github.io/), so the API pages cannot drift from
+the code.
+
+**Read it online:** <https://grageragarces.github.io/Bench-network-applications/>
+
+**Preview it locally** (live-reloads as you edit `docs/`):
+
+```bash
+pip install -e ".[docs]"
+mkdocs serve                 # then open the URL it prints
+mkdocs serve -o              # ... or let it open a browser for you
+mkdocs serve -a 0.0.0.0:8080 # reachable from another machine
+```
+
+The server mounts at the `site_url` path, so the local address is
+<http://127.0.0.1:8000/Bench-network-applications/> — not `/`. `mkdocs serve`
+prints it on startup; follow that link rather than typing the bare host.
+
+**Build or publish:**
+
+```bash
+mkdocs build                 # static site into site/ (gitignored)
+mkdocs gh-deploy             # build + push to the gh-pages branch -> GitHub Pages
+```
+
+`mkdocs build` runs in strict mode, so a broken cross-reference or a docstring that
+fails to resolve fails the build rather than shipping a dead link.
+
+| | |
+|---|---|
+| [docs/usage.md](docs/usage.md) | how to run benchmarks and what data you get |
+| [docs/guide/](docs/guide/) | one page per utility: CLI, backends, topologies, policies, metrics, traces, characterization, contention, circuits |
+| [docs/tutorials/distributed-circuits.md](docs/tutorials/distributed-circuits.md) | load any circuit — built-in, hand-written, or imported from Qiskit / MQT Bench |
+| [docs/adopting.md](docs/adopting.md) | add an application, a backend, or consume traces |
+| [docs/specs/](docs/specs/) | the versioned trace + metric contract |
+
 ## Contributing to the suite
 
 Instructions on how to extend the suite are documented in [docs/adopting.md](docs/adopting.md):
@@ -246,3 +291,16 @@ Apache-2.0.
 
 Note that both Fable 5 and Opus 4.8 were used to help in the development of this library. 
 The commits they have contributed to are saved accordingly in the commit history.
+
+**The documentation site was written by Claude Opus 5.** That covers everything
+under [docs/](docs/) except `usage.md`, `adopting.md`, `design.md` and `specs/`
+(earlier work): the landing page, install and quickstart, the per-utility guide
+pages, the distributed-circuit tutorial, and the [mkdocs.yml](mkdocs.yml)
+configuration. The API reference pages are generated from the package's own
+docstrings rather than written by hand.
+
+Code examples in the documentation were executed before being documented — the
+Qiskit and MQT Bench import paths in the circuit tutorial were verified against
+Qiskit 2.5.2 and MQT Bench 2.3.0 — but the prose is machine-written and has not
+been line-by-line reviewed by a human. Treat it accordingly, and trust the
+docstrings and the tests over the narrative where they disagree.

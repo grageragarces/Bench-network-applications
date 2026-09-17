@@ -1,4 +1,5 @@
 {
+  "run_id": "e6c319467bb747948a07443f45636ed5",
   "signature": {
     "app": "dqc_random4",
     "trace": {
@@ -18,7 +19,12 @@
     "fidelity_threshold_std": 0.1254292334579349,
     "staleness_halflife_std": 0.0004070639045365521,
     "fidelity_threshold_bracket": 0.006249999999999978,
-    "staleness_halflife_bracket": 1.8749999999999995e-05
+    "staleness_halflife_bracket": 1.8749999999999995e-05,
+    "fidelity_threshold_seed_median": 0.8537760416666667,
+    "staleness_halflife_seed_median": 0.0003125,
+    "fidelity_threshold_seed_count": 32,
+    "staleness_halflife_seed_count": 30,
+    "n_seeds": 32
   },
   "fidelity_curve": [
     {

@@ -1,0 +1,34 @@
+Replay outcome-preservation: native reference run vs. the same supply
+replayed through the same engine (seed 0).
+
+application                   native  replayed  match
+-----------------------------------------------------
+anonymous_transmission      0.921875  0.921875  yes
+b92                         0.152344  0.152344  yes
+bb84                        0.253906  0.253906  yes
+bqc                         0.937500  0.937500  yes
+byzantine_agreement         0.953125  0.953125  yes
+chsh                        1.000000  1.000000  yes
+clock_sync                  1.000000  1.000000  yes
+conference_key              0.312500  0.312500  yes
+distillation                0.968750  0.968750  yes
+distilled_gate              1.000000  1.000000  yes
+distributed_gate            1.000000  1.000000  yes
+dqc_ghz4                    0.750000  0.750000  yes
+dqc_qft4                    0.250000  0.250000  yes
+dqc_random4                 0.500000  0.500000  yes
+entanglement_swap           0.953125  0.953125  yes
+heralded_teleport           0.958333  0.958333  yes
+leader_election             0.083333  0.083333  yes
+multihop_qkd                0.242504  0.242504  yes
+oblivious_transfer          0.500000  0.500000  yes
+position_verification       0.979167  0.979167  yes
+qkd                         0.222656  0.222656  yes
+secret_sharing              0.921875  0.921875  yes
+shared_randomness           0.937500  0.937500  yes
+six_state                   0.146667  0.146667  yes
+teleportation               0.984375  0.984375  yes
+threshold_secret_sharing    0.906250  0.906250  yes
+verified_bqc                0.937500  0.937500  yes
+
+27/27 applications reproduce their native outcome exactly.

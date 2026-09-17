@@ -1,4 +1,5 @@
 {
+  "run_id": "e6c319467bb747948a07443f45636ed5",
   "signature": {
     "app": "leader_election",
     "trace": {
@@ -18,7 +19,12 @@
     "fidelity_threshold_std": 0.006509616510293719,
     "staleness_halflife_std": 1.1538259526932136e-05,
     "fidelity_threshold_bracket": 0.006249999999999978,
-    "staleness_halflife_bracket": 6.25e-06
+    "staleness_halflife_bracket": 6.25e-06,
+    "fidelity_threshold_seed_median": 0.9915064102564103,
+    "staleness_halflife_seed_median": 1.011904761904762e-05,
+    "fidelity_threshold_seed_count": 32,
+    "staleness_halflife_seed_count": 32,
+    "n_seeds": 32
   },
   "fidelity_curve": [
     {

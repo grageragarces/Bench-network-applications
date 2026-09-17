@@ -1,0 +1,35 @@
+Demand-signature axes across backends (single trace, seed 0).
+backends: netsquid, reference, sequence
+
+application                    request_cv    fano_factor  msgs_per_pair bytes_per_pair      n_parties
+-----------------------------------------------------------------------------------------------------
+anonymous_transmission        1.116 +26.5%    0.475 +86.2%       2.016  =       3.016  =       3.000  =
+b92                              0.000  =       0.012  =       0.012  =       1.305  =       2.000  =
+bb84                             0.000  =       0.012  =       0.016  =       2.516  =       2.000  =
+bqc                           0.491 +88.2%       0.600  =       2.000  =       2.000  =       2.000  =
+byzantine_agreement           1.116 +26.5%    0.475 +86.2%       2.016  =       3.031  =       3.000  =
+chsh                          0.951 +96.1%    0.872 +99.2%       0.008  =       4.000  =       2.000  =
+clock_sync                    0.951 +96.1%    0.872 +99.2%       0.008  =       2.000  =       2.000  =
+conference_key                1.522 +30.4%    0.431 +87.3%       2.016  =       2.031  =       4.000  =
+distillation                  0.473 +39.2%    0.425 +22.2%    1.953 +0.8%    1.953 +0.8%       2.000  =
+distilled_gate                0.518 +62.2%    0.504 +30.5%       2.000  =       3.360  =       2.000  =
+distributed_gate              0.491 +88.2%       0.600  =       2.250  =       5.000  =       2.000  =
+dqc_ghz4                      0.299 +87.5%       0.700  =       2.333  =       2.667  =       2.000  =
+dqc_qft4                      0.436 +90.7%    0.200 +38.5%       2.125  =       2.250  =       2.000  =
+dqc_random4                   0.410 +91.4%    0.300 +75.0%       2.100  =       2.200  =       2.000  =
+entanglement_swap             0.499 +85.2%    0.303 +86.1%       1.516  =       2.031  =       3.000  =
+heralded_teleport             1.512 +8.8%    2.199 +36.9%       1.671  =       2.671  =       2.000  =
+leader_election               1.836 +33.1%    0.600 +86.2%       2.014  =       2.028  =       5.000  =
+multihop_qkd                  1.086 +13.3%    0.520 +89.3%       0.535  =       3.508  =       3.000  =
+oblivious_transfer               0.343  =       0.041  =       0.096  =       2.129  =       2.000  =
+position_verification         0.365 +93.0%    0.225 +55.6%       2.021  =       2.042  =       2.000  =
+qkd                           0.951 +96.1%    0.872 +99.2%       0.016  =       2.453  =       2.000  =
+secret_sharing                1.116 +26.5%    0.475 +86.2%       2.016  =       2.031  =       3.000  =
+shared_randomness             0.987 +95.1%    0.975 +97.3%       0.016  =       1.000  =       2.000  =
+six_state                        0.000  =       0.000  =       0.013  =       2.300  =       2.000  =
+teleportation                 0.516 +93.4%    0.300 +83.3%       1.016  =       3.031  =       2.000  =
+threshold_secret_sharing         0.577  =       0.028  =       2.016  =       2.031  =       5.000  =
+verified_bqc                  0.436 +90.7%    0.200 +38.5%       2.000  =       2.000  =       2.000  =
+
+5 of 27 applications: every axis identical on every backend.
+worst relative spread per axis: request_cv 96.1%, fano_factor 99.2%, msgs_per_pair 0.8%, bytes_per_pair 0.8%, n_parties 0.0%

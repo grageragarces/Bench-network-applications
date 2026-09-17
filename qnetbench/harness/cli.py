@@ -42,6 +42,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--seeds", type=int, default=SEEDS, help="seeds averaged per sweep point"
     )
     ch.add_argument("--out", help="directory to write per-app signature+curve JSON")
+    ch.add_argument(
+        "--latex",
+        action="store_true",
+        help="print the table as a booktabs tabular (also always written to --out/table.tex)",
+    )
 
     sp = sub.add_parser("spec", help="write the versioned trace + metric JSON Schemas")
     sp.add_argument("--out", default="docs/specs", help="output directory (default: docs/specs)")
@@ -57,26 +62,38 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _characterize(app: str | None, seeds: int, out: str | None) -> int:
-    from qnetbench.characterize import characterize_app, render_table
+def _characterize(app: str | None, seeds: int, out: str | None, latex: bool = False) -> int:
+    from qnetbench.characterize import characterize_app, render_latex, render_table
+    from qnetbench.characterize.provenance import finish_run, start_run, write_atomic
 
     apps = [app] if app else available_apps()
+    out_dir = Path(out) if out else None
+    # Stamp the directory before writing anything, so a run that dies part way
+    # leaves a manifest saying so rather than a directory that looks finished.
+    manifest = start_run(out_dir, apps, seeds) if out_dir is not None else None
     signatures = []
     for name in apps:
         signature, curves = characterize_app(name, seeds=range(seeds))
         signatures.append(signature)
-        if out:
-            out_dir = Path(out)
-            out_dir.mkdir(parents=True, exist_ok=True)
+        if out_dir is not None and manifest is not None:
             payload = {
+                "run_id": manifest.run_id,
                 "signature": signature.model_dump(),
                 "fidelity_curve": curves.fidelity.as_rows(),
                 "staleness_curve": curves.staleness.as_rows(),
             }
-            (out_dir / f"{name}.json").write_text(json.dumps(payload, indent=2))
-    print(render_table(signatures))
-    if out:
-        print(f"\nper-app signature + curve data written to {out}/")
+            write_atomic(out_dir / f"{name}.json", json.dumps(payload, indent=2) + "\n")
+    print(render_latex(signatures) if latex else render_table(signatures))
+    if out_dir is not None and manifest is not None:
+        # Written by the tool, not by a shell redirect: `> table.txt` truncates at
+        # launch, so an interrupted run used to leave an empty file where a reader
+        # expected a table. table.tex is what the manuscript \input{}s, so the
+        # paper's table cannot be transcribed by hand and drift.
+        write_atomic(out_dir / "table.txt", render_table(signatures) + "\n")
+        write_atomic(out_dir / "table.tex", render_latex(signatures))
+        finish_run(out_dir, manifest)
+        print(f"\nper-app signature + curve data written to {out_dir}/")
+        print(f"tables written to {out_dir}/table.txt and {out_dir}/table.tex")
     return 0
 
 
@@ -91,7 +108,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "characterize":
-        return _characterize(args.app, args.seeds, args.out)
+        return _characterize(args.app, args.seeds, args.out, args.latex)
 
     if args.command == "spec":
         from qnetbench.spec import SPEC_VERSION, write_specs

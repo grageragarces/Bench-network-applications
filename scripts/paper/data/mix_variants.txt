@@ -1,10 +1,15 @@
-variant                                                dh_win          fh_win  inversion
-----------------------------------------------------------------------------------------
-default (Table IV)                                        edf  fidelity_first  True
-dh: 3 distributed_gate + 2 qkd                            edf  fidelity_first  True
-dh: 5 distributed_gate + 0 qkd (homogeneous)             fifo  fidelity_first  True
-dh: 2 distributed_gate + 3 dqc_ghz4                      fifo  fidelity_first  True
-dh: 4 distributed_gate + 1 multihop_qkd                  fifo  fidelity_first  True
-fh: 3 bqc + 2 chsh (no qkd)                               edf            fifo  True
-fh: 1 bqc + 3 chsh + 1 qkd                                edf  fidelity_first  True
-fh: 2 bqc + 2 verified_bqc + 1 qkd                        edf            fifo  True
+mix-composition variants at capacity 160 pairs/s: 8 independent arrival draws, 100 requests/tenant.
+winner = every policy tied for the top score; support = draws agreeing.
+
+variant                                          dh winner   sup    fh winner   sup  inversion
+----------------------------------------------------------------------------------------------
+default (Table IV)                                     edf   8/8            ff   8/8   8/8
+dh: 3 distributed_gate + 2 qkd                         edf   7/8            ff   8/8   7/8
+dh: 5 distributed_gate + 0 qkd (homogeneous)   edf/ff/fifo   8/8            ff   8/8   0/8
+dh: 2 distributed_gate + 3 dqc_ghz4                ff/fifo   8/8            ff   8/8   0/8
+dh: 4 distributed_gate + 1 multihop_qkd             edf/ff   8/8            ff   8/8   0/8
+fh: 3 bqc + 2 chsh (no qkd)                            edf   8/8        edf/ff   8/8   0/8
+fh: 1 bqc + 3 chsh + 1 qkd                             edf   8/8          fifo   8/8   8/8
+fh: 2 bqc + 2 verified_bqc + 1 qkd                     edf   8/8        edf/ff   8/8   0/8
+
+2 of 8 variants show the inversion on every draw.

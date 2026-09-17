@@ -1,4 +1,5 @@
 {
+  "run_id": "e6c319467bb747948a07443f45636ed5",
   "signature": {
     "app": "distilled_gate",
     "trace": {
@@ -18,7 +19,12 @@
     "fidelity_threshold_std": 0.07326758632197969,
     "staleness_halflife_std": 0.0010684112974960927,
     "fidelity_threshold_bracket": 0.006249999999999978,
-    "staleness_halflife_bracket": null
+    "staleness_halflife_bracket": null,
+    "fidelity_threshold_seed_median": 0.6322265625,
+    "staleness_halflife_seed_median": 0.003266666666666667,
+    "fidelity_threshold_seed_count": 32,
+    "staleness_halflife_seed_count": 12,
+    "n_seeds": 32
   },
   "fidelity_curve": [
     {

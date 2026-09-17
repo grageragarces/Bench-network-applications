@@ -1,0 +1,41 @@
+A. Synchronised vs independent tenants (12 requests/tenant, capacity 120)
+   Synchronised is the original model: same arrival pattern, all from t=0.
+
+            model              mix     fifo fid_1st     edf  winner
+     synchronised   deadline_heavy    0.467   0.467   0.517  edf
+     synchronised   fidelity_heavy    0.533   0.767   0.683  fidelity_first
+      independent   deadline_heavy    0.150   0.150   0.567  edf
+      independent   fidelity_heavy    0.467   0.667   0.550  fidelity_first
+
+B. Replication: 32 independent arrival draws, 100 requests/tenant,
+   capacity 160 pairs/s against 167 req/s aggregate demand.
+   Resolution floor 1/500 = 0.0020 (was 1/60 = 0.0167).
+
+   deadline_heavy
+      fifo            0.507 +- 0.107
+      fidelity_first  0.507 +- 0.107
+      edf             0.809 +- 0.012
+      -> edf over fifo: +0.302 (15.9 sigma)
+   fidelity_heavy
+      fifo            0.589 +- 0.044
+      fidelity_first  0.683 +- 0.060
+      edf             0.550 +- 0.098
+      -> fidelity_first over fifo: +0.093 (7.1 sigma)
+   inversion on 32/32 draws
+
+C. Capacity sweep under independent tenants (6 draws per point).
+   'tie' counts draws whose winning score was shared by >1 policy.
+
+   capacity               dh winner              fh winner    inv      dh     fh
+         60               edf (3/6)             fifo (4/6)  2/6   0.017  0.018
+         80  fidelity_first/fifo (3/6) edf/fidelity_first (5/6)  1/6   0.022  0.288
+        100               edf (3/6)   fidelity_first (6/6)  3/6   0.034  0.403
+        120               edf (6/6)   fidelity_first (6/6)  6/6   0.106  0.549
+        140               edf (6/6)   fidelity_first (6/6)  6/6   0.801  0.615
+        160               edf (6/6)   fidelity_first (6/6)  6/6   0.807  0.683
+        166               edf (5/6)   fidelity_first (6/6)  5/6   0.830  0.797
+        175  fidelity_first/fifo (5/6)   fidelity_first (6/6)  1/6   0.930  0.949
+        185  fidelity_first/fifo (6/6)   fidelity_first (6/6)  0/6   0.982  0.983
+        200  fidelity_first/fifo (6/6)   fidelity_first (5/6)  0/6   1.000  0.997
+        250  edf/fidelity_first/fifo (4/6) edf/fidelity_first (3/6)  0/6   1.000  1.000
+        320  edf/fidelity_first/fifo (6/6) edf/fidelity_first/fifo (4/6)  0/6   1.000  1.000

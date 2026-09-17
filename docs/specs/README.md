@@ -36,12 +36,12 @@ The `demand` object on `ent_requested` is the contract: `min_fidelity`,
 
 ## Published reference traces
 
-[`../../traces/`](../../traces/) holds one trace per application, generated on the
-reference backend at a fixed seed, with a [`manifest.json`](../../traces/manifest.json)
+[`traces/`](https://github.com/grageragarces/Bench-network-applications/tree/main/traces) holds one trace per application, generated on the
+reference backend at a fixed seed, with a [`manifest.json`](https://github.com/grageragarces/Bench-network-applications/blob/main/traces/manifest.json)
 listing each trace's `sha256` and event count. Regenerate with `qnetbench corpus`.
 
 Consume a trace in any language by reading it line-by-line as JSON; the metrics in
-[`../design.md §5`](../design.md) are computed purely from these events.
+[`design.md §5`](../design.md) are computed purely from these events.
 
 ## Stability policy
 

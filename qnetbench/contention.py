@@ -19,6 +19,7 @@ inversion is the proof that single-workload evaluation produces unreliable ranki
 from __future__ import annotations
 
 import math
+import random
 from dataclasses import dataclass, field, replace
 
 from qnetbench.api.types import Demand
@@ -45,6 +46,13 @@ class Tenant:
     # a perfectly regular stream, which is what the earlier fixed-cadence model
     # assumed for every tenant regardless of how the application actually behaves.
     pattern: tuple[float, ...] = ()
+    # Offset of this tenant's first request. Without it every tenant starts at
+    # t=0, so tenants of the same application — which also share an arrival
+    # pattern unless given distinct trace seeds — issue every request at exactly
+    # the same instant. That is a thundering herd, not independent multi-tenancy:
+    # it maximises queueing by construction and leaves a fidelity-ordered policy
+    # nothing to order by, since the contending requests are identical.
+    phase: float = 0.0
 
 
 @dataclass
@@ -80,10 +88,24 @@ def _arrival_pattern(events: list[Event]) -> tuple[float, ...]:
     return tuple(g / mean for g in gaps) if mean > 0 else ()
 
 
-def app_profile(app: str, n_requests: int, interval: float) -> Tenant:
+def app_profile(
+    app: str,
+    n_requests: int,
+    interval: float,
+    *,
+    trace_seed: int = 0,
+    phase: float = 0.0,
+) -> Tenant:
     """Build a tenant from an application's real demand contract and real arrival
-    pattern, both read from an actual run."""
-    events = run_once(app, seed=0)
+    pattern, both read from an actual run.
+
+    `trace_seed` selects which run the arrival pattern is read from, and `phase`
+    offsets the tenant's first request. Two tenants of the same application built
+    with the same seed and phase are indistinguishable — same contract, same
+    arrival instants — so distinct seeds are what make a mix genuinely
+    multi-tenant rather than one stream counted several times.
+    """
+    events = run_once(app, seed=trace_seed)
     pattern = _arrival_pattern(events)
     for ev in events:
         if isinstance(ev, EntanglementRequested):
@@ -94,7 +116,9 @@ def app_profile(app: str, n_requests: int, interval: float) -> Tenant:
                 budget = d.deadline - ev.t
             else:
                 budget = None
-            return Tenant(app, d.min_fidelity, budget, n_requests, interval, pattern)
+            return Tenant(
+                app, d.min_fidelity, budget, n_requests, interval, pattern, phase
+            )
     raise ValueError(f"application {app!r} issued no entanglement requests")
 
 
@@ -109,7 +133,7 @@ def simulate(
     """Discrete-event contention simulation over one shared link."""
     requests: list[_Req] = []
     for tenant in tenants:
-        arrival = 0.0
+        arrival = tenant.phase
         for k in range(tenant.n_requests):
             if k:
                 # Replay the application's own gap sequence, scaled to `interval`.
@@ -177,7 +201,7 @@ def ranking_experiment(
     link_fidelity: float,
     coherence_time: float,
 ) -> dict[str, dict[str, ContentionResult]]:
-    """Run every mix under every policy. Returns results[mix][policy]."""
+    """Run every mix under every policy. Returns `results[mix][policy]`."""
     out: dict[str, dict[str, ContentionResult]] = {}
     for mix_name, tenants in mixes.items():
         out[mix_name] = {
@@ -194,8 +218,20 @@ def ranking_experiment(
 
 
 def best_policy(results: dict[str, ContentionResult]) -> str:
-    """The policy with the highest aggregate utility for one mix."""
+    """The policy with the highest aggregate utility for one mix.
+
+    Resolves ties by dict order, so prefer `winning_policies` wherever a tie
+    would be reported as a result: several of this experiment's operating points
+    have two or three policies on exactly the same score, and an argmax silently
+    turns that into a winner.
+    """
     return max(results, key=lambda p: results[p].aggregate_utility)
+
+
+def winning_policies(results: dict[str, ContentionResult]) -> frozenset[str]:
+    """Every policy tied for the highest aggregate utility."""
+    top = max(r.aggregate_utility for r in results.values())
+    return frozenset(p for p, r in results.items() if r.aggregate_utility == top)
 
 
 def has_inversion(experiment: dict[str, dict[str, ContentionResult]]) -> bool:
@@ -209,17 +245,53 @@ def has_inversion(experiment: dict[str, dict[str, ContentionResult]]) -> bool:
 # Moderate overload: below aggregate demand, and representative of the contended
 # regime rather than special within it (Section VIII reports the inversion across
 # the whole capacity sweep, not at this point alone).
-CAPACITY = 120.0
+# Operating point for the headline comparison. Capacity sits just below the
+# aggregate demand of five tenants at one request per 30 ms (167 req/s), i.e.
+# moderate overload. It was raised from 120 when the experiment moved to 100
+# requests per tenant: over a longer run the queue no longer drains between
+# bursts, so 120 is sustained starvation (about 10% of contracts met) rather
+# than the contended regime the experiment is meant to probe.
+CAPACITY = 160.0
 LINK_FIDELITY = 0.99
 COHERENCE_TIME = 0.25
+# Requests per tenant, and independent arrival draws the headline table averages
+# over. Twelve requests quantised the satisfaction rate in units of 1/60, which
+# is coarser than the margins being compared.
+N_REQUESTS = 100
+DRAWS = 32
 
 
-def default_mixes(n_requests: int = 12, interval: float = 0.03) -> dict[str, list[Tenant]]:
+def default_mixes(
+    n_requests: int = 12, interval: float = 0.03, *, seed: int | None = None
+) -> dict[str, list[Tenant]]:
     """Two workload classes: one dominated by deadline-critical demand (distributed
-    gates), one by fidelity-thresholded demand (BQC + CHSH + QKD)."""
+    gates), one by fidelity-thresholded demand (BQC + CHSH + QKD).
+
+    `seed=None` keeps the synchronised model: every tenant of an application
+    replays the same measured arrival sequence starting at t=0, so four
+    `distributed_gate` tenants are one stream counted four times. An integer seed
+    gives each tenant its own arrival realisation and start phase, which is what
+    "five tenants" ought to mean, and varying it turns a single deterministic
+    realisation into a distribution over arrival patterns.
+    """
+    rng = random.Random(seed) if seed is not None else None
 
     def group(app: str, count: int) -> list[Tenant]:
-        return [app_profile(app, n_requests, interval) for _ in range(count)]
+        out: list[Tenant] = []
+        for _ in range(count):
+            if rng is None:
+                out.append(app_profile(app, n_requests, interval))
+            else:
+                out.append(
+                    app_profile(
+                        app,
+                        n_requests,
+                        interval,
+                        trace_seed=rng.randrange(1 << 30),
+                        phase=rng.uniform(0.0, interval),
+                    )
+                )
+        return out
 
     return {
         "deadline_heavy": group("distributed_gate", 4) + group("qkd", 1),
@@ -228,7 +300,12 @@ def default_mixes(n_requests: int = 12, interval: float = 0.03) -> dict[str, lis
 
 
 def burstiness_mixes(
-    app: str = "heralded_teleport", count: int = 5, n_requests: int = 12, interval: float = 0.03
+    app: str = "heralded_teleport",
+    count: int = 5,
+    n_requests: int = 12,
+    interval: float = 0.03,
+    *,
+    seed: int | None = None,
 ) -> dict[str, list[Tenant]]:
     """Two mixes that differ *only* in burstiness.
 
@@ -238,9 +315,25 @@ def burstiness_mixes(
     the burstiness axis of Section VI, which the fixed-cadence arrival model could
     not express: under it every tenant was smooth regardless of the workload.
     """
-    bursty = app_profile(app, n_requests, interval)
-    smooth = replace(bursty, pattern=())
-    return {"bursty": [bursty] * count, "smooth": [smooth] * count}
+    rng = random.Random(seed) if seed is not None else None
+    bursty: list[Tenant] = []
+    smooth: list[Tenant] = []
+    for _ in range(count):
+        if rng is None:
+            t = app_profile(app, n_requests, interval)
+        else:
+            t = app_profile(
+                app,
+                n_requests,
+                interval,
+                trace_seed=rng.randrange(1 << 30),
+                phase=rng.uniform(0.0, interval),
+            )
+        bursty.append(t)
+        # Same tenant, same phase, arrivals evenly spaced instead of replayed:
+        # the comparison isolates arrival *shape* and nothing else.
+        smooth.append(replace(t, pattern=()))
+    return {"bursty": bursty, "smooth": smooth}
 
 
 def default_experiment() -> dict[str, dict[str, ContentionResult]]:

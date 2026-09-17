@@ -19,6 +19,8 @@ from pathlib import Path
 
 import matplotlib
 
+from qnetbench.characterize import RunConsistencyError, verify_run
+
 matplotlib.use("Agg")  # headless; write a file, don't open a window
 import matplotlib.pyplot as plt  # noqa: E402
 
@@ -29,7 +31,14 @@ def main() -> None:
     parser.add_argument("--out", default="curves.png", help="output image (default: curves.png)")
     args = parser.parse_args()
 
-    files = sorted(Path(args.indir).glob("*.json"))
+    # A warning rather than a refusal: this is the general-purpose viewer, where
+    # looking at a partial run is a legitimate thing to want. scripts/paper/plot.py,
+    # which draws the figure that goes in the paper, refuses instead.
+    try:
+        verify_run(Path(args.indir))
+    except RunConsistencyError as exc:
+        print(f"warning: {exc}")
+    files = sorted(p for p in Path(args.indir).glob("*.json") if p.name != "manifest.json")
     if not files:
         raise SystemExit(
             f"no per-app JSON in {args.indir!r}; run "

@@ -40,6 +40,11 @@ sequence = ["sequence>=1.0"]  # pulls numpy>=2.3.5
 netsquid = ["netsquid>=1.1", "numpy<2"]  # NetSquid ships from https://pypi.netsquid.org
 mqt = ["mqt.bench>=1.0"]  # optional: load MQT Bench / Qiskit circuits as DQC demand
 viz = ["matplotlib>=3.5"]  # optional: scripts/plot_curves.py (characterization figures)
+docs = [  # optional: build the documentation site (mkdocs build / mkdocs serve)
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.25",
+]
 dev = [
     "pytest>=8.0",
     "mypy>=1.8",

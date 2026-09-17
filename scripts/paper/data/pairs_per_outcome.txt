@@ -1,0 +1,39 @@
+Fidelity threshold against the number of pairs one outcome depends on.
+Mirror-circuit families at sizes 4-10, 16 seeds per sweep point.
+
+application        qubits  pairs/outcome     F_1/2  parties
+-----------------------------------------------------------
+dqc_ghz4                4              6     0.841        2
+dqc_ghz5                5              8     0.812        2
+dqc_ghz6                6             10     0.797        2
+dqc_ghz7                7             12     0.808        2
+dqc_ghz8                8             14     0.808        2
+dqc_ghz9                9             16     0.802        2
+dqc_ghz10              10             18     0.808        2
+dqc_qft4                4             16     0.884        2
+dqc_qft5                5             24     0.965        2
+dqc_qft6                6             36     0.952        2
+dqc_qft7                7             48     0.971        2
+dqc_qft8                8             64     0.976        2
+dqc_qft9                9             80     0.965        2
+dqc_qft10              10            100     0.962        2
+dqc_random4             4             20     0.952        2
+dqc_random5             5             16     0.812        2
+dqc_random6             6             20     0.936        2
+dqc_random7             7             12     0.843        2
+dqc_random8             8             32     0.914        2
+dqc_random9             9             26     0.895        2
+dqc_random10           10             36     0.932        2
+dqc_graph4              4              8     0.762        2
+dqc_graph5              5              8     0.754        2
+dqc_graph6              6             12     0.880        2
+dqc_graph7              7             12     0.839        2
+dqc_graph8              8             16     0.811        2
+dqc_graph9              9             16     0.818        2
+dqc_graph10            10             20     0.836        2
+
+28 instances. Pairs per outcome spans 6-100.
+  F_1/2 at fewest pairs (6): 0.841
+  F_1/2 at most pairs   (100): 0.962
+  log(1 - F_1/2) vs log(pairs): slope -0.861, R^2 0.700
+  (negative slope = threshold rises with pairs per outcome)

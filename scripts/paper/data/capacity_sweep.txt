@@ -1,39 +1,27 @@
-capacity  dh_fifo   dh_ff  dh_edf          dh_win  fh_fifo   fh_ff  fh_edf          fh_win  inversion
------------------------------------------------------------------------------------------------------
-      10    0.017   0.017   0.033             edf    0.017   0.017   0.017            fifo  True
-      15    0.017   0.017   0.050             edf    0.033   0.017   0.017            fifo  True
-      20    0.017   0.017   0.033             edf    0.017   0.017   0.017            fifo  True
-      25    0.033   0.033   0.033            fifo    0.017   0.017   0.017            fifo  False
-      30    0.033   0.033   0.100             edf    0.050   0.017   0.017            fifo  True
-      35    0.067   0.067   0.100             edf    0.050   0.017   0.017            fifo  True
-      40    0.067   0.067   0.100             edf    0.050   0.017   0.017            fifo  True
-      45    0.083   0.083   0.117             edf    0.067   0.050   0.050            fifo  True
-      50    0.133   0.133   0.117            fifo    0.067   0.050   0.050            fifo  False
-      55    0.133   0.133   0.117            fifo    0.067   0.083   0.083  fidelity_first  True
-      60    0.167   0.167   0.133            fifo    0.117   0.067   0.083            fifo  False
-      65    0.200   0.200   0.167            fifo    0.133   0.100   0.100            fifo  False
-      70    0.183   0.183   0.167            fifo    0.150   0.167   0.117  fidelity_first  True
-      75    0.200   0.200   0.183            fifo    0.200   0.200   0.150            fifo  False
-      80    0.250   0.250   0.233            fifo    0.250   0.267   0.183  fidelity_first  True
-      85    0.200   0.200   0.217             edf    0.267   0.283   0.200  fidelity_first  True
-      90    0.300   0.300   0.300            fifo    0.317   0.300   0.217            fifo  False
-      95    0.300   0.300   0.367             edf    0.367   0.400   0.300  fidelity_first  True
-     100    0.283   0.283   0.367             edf    0.400   0.367   0.317            fifo  True
-     105    0.300   0.300   0.383             edf    0.417   0.417   0.433             edf  False
-     110    0.333   0.333   0.433             edf    0.517   0.600   0.650             edf  False
-     115    0.350   0.350   0.433             edf    0.467   0.550   0.517  fidelity_first  True
-     120    0.467   0.467   0.517             edf    0.533   0.767   0.683  fidelity_first  True
-     125    0.517   0.517   0.583             edf    0.533   0.750   0.683  fidelity_first  True
-     130    0.550   0.550   0.617             edf    0.600   0.783   0.683  fidelity_first  True
-     135    0.600   0.600   0.650             edf    0.583   0.783   0.717  fidelity_first  True
-     140    0.650   0.650   0.683             edf    0.750   0.867   0.817  fidelity_first  True
-     145    0.667   0.667   0.683             edf    0.783   0.850   0.817  fidelity_first  True
-     150    0.733   0.733   0.750             edf    0.800   0.883   0.850  fidelity_first  True
-     155    0.783   0.783   0.783            fifo    0.817   0.900   0.867  fidelity_first  True
-     160    0.800   0.800   0.817             edf    0.867   0.933   0.900  fidelity_first  True
-     165    0.800   0.800   0.850             edf    0.883   0.933   0.883  fidelity_first  True
-     170    0.850   0.850   0.883             edf    0.917   0.967   0.917  fidelity_first  True
-     200    1.000   1.000   0.950            fifo    0.917   1.000   0.967  fidelity_first  True
-     250    1.000   1.000   0.983            fifo    0.950   1.000   0.967  fidelity_first  True
-     300    1.000   1.000   1.000            fifo    0.967   1.000   1.000  fidelity_first  True
-     400    1.000   1.000   1.000            fifo    0.983   1.000   1.000  fidelity_first  True
+capacity sweep: 32 independent arrival draws, 100 requests/tenant, 5 tenants at one request per 30 ms (167 req/s aggregate demand).
+winner = every policy tied for the top score; support = draws agreeing.
+
+capacity       dh winner   sup       fh winner   sup  inversion  dh rate fh rate
+--------------------------------------------------------------------------------
+      20             edf  24/32    edf/ff/fifo  21/32      5/32    0.005   0.001
+      30             edf  29/32           fifo  19/32     18/32    0.008   0.003
+      40             edf  24/32           fifo  24/32     18/32    0.012   0.005
+      50             edf  24/32           fifo  28/32     22/32    0.018   0.007
+      60             edf  22/32           fifo  18/32     12/32    0.020   0.014
+      70             edf  22/32         edf/ff  29/32      1/32    0.023   0.164
+      80             edf  23/32         edf/ff  26/32      3/32    0.028   0.298
+      90             edf  24/32         edf/ff  16/32      8/32    0.034   0.350
+     100             edf  25/32             ff  31/32     24/32    0.046   0.405
+     110             edf  29/32             ff  32/32     29/32    0.061   0.484
+     120             edf  32/32             ff  32/32     32/32    0.118   0.539
+     130             edf  32/32             ff  32/32     32/32    0.342   0.576
+     140             edf  32/32             ff  32/32     32/32    0.800   0.599
+     150             edf  32/32             ff  32/32     32/32    0.802   0.620
+     160             edf  32/32             ff  32/32     32/32    0.809   0.683
+     170         ff/fifo  16/32             ff  32/32     16/32    0.871   0.823
+     180         ff/fifo  29/32             ff  32/32      3/32    0.956   0.934
+     190         ff/fifo  32/32             ff  31/32      1/32    0.988   0.976
+     200         ff/fifo  32/32             ff  31/32      0/32    0.996   0.993
+     250     edf/ff/fifo  18/32         edf/ff  22/32      0/32    1.000   1.000
+     300     edf/ff/fifo  32/32    edf/ff/fifo  18/32      0/32    1.000   1.000
+     400     edf/ff/fifo  32/32    edf/ff/fifo  32/32      0/32    1.000   1.000

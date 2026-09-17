@@ -50,3 +50,30 @@ def test_every_catalog_entry_runs(app: str) -> None:
     if app.startswith("dqc_"):
         assert report.app_utility == 1.0  # U;U† returns every qubit to |0>
     assert report.n_delivered > 0 or report.qubits_sent > 0
+
+
+def test_register_app_makes_a_runtime_benchmark_name_resolvable() -> None:
+    """A benchmark built at runtime must reach everything that resolves by name —
+    which is what lets a loaded circuit be run and characterized like any other."""
+    from qnetbench.apps import register_app
+    from qnetbench.apps.dqc import DQC
+    from qnetbench.circuits import ghz
+
+    name = register_app(DQC(ghz(3)))
+    assert name == "dqc_ghz3"
+    assert get_app(name).name == name
+    assert name in catalog_apps()
+    assert name not in available_apps()  # registering does not touch the core
+
+    report = compute_report(run_once(name, seed=0, topology=_perfect_topology(name)))
+    assert report.app_utility == 1.0  # a mirror circuit still returns |0…0>
+
+
+def test_register_app_refuses_to_shadow_silently() -> None:
+    from qnetbench.apps import register_app
+    from qnetbench.apps.dqc import DQC
+    from qnetbench.circuits import ghz
+
+    with pytest.raises(KeyError, match="already registered"):
+        register_app(DQC(ghz(4)))  # dqc_ghz4 is a core benchmark
+    assert register_app(DQC(ghz(4)), replace=True) == "dqc_ghz4"

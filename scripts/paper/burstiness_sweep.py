@@ -12,32 +12,44 @@ not express at all.
 
 from __future__ import annotations
 
+import statistics as st
+
 from qnetbench.contention import (
     COHERENCE_TIME,
+    DRAWS,
     LINK_FIDELITY,
-    best_policy,
+    N_REQUESTS,
     burstiness_mixes,
     ranking_experiment,
 )
 
 
 def main() -> None:
-    hdr = f"{'capacity':>8}{'bursty':>9}{'smooth':>9}{'cost':>8}   winners (bursty / smooth)"
+    # One independent tenant population per draw, reused across capacities.
+    populations = [burstiness_mixes(n_requests=N_REQUESTS, seed=seed) for seed in range(DRAWS)]
+    print(
+        f"burstiness at fixed load: {DRAWS} independent arrival draws, "
+        f"{N_REQUESTS} requests/tenant. Rates are FIFO, mean +- sd across draws."
+    )
+    print()
+    hdr = f"{'capacity':>8}{'bursty':>16}{'smooth':>16}{'cost':>8}"
     print(hdr)
     print("-" * len(hdr))
-    for cap in list(range(20, 171, 10)):
-        exp = ranking_experiment(
-            burstiness_mixes(),
-            capacity=cap,
-            link_fidelity=LINK_FIDELITY,
-            coherence_time=COHERENCE_TIME,
-        )
-        b, s = exp["bursty"], exp["smooth"]
-        bu = b["fifo"].aggregate_utility
-        su = s["fifo"].aggregate_utility
+    for cap in list(range(40, 221, 20)):
+        bursty, smooth = [], []
+        for mixes in populations:
+            exp = ranking_experiment(
+                mixes,
+                capacity=cap,
+                link_fidelity=LINK_FIDELITY,
+                coherence_time=COHERENCE_TIME,
+            )
+            bursty.append(exp["bursty"]["fifo"].aggregate_utility)
+            smooth.append(exp["smooth"]["fifo"].aggregate_utility)
+        bm, sm = st.mean(bursty), st.mean(smooth)
         print(
-            f"{cap:>8}{bu:>9.3f}{su:>9.3f}{su - bu:>8.3f}   "
-            f"{best_policy(b)} / {best_policy(s)}"
+            f"{cap:>8}{f'{bm:.3f} +- {st.stdev(bursty):.3f}':>16}"
+            f"{f'{sm:.3f} +- {st.stdev(smooth):.3f}':>16}{sm - bm:>8.3f}"
         )
 
 

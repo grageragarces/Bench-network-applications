@@ -68,7 +68,7 @@ latency percentiles (p50/p95/p99), classical-coupling (bytes & msgs per pair),
 plus the aggregate `app_success`/`app_utility`.
 
 **The trace** — one JSON object per line (JSONL), the versioned wire contract in
-[specs/](specs/): `run_header`, `ent_requested` (carries the `demand`),
+[specs/](specs/README.md): `run_header`, `ent_requested` (carries the `demand`),
 `ent_delivered`, `contract_violation`, `classical_msg`, `qubit_sent`, `measurement`,
 `app_outcome`. Metrics are computed *from* the trace, so any tool can consume it:
 
@@ -80,7 +80,7 @@ for line in open("run.jsonl"):
         ...  # e["actual_fidelity"], e["latency"], e["pair_age"]
 ```
 
-**Published reference traces** for all 27 core apps live in [../traces/](../traces/)
+**Published reference traces** for all 27 core apps live in [traces/](https://github.com/grageragarces/Bench-network-applications/tree/main/traces)
 with a checksummed manifest — regenerate with `qnetbench corpus`.
 
 **The demand signature** (`qnetbench characterize`) — burstiness, classical coupling,

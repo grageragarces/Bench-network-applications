@@ -14,15 +14,28 @@ destroys the step). This is the opposite corner of the demand space from the
 fidelity-thresholded protocols, and the workload for which serving by fidelity
 threshold is the wrong strategy.
 
-Utility is the correlation quality of the distilled pairs; success additionally
-requires that distillation actually *improved* on the raw pairs, measured in the
-same run against a control sample.
+Utility is the *singlet fraction* of the distilled pairs — their fidelity to
+Phi+, estimated from same-basis agreement in Z, X and Y (see
+`purify.singlet_fraction`). Reporting the raw agreement rate instead would
+credit the protocol below the entanglement threshold: at an input fidelity of
+0.5 the pairs are separable, yet post-selection still lifts same-basis agreement
+from 2/3 to roughly 3/4, because sharpening a classical correlation looks the
+same in one basis as sharpening a quantum one. The singlet fraction does not
+have that failure mode, since it is above 1/2 exactly when the state is
+entangled. Success additionally requires that the output be entangled at all and
+that distillation improved on the raw pairs, measured in the same run against a
+control sample.
 """
 
 from __future__ import annotations
 
-from qnetbench.api import AppOutcome, Demand, Host, Role
-from qnetbench.apps.purify import correlation_test, distill_step, test_basis
+from qnetbench.api import AppOutcome, Basis, Demand, Host, Role
+from qnetbench.apps.purify import (
+    correlation_test,
+    distill_step,
+    singlet_fraction,
+    test_basis,
+)
 from qnetbench.apps.util import cfg_int
 
 _SIGN = {"alice": 1, "bob": -1}  # DEJMPS rotates the two nodes in opposite senses
@@ -64,33 +77,45 @@ class Distillation:
         cls = host.classical_socket(peer)
 
         # --- control sample: how good are the raw pairs? ----------------------
-        raw_ok = 0
+        # Tallied per basis, because the singlet fraction needs all three; a
+        # single pooled agreement rate cannot say whether a pair is entangled.
+        raw: dict[Basis, tuple[int, int]] = {}
         for i in range(control):
             handle = epr.request(1, self._demand())[0]
             assert handle.qubit is not None
-            raw_ok += int(correlation_test(handle.qubit, cls, test_basis(i)))
+            basis = test_basis(i)
+            ok, n = raw.get(basis, (0, 0))
+            raw[basis] = (ok + int(correlation_test(handle.qubit, cls, basis)), n + 1)
 
         # --- distillation: two raw pairs per attempt -------------------------
         kept = 0
-        distilled_ok = 0
+        distilled: dict[Basis, tuple[int, int]] = {}
         for i in range(rounds):
             handles = epr.request(2, self._demand())
             keep, sacrifice = handles[0].qubit, handles[1].qubit
             assert keep is not None and sacrifice is not None
             if distill_step(keep, sacrifice, cls, sign=sign):
                 kept += 1
-                distilled_ok += int(correlation_test(keep, cls, test_basis(i)))
+                basis = test_basis(i)
+                ok, n = distilled.get(basis, (0, 0))
+                distilled[basis] = (ok + int(correlation_test(keep, cls, basis)), n + 1)
             else:
                 keep.free()  # the step detected an error; the pair is spent
 
-        raw_quality = raw_ok / control if control else 0.0
-        distilled_quality = distilled_ok / kept if kept else 0.0
+        raw_quality = singlet_fraction(raw)
+        distilled_quality = singlet_fraction(distilled)
         # Yield is pairs out per pair in: the recurrence ceiling is 1/2, reached
         # only when every step is heralded successful.
         pair_yield = kept / (2 * rounds) if rounds else 0.0
+        # Success means the protocol did its job: it produced pairs that are
+        # entangled (singlet fraction above 1/2, the separability boundary) and
+        # more so than the raw pairs it consumed. The first clause matters — a
+        # recurrence step applied to separable inputs still heralds "successes"
+        # and still raises same-basis agreement, because post-selection sharpens
+        # classical correlation just as it sharpens quantum correlation.
         return AppOutcome(
             role=role,
-            success=kept > 0 and distilled_quality >= raw_quality,
+            success=kept > 0 and distilled_quality > 0.5 and distilled_quality >= raw_quality,
             utility=distilled_quality,
             payload={
                 "kept": kept,
