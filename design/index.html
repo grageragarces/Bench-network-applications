@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://grageragarces.github.io/Bench-network-applications/design/">
       
       
-        <link rel="prev" href="../reference/spec/">
+        <link rel="prev" href="../changelog/">
       
       
       
@@ -1452,6 +1452,33 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -2541,10 +2568,22 @@ priority order.</p>
 </ul>
 <h3 id="release">Release<a class="headerlink" href="#release" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>Publish a real PyPI release.</strong> What's on PyPI is only the <code>v0.0.1</code> name
-  reservation; the current suite (api/schema <strong>0.2.0</strong>, 22 protocols) is unreleased.
-  Bump <code>pyproject</code> version → 0.2.0, <code>python -m build</code>, <code>twine upload</code> (needs the
-  maintainer's token).</li>
+<li>✅ <strong>Documentation site</strong> — MkDocs + mkdocstrings, built from <code>mkdocs.yml</code>;
+  <code>mkdocs serve</code> to preview, <code>mkdocs gh-deploy</code> to publish to GitHub Pages.</li>
+<li><strong>Cut the 0.1.0 release.</strong> <code>pyproject</code> is already at <code>0.1.0</code> with a
+  <a href="../changelog/">CHANGELOG</a> entry; what remains is <code>python -m build</code> and
+  <code>twine upload</code> (needs the maintainer's token), then a <code>v0.1.0</code> git tag.</li>
+<li><strong>Keep the three version numbers separate.</strong> The package version, <code>API_VERSION</code>,
+  and <code>SCHEMA_VERSION</code>/<code>SPEC_VERSION</code> move independently, and both contracts are
+  currently at <strong>0.2.0</strong> with <code>qnetbench/api/</code> and <code>qnetbench/trace/</code> untouched
+  since 0.0.2. Bumping a contract version signals a wire-format change to every
+  trace consumer, so do it only when the shim or the event schema actually changes
+  — not to match a package release. The contract versions travel in each trace's
+  <code>run_header</code>, which is where a consumer should read them from.</li>
+<li><strong>Version the corpus, not just the schema.</strong> 0.1.0 regenerated every published
+  trace under an unchanged <code>SCHEMA_VERSION</code> (the replay RNG fix). The manifest's
+  <code>sha256</code> values make that detectable, but only by a reader who thinks to look;
+  consider recording the producing package version in <code>traces/manifest.json</code>.</li>
 </ul>
 <h3 id="remaining-algorithms">Remaining algorithms<a class="headerlink" href="#remaining-algorithms" title="Permanent link">&para;</a></h3>
 <ul>
