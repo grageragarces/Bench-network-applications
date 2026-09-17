@@ -1,0 +1,2691 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A benchmark suite and workload-characterization framework for quantum-network applications.">
+      
+      
+      
+        <link rel="canonical" href="https://grageragarces.github.io/Bench-network-applications/design/">
+      
+      
+        <link rel="prev" href="../reference/spec/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Design notes - qnetbench</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#qnetbench-design-roadmap" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="qnetbench" class="md-header__button md-logo" aria-label="qnetbench" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            qnetbench
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Design notes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/grageragarces/Bench-network-applications" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    grageragarces/Bench-network-applications
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="qnetbench" class="md-nav__button md-logo" aria-label="qnetbench" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    qnetbench
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/grageragarces/Bench-network-applications" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    grageragarces/Bench-network-applications
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usage overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilities
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utilities
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/running/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running benchmarks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/applications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Applications
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/backends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backends
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/topologies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topologies and links
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arbitration and policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics and reports
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/traces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Traces
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/characterization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Characterization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/contention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contention
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/circuits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Circuits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/distributed-circuits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Load any distributed circuit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adopting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extending the suite
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../specs/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/apps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.apps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/circuits/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.circuits
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/harness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.harness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/backends/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.backends
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/topology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.topology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/policies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.policies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/trace/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.trace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/characterize/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.characterize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/contention/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.contention
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/spec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    qnetbench.spec
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design notes
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-design-goals-in-priority-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Design goals (in priority order)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Design goals (in priority order)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#non-goals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-goals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-portable-api-shim-qnetbenchapi-the-crux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The portable API shim (qnetbench.api) — the crux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-trace-format-qnetbenchtrace-the-frozen-wire-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Trace format (qnetbench.trace) — the frozen wire contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-metrics-reporting-qnetbenchmetrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Metrics &amp; reporting (qnetbench.metrics)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-demand-signature-taxonomy-qnetbenchcharacterize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Demand-signature taxonomy (qnetbench.characterize)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-application-set-target-68-spanning-the-issues-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Application set (target 6–8, spanning the issue's classes)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-arbitration-seam-cross-policy-evaluation-qnetbenchpolicies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Arbitration seam &amp; cross-policy evaluation (qnetbench.policies)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-cross-backend-equivalence-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Cross-backend equivalence testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Repository layout
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Repository layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sequence-backend-model-resolved-hybrid-entanglement-supply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeQUeNCe backend model — RESOLVED: hybrid (entanglement-supply)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-roadmap-phases-mapped-to-the-issues-deliverables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Roadmap — phases mapped to the issue's deliverables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-future-benchmarks-planned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Future benchmarks (planned)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-remaining-work-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Remaining work (TODO)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Remaining work (TODO)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage &amp; docs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remaining-algorithms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remaining algorithms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#demand-space-gaps-found-by-the-characterizer-and-closed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demand-space gaps found by the characterizer (and closed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bugs-known-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bugs / known limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-infrastructure-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage / infrastructure gaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-design-goals-in-priority-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Design goals (in priority order)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Design goals (in priority order)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#non-goals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-goals
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-the-portable-api-shim-qnetbenchapi-the-crux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. The portable API shim (qnetbench.api) — the crux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-trace-format-qnetbenchtrace-the-frozen-wire-contract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Trace format (qnetbench.trace) — the frozen wire contract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-metrics-reporting-qnetbenchmetrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Metrics &amp; reporting (qnetbench.metrics)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-demand-signature-taxonomy-qnetbenchcharacterize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Demand-signature taxonomy (qnetbench.characterize)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-application-set-target-68-spanning-the-issues-classes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Application set (target 6–8, spanning the issue's classes)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-arbitration-seam-cross-policy-evaluation-qnetbenchpolicies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Arbitration seam &amp; cross-policy evaluation (qnetbench.policies)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-cross-backend-equivalence-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Cross-backend equivalence testing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Repository layout
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. Repository layout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sequence-backend-model-resolved-hybrid-entanglement-supply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeQUeNCe backend model — RESOLVED: hybrid (entanglement-supply)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-roadmap-phases-mapped-to-the-issues-deliverables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Roadmap — phases mapped to the issue's deliverables
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-future-benchmarks-planned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        13. Future benchmarks (planned)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-remaining-work-todo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        14. Remaining work (TODO)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="14. Remaining work (TODO)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#usage-docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage &amp; docs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remaining-algorithms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remaining algorithms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#demand-space-gaps-found-by-the-characterizer-and-closed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demand-space gaps found by the characterizer (and closed)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bugs-known-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bugs / known limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-infrastructure-gaps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage / infrastructure gaps
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="qnetbench-design-roadmap">qnetbench — Design &amp; Roadmap<a class="headerlink" href="#qnetbench-design-roadmap" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>A benchmark suite and workload-characterization framework for quantum-network
+applications. Answers Issue #4: a SPEC/TPC/YCSB-equivalent for the quantum
+internet, so that schedulers, routers, and APIs can be evaluated on a shared,
+characterized, cross-simulator workload instead of one bespoke toy each.</p>
+</blockquote>
+<p><strong>Status:</strong> all five deliverables complete, plus a large expansion — <strong>22 core
+protocols + a 66-entry catalog</strong> on <strong>3 backends</strong> (reference, SeQUeNCe, NetSquid),
+published to GitHub. This document is the architecture + roadmap; the resolved
+<code>[DECIDE]</code> sections below are kept for the record. <strong>New here? Start with
+<a href="../usage/">usage.md</a></strong> — how to run benchmarks, what data you get, how to point them
+at different topologies, and what you can define vs. what ships predefined. What's
+still open is collected in <a href="#14-remaining-work-todo">§14 Remaining work</a>.</p>
+<hr />
+<h2 id="1-design-goals-in-priority-order">1. Design goals (in priority order)<a class="headerlink" href="#1-design-goals-in-priority-order" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Write an application once, run it on any backend.</strong> An application must not
+   import a simulator. It talks only to the portable API shim. This is the whole
+   bet — if the shim leaks simulator concepts, comparability dies.</li>
+<li><strong>Demand is first-class and declarative.</strong> Every request for entanglement
+   carries a <em>contract</em>: minimum fidelity, latency budget / deadline, staleness
+   tolerance, priority weight. Schedulers see contracts; metrics measure
+   contract violations. This is what makes the suite <em>discriminative</em> rather than
+   merely runnable, and it is what feeds the demand-signature characterization
+   (Deliverable 2) and Issue #5 (staleness).</li>
+<li><strong>Everything observable is a trace.</strong> A run emits a versioned, machine-readable
+   event stream. Metrics are computed <em>from traces</em>, never inline. A scheduler
+   paper can consume traces without importing our code, and our own metrics are
+   just the first consumer.</li>
+<li><strong>Two independent backends or it doesn't count.</strong> A workload spec that only
+   runs on one simulator has proven nothing. Cross-backend equivalence tests are
+   a first-class deliverable, not an afterthought.</li>
+<li><strong>Adoption is the success metric.</strong> Typed schemas, semantic-versioned specs,
+   and docs sufficient for a third party to add an application or a backend
+   without reading our internals.</li>
+</ol>
+<h3 id="non-goals">Non-goals<a class="headerlink" href="#non-goals" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Not a new simulator. We adapt SeQUeNCe and NetSquid; we do not model physics.</li>
+<li>Not a scheduler. We provide the <em>policy seam</em> and evaluate published policies;
+  we don't claim to invent a good one.</li>
+<li>Not tied to the Delft stack. SquidASM's <code>Program</code> interface is our ergonomic
+  reference (it's proven), but the shim is its own thing with backends for
+  non-Delft simulators.</li>
+</ul>
+<hr />
+<h2 id="2-architecture">2. Architecture<a class="headerlink" href="#2-architecture" title="Permanent link">&para;</a></h2>
+<p>Seven layers, each depending only on the ones above it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌─────────────────────────────────────────────────────────────┐
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│  qnetbench.cli / harness   run(app × backend × policy × topo)│
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├─────────────────────────────────────────────────────────────┤
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│  qnetbench.metrics         traces → metrics + curves + report │
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│  qnetbench.characterize    demand-signature extraction        │
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├─────────────────────────────────────────────────────────────┤
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│  qnetbench.trace           versioned event schema (pydantic)  │  ← the contract
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>├─────────────────────────────────────────────────────────────┤
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│  qnetbench.apps            applications, written ONCE          │
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>├─────────────────────────────────────────────────────────────┤
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│  qnetbench.api             the portable shim (ABCs + types)    │  ← the bet
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>├─────────────────────────────────────────────────────────────┤
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>│  qnetbench.backends        reference │ sequence │ netsquid     │
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>│  qnetbench.policies        scheduling/routing plug-in seam     │
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>└─────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<ul>
+<li><strong><code>api</code></strong> and <strong><code>trace</code></strong> are the two frozen contracts. They get semantic
+  versions and change slowly. Everything else is free to move.</li>
+<li>Applications depend on <code>api</code> and emit into <code>trace</code>. They never see a backend.</li>
+<li>Backends depend on <code>api</code> (they implement it) and <code>trace</code> (they emit low-level
+  entanglement events). They never see an application.</li>
+</ul>
+<hr />
+<h2 id="3-the-portable-api-shim-qnetbenchapi-the-crux">3. The portable API shim (<code>qnetbench.api</code>) — the crux<a class="headerlink" href="#3-the-portable-api-shim-qnetbenchapi-the-crux" title="Permanent link">&para;</a></h2>
+<p>Modeled on the SquidASM <code>Program</code> interface (classical sockets + EPR sockets +
+local qubit ops), extended with <strong>explicit demand contracts</strong>. Concrete sketch:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Demand</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The contract attached to a request for entanglement.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">min_fidelity</span><span class="p">:</span> <span class="nb">float</span>                 <span class="c1"># reject/flag deliveries below this</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">latency_budget</span><span class="p">:</span> <span class="n">Duration</span> <span class="o">|</span> <span class="kc">None</span>     <span class="c1"># soft deadline from request to delivery</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">deadline</span><span class="p">:</span> <span class="n">SimTime</span> <span class="o">|</span> <span class="kc">None</span>            <span class="c1"># hard absolute deadline (distributed gates)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">staleness_tolerance</span><span class="p">:</span> <span class="n">Duration</span> <span class="o">|</span> <span class="kc">None</span> <span class="c1"># max age of a pre-generated pair still usable</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">priority</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>               <span class="c1"># scheduler weight</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">purpose</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;keep&quot;</span><span class="p">,</span> <span class="s2">&quot;measure&quot;</span><span class="p">]</span> <span class="c1"># keep the qubit, or measure immediately</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">class</span><span class="w"> </span><span class="nc">EPRSocket</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">demand</span><span class="p">:</span> <span class="n">Demand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">EntanglementHandle</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="c1">#   returns handles once delivered (or contract-violation markers)</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="k">class</span><span class="w"> </span><span class="nc">ClassicalSocket</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">recv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="k">class</span><span class="w"> </span><span class="nc">Qubit</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="o">*</span><span class="n">params</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">measure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="n">Basis</span> <span class="o">=</span> <span class="n">Basis</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="k">class</span><span class="w"> </span><span class="nc">Host</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>    <span class="n">node</span><span class="p">:</span> <span class="n">NodeId</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">epr_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peer</span><span class="p">:</span> <span class="n">NodeId</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EPRSocket</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">classical_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peer</span><span class="p">:</span> <span class="n">NodeId</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ClassicalSocket</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">now</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimTime</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">TraceEvent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>   <span class="c1"># application-level outcome</span>
+<a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>
+<a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a><span class="k">class</span><span class="w"> </span><span class="nc">Application</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">roles</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Role</span><span class="p">]:</span> <span class="o">...</span>              <span class="c1"># e.g. [Alice, Bob]</span>
+<a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">:</span> <span class="n">Host</span><span class="p">,</span> <span class="n">role</span><span class="p">:</span> <span class="n">Role</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AppOutcome</span><span class="p">:</span> <span class="o">...</span>
+</code></pre></div>
+<p><strong>Why <code>Demand</code> is separate from the request call:</strong> it turns every entanglement
+request into a labelled, measurable event. The backend's policy layer reads the
+<code>Demand</code>; the trace records requested-vs-delivered; the characterizer mines the
+distribution of demands an application emits. Without this, staleness tolerance
+and fidelity/rate sensitivity are unmeasurable — which is exactly the gap the
+issue names.</p>
+<p><strong>Async model — RESOLVED: (a) blocking / generator style.</strong> Applications are
+naturally concurrent (send, wait, receive). Calls block on generators driven by
+the backend's event loop (SquidASM-style yields). This matches both target
+simulators' native styles and keeps application code readable and sequential.</p>
+<hr />
+<h2 id="4-trace-format-qnetbenchtrace-the-frozen-wire-contract">4. Trace format (<code>qnetbench.trace</code>) — the frozen wire contract<a class="headerlink" href="#4-trace-format-qnetbenchtrace-the-frozen-wire-contract" title="Permanent link">&para;</a></h2>
+<p>JSONL, one event per line, each a tagged pydantic model. Semantic-versioned via
+a <code>schema_version</code> header record. Compact enough to hand to a scheduler paper.</p>
+<p>Core event types:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Emitted by</th>
+<th>Key fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RunHeader</code></td>
+<td>harness</td>
+<td>schema_version, app, backend, policy, topology, seed</td>
+</tr>
+<tr>
+<td><code>EntanglementRequested</code></td>
+<td>backend</td>
+<td>req_id, src, dst, n, demand, t</td>
+</tr>
+<tr>
+<td><code>EntanglementDelivered</code></td>
+<td>backend</td>
+<td>req_id, actual_fidelity, latency, pair_age, t</td>
+</tr>
+<tr>
+<td><code>ContractViolation</code></td>
+<td>backend</td>
+<td>req_id, kind∈{fidelity,deadline,staleness,dropped}, t</td>
+</tr>
+<tr>
+<td><code>ClassicalMessage</code></td>
+<td>backend</td>
+<td>src, dst, n_bytes, t</td>
+</tr>
+<tr>
+<td><code>Measurement</code></td>
+<td>app</td>
+<td>node, basis, result, t</td>
+</tr>
+<tr>
+<td><code>AppOutcome</code></td>
+<td>app</td>
+<td>role, success, utility, payload, t</td>
+</tr>
+</tbody>
+</table>
+<p><code>utility</code> on <code>AppOutcome</code> is application-defined in <code>[0,1]</code> and is what the
+staleness/fidelity curves are plotted against. <code>pair_age</code> on delivery is what
+makes staleness-tolerance curves computable directly from a trace.</p>
+<hr />
+<h2 id="5-metrics-reporting-qnetbenchmetrics">5. Metrics &amp; reporting (<code>qnetbench.metrics</code>)<a class="headerlink" href="#5-metrics-reporting-qnetbenchmetrics" title="Permanent link">&para;</a></h2>
+<p>All computed from a trace (or a set of traces). Standard report:</p>
+<ul>
+<li><strong>Delivered fidelity-throughput</strong> — pairs/sec weighted by delivered fidelity,
+  and the raw (rate, mean-fidelity) pair.</li>
+<li><strong>Contract-violation rate</strong> — per <code>kind</code>, per application.</li>
+<li><strong>Latency distribution</strong> — request→delivery, p50/p95/p99.</li>
+<li><strong>Staleness-tolerance curve</strong> — utility vs <code>pair_age</code>, per application.</li>
+<li><strong>Fidelity/rate indifference curve</strong> — utility vs delivered fidelity at fixed
+  rate and vice-versa (swept across runs).</li>
+<li><strong>Classical-coupling ratio</strong> — classical bytes / entangled pair, and the
+  request→classical dependency depth.</li>
+</ul>
+<p>Report is emitted as machine-readable JSON <em>and</em> a rendered summary. Curves ship
+as data (CSV/JSON) so the characterization paper's figures regenerate from source.</p>
+<hr />
+<h2 id="6-demand-signature-taxonomy-qnetbenchcharacterize">6. Demand-signature taxonomy (<code>qnetbench.characterize</code>)<a class="headerlink" href="#6-demand-signature-taxonomy-qnetbenchcharacterize" title="Permanent link">&para;</a></h2>
+<p>The dimensions we measure per application (Deliverable 2):</p>
+<ol>
+<li><strong>Burstiness</strong> — inter-request-arrival distribution; Fano factor / index of
+   dispersion; on/off duty cycle.</li>
+<li><strong>Fidelity-vs-rate sensitivity</strong> — shape of the utility indifference curves.</li>
+<li><strong>Staleness tolerance</strong> — utility decay vs pair age (feeds Issue #5).</li>
+<li><strong>Classical-communication coupling</strong> — coupling ratio + dependency structure
+   (does each quantum op block on a classical round-trip?).</li>
+<li><strong>Deadline-criticality</strong> — hard vs soft; distribution of latency budgets.</li>
+<li><strong>Multipartiteness</strong> — bipartite vs GHZ/multipartite demand.</li>
+</ol>
+<p>Each application gets a signature vector on these axes; the "characterization
+paper" is the cross-application table + curves, regenerated from traces.</p>
+<hr />
+<h2 id="7-application-set-target-68-spanning-the-issues-classes">7. Application set (target 6–8, spanning the issue's classes)<a class="headerlink" href="#7-application-set-target-68-spanning-the-issues-classes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Application</th>
+<th>Class</th>
+<th>Signature emphasis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>QKD (BB84/E91)</td>
+<td>key distribution</td>
+<td>steady, rate-hungry, fidelity-thresholded</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Blind Quantum Computation</td>
+<td>BQC</td>
+<td>bursty, latency-coupled, high-fidelity, heavy classical coupling</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Distributed gate (teleported CNOT)</td>
+<td>distributed gates</td>
+<td>deadline-critical, staleness-intolerant</td>
+</tr>
+<tr>
+<td>4</td>
+<td>CHSH / DIQKD test</td>
+<td>key distribution (device-indep)</td>
+<td>correlation-quality-sensitive</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Clock synchronization</td>
+<td>sensing</td>
+<td>correlation-quality-sensitive, steady</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Anonymous transmission</td>
+<td>multipartite broadcast</td>
+<td>GHZ demand, multipartite</td>
+</tr>
+<tr>
+<td>7</td>
+<td><em>(stretch)</em> Leader election</td>
+<td>coordination</td>
+<td>multipartite, bursty</td>
+</tr>
+<tr>
+<td>8</td>
+<td><em>(stretch)</em> Teleportation-based DQC circuit</td>
+<td>distributed gates</td>
+<td>mixed, deadline-driven</td>
+</tr>
+</tbody>
+</table>
+<p>Phase 0 builds #1–#3 (they span the three most distinct signatures and are enough
+to demonstrate ranking inversion). #4–#6 complete the "credible suite" claim.</p>
+<hr />
+<h2 id="8-arbitration-seam-cross-policy-evaluation-qnetbenchpolicies">8. Arbitration seam &amp; cross-policy evaluation (<code>qnetbench.policies</code>)<a class="headerlink" href="#8-arbitration-seam-cross-policy-evaluation-qnetbenchpolicies" title="Permanent link">&para;</a></h2>
+<p>Arbitration is a <strong>run-level toggle</strong>, borrowing MQT Bench's model where the user
+picks the <em>level</em> they want rather than being locked into ours:</p>
+<ul>
+<li><strong><code>native</code></strong> — the backend uses its own default scheduling/routing (SeQUeNCe's
+  reservation/RSVP layer, NetSquid's native behavior). This is the "standard
+  implementation" that most papers run today, and it is the <strong>opt-out</strong>: people
+  who just want to run the application as-is never touch our policy layer.</li>
+<li><strong><code>policy:&lt;name&gt;</code></strong> — a <strong>backend-agnostic arbiter inside qnetbench</strong> intercepts
+  entanglement requests and applies the chosen policy. To make policy behavior
+  <em>identical across backends</em>, the arbiter sits <strong>above</strong> the backend's low-level
+  pair-generation primitives and performs ordering/routing itself, rather than
+  hooking each simulator's internal reservation layer. We rebuild the arbiter
+  once, in qnetbench; every backend then exposes the same policy semantics.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">Policy</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pending</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">EntanglementRequested</span><span class="p">],</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>              <span class="n">state</span><span class="p">:</span> <span class="n">NetworkState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">req_id</span><span class="p">]:</span> <span class="o">...</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">:</span> <span class="n">EntanglementRequested</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>              <span class="n">topology</span><span class="p">:</span> <span class="n">Topology</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="c1"># Backends implement only the primitive seam the arbiter drives:</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="k">class</span><span class="w"> </span><span class="nc">PrimitiveBackend</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">generate_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">:</span> <span class="n">NodeId</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">NodeId</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>                      <span class="n">demand</span><span class="p">:</span> <span class="n">Demand</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EntanglementHandle</span><span class="p">:</span> <span class="o">...</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">supports_native_arbitration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>   <span class="c1"># for `native` mode</span>
+</code></pre></div>
+<p>We implement 2–3 <em>published</em> policies (FIFO baseline, a fidelity-first /
+threshold policy, a deadline/EDF-style policy) and run the full suite under each,
+plus <code>native</code>. <strong>Deliverable 4 is proven when the policy ranking inverts across
+workload classes</strong> — e.g. EDF wins on distributed-gate (deadline) traffic but
+loses to fidelity-first on QKD. Every result in the report is tagged with the
+backend and arbitration mode it came from, so <code>native</code>-vs-<code>policy</code> differences
+are visible too.</p>
+<hr />
+<h2 id="9-cross-backend-equivalence-testing">9. Cross-backend equivalence testing<a class="headerlink" href="#9-cross-backend-equivalence-testing" title="Permanent link">&para;</a></h2>
+<p>The thing that makes the suite trustworthy. For each application, a
+backend-agnostic test asserts that <em>outcome invariants</em> hold on every backend:
+QKD produces matched sifted keys with QBER below threshold; teleported-CNOT
+reproduces the truth table; CHSH yields S ≈ 2√2 under a noiseless config. Physics
+differs across simulators, so we assert <em>invariants and tolerances</em>, not
+bit-identical traces. The reference backend is the oracle for these tests (it's
+the only one that runs in CI without registration).</p>
+<hr />
+<h2 id="10-repository-layout">10. Repository layout<a class="headerlink" href="#10-repository-layout" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>qnetbench/
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  api/          # the shim: ABCs, Demand, Host, sockets, Qubit, gates
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  trace/        # pydantic event models, JSONL reader/writer, schema_version
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  apps/         # qkd.py, bqc.py, distributed_gate.py, ...  (import only api+trace)
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  backends/
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    reference/  # pure-Python, no external deps — CI oracle
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    sequence/   # SeQUeNCe adapter
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    netsquid/   # NetSquid adapter
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  policies/     # fifo.py, fidelity_first.py, edf.py, base.py
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  metrics/      # readers → metrics + curves + report
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  characterize/ # demand-signature extraction
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  harness/      # run matrix, cli.py
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>tests/
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  invariants/   # per-app cross-backend equivalence
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  golden/       # trace schema round-trip + versioning
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>docs/
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>  design.md     # this file
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>  specs/        # versioned trace-spec + metric-spec (machine-readable)
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>  adopting.md   # &quot;add an application&quot; / &quot;add a backend&quot; guides
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>traces/         # published reference traces (Deliverable 3)
+</code></pre></div>
+<p>Tooling: <code>pyproject.toml</code>, mypy-strict, ruff, pytest, GitHub Actions CI running
+the reference backend + invariant tests. SeQUeNCe/NetSquid backends tested behind
+optional extras (<code>pip install qnetbench[sequence]</code>, <code>[netsquid]</code>).</p>
+<hr />
+<h3 id="sequence-backend-model-resolved-hybrid-entanglement-supply">SeQUeNCe backend model — RESOLVED: hybrid (entanglement-supply)<a class="headerlink" href="#sequence-backend-model-resolved-hybrid-entanglement-supply" title="Permanent link">&para;</a></h3>
+<p>SeQUeNCe owns the entanglement-generation physics; qnetbench owns app execution.
+For each edge we run a SeQUeNCe reservation and extract the delivered-pair stream
+(inter-arrival timing + fidelity); the verified reference engine then <em>replays</em>
+that supply and runs the local quantum ops + classical protocol. This targets the
+layer Issue #4 discriminates on (how entanglement is supplied), reuses the
+reference engine (so the SeQUeNCe backend is a ~90-line subclass overriding two
+physics hooks), and keeps cross-backend equivalence clean (delivered fidelity is
+the controlled variable). Two SeQUeNCe-specific notes: delivered fidelity is set
+by the memory <code>raw_fidelity</code> param; and SeQUeNCe keeps process-global state that
+misbehaves under the engine's worker threads, so every edge's supply is
+pre-generated eagerly on the main thread in <code>SequenceBackend.__init__</code>.</p>
+<h2 id="11-roadmap-phases-mapped-to-the-issues-deliverables">11. Roadmap — phases mapped to the issue's deliverables<a class="headerlink" href="#11-roadmap-phases-mapped-to-the-issues-deliverables" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Output</th>
+<th>Issue deliverable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0. Skeleton</strong> ✅</td>
+<td>scaffolding, typed <code>api</code> + <code>trace</code>, reference backend, apps #1–#3, metrics, CLI, CI, invariant tests</td>
+<td>foundation for all</td>
+</tr>
+<tr>
+<td><strong>1. SeQUeNCe backend</strong> ✅</td>
+<td><code>backends/sequence</code> (hybrid) + cross-backend invariants for #1–#3</td>
+<td>Deliverable 1 (½)</td>
+</tr>
+<tr>
+<td><strong>2. NetSquid backend</strong> ✅</td>
+<td><code>backends/netsquid</code> (hybrid) + shared <code>ReplayBackend</code> base + equivalence tests</td>
+<td>Deliverable 1 (✔ ≥2 sims)</td>
+</tr>
+<tr>
+<td><strong>3. Full app set</strong> ✅</td>
+<td>apps #4–#6 (chsh, clock_sync, anonymous) across all backends; star topology + GHZ fusion</td>
+<td>Deliverable 1 (✔ 6–8 apps)</td>
+</tr>
+<tr>
+<td><strong>4. Characterization</strong> ✅</td>
+<td><code>qnetbench.characterize</code>: single-trace signatures + fidelity/staleness curves + cross-app table + CLI; pair-aging in the reference backend</td>
+<td>Deliverable 2</td>
+</tr>
+<tr>
+<td><strong>5. Spec freeze</strong> ✅</td>
+<td>versioned trace + metric JSON Schemas in <code>docs/specs</code> (drift-guarded) + published reference traces in <code>traces/</code> with a checksummed manifest; <code>qnetbench spec</code>/<code>corpus</code></td>
+<td>Deliverable 3</td>
+</tr>
+<tr>
+<td><strong>6. Cross-policy eval</strong> ✅</td>
+<td><code>qnetbench.contention</code>: multi-tenant DES, 3 policies × 2 workload mixes; EDF↔fidelity_first ranking inversion; <code>qnetbench contention</code></td>
+<td>Deliverable 4</td>
+</tr>
+<tr>
+<td><strong>7. Adoption docs</strong> ✅</td>
+<td><code>docs/adopting.md</code> (add-an-app / add-a-backend / consume-traces, examples verified to run); released to PyPI</td>
+<td>Deliverable 5 (the real success metric)</td>
+</tr>
+</tbody>
+</table>
+<p>Each phase is independently reviewable and leaves the repo runnable.</p>
+<h2 id="13-future-benchmarks-planned">13. Future benchmarks (planned)<a class="headerlink" href="#13-future-benchmarks-planned" title="Permanent link">&para;</a></h2>
+<p>The five deliverables are complete; these extend <em>coverage and realism</em>. An
+application is one file against the API, so the suite has no cap on size — new apps
+inherit cross-backend equivalence, a demand signature, and a published trace for
+free.</p>
+<ul>
+<li><strong>DQC circuit-demand generator</strong> ✅ — <code>qnetbench.circuits</code> (distributed-circuit IR,
+  ASAP layering, GHZ/QFT/random mirror circuits, <code>from_qiskit</code> loader) + <code>apps/dqc.py</code>
+  (executes a partitioned circuit; each non-local gate is a teleported gate whose
+  deadline is its layer × a per-layer budget, so the trace is the circuit's
+  Entanglement Demand Schedule). Registered as <code>dqc_ghz4</code>/<code>dqc_qft4</code>/<code>dqc_random4</code>;
+  the shared teleported-gate primitive lives in <code>apps/telegate.py</code>. Optional MQT
+  Bench / Qiskit circuits load behind the <code>mqt</code> extra.</li>
+<li><strong>Entanglement swapping</strong> ✅ — <code>apps/swap.py</code> (<code>entanglement_swap</code>): a 3-node line
+  alice—repeater—bob where the repeater does a Bell-state measurement to swap two
+  elementary links into one end-to-end pair (bob applies the Pauli correction). Adds
+  the multi-hop relay/routing demand class (two elementary pairs per end-to-end
+  unit). <em>Still planned:</em> multi-hop QKD over a repeater chain (key from swapped pairs).</li>
+<li><strong>Core / catalog split</strong> ✅ — the suite is now a curated <strong>core</strong> (<code>available_apps()</code>,
+  ~11 distinct protocols, run in CI + corpus + cross-backend equivalence) plus a
+  <strong>catalog</strong> (<code>catalog_apps()</code>, 50+) generated as DQC over circuit families
+  (GHZ/QFT/random/graph/IQP/HEA) × sizes, resolvable on demand via <code>get_app</code> and
+  <code>qnetbench run &lt;name&gt;</code> / <code>list --all</code>, but not baked into CI. The MQT Bench / SPEC
+  model — coverage from the core, quantity from the generator.</li>
+<li><strong>Teleportation</strong> ✅ — <code>apps/teleport.py</code> (<code>teleportation</code>): moves a <em>state</em> (not a
+  gate) via one EPR pair + two classical bits; added to the core.</li>
+<li><strong>Multi-hop QKD</strong> ✅ — <code>apps/multihop_qkd.py</code> (<code>multihop_qkd</code>): key distribution over
+  a repeater chain (swap → end-to-end pair → BBM92 sifting, classical relayed through
+  the repeater). Multi-hop <em>and</em> fidelity-thresholded — the only 3-party key app.</li>
+<li><strong>Shared randomness</strong> ✅ — <code>apps/shared_randomness.py</code> (<code>shared_randomness</code>): the only
+  app using <code>purpose="measure"</code> (the backend measures on delivery, no local qubit) —
+  correlated shared random bits from Z-measured pairs.</li>
+<li><strong>Quantum secret sharing</strong> ✅ — <code>apps/secret_sharing.py</code> (<code>secret_sharing</code>): a dealer
+  splits a secret bit among two players over a GHZ; both together (neither alone)
+  reconstruct it via the GHZ X-parity.</li>
+<li><strong>Conference key agreement</strong> ✅ — <code>apps/conference_key.py</code> (<code>conference_key</code>): the
+  N-party generalization of QKD — a hub fuses three pairs into a 4-party GHZ and all
+  four measure Z for one shared key bit. The highest party count (4) and the most
+  fidelity-demanding app in the suite (a 4-party GHZ from 3 pairs is fragile).</li>
+<li><strong>Verified BQC</strong> ✅ — <code>apps/verified_bqc.py</code> (<code>verified_bqc</code>): BQC with interleaved
+  trap rounds; an accept/reject verification (utility = trap pass rate, success =
+  every trap passed) rather than a plain computation. Shares the UBQC gadget in
+  <code>apps/ubqc.py</code>.</li>
+<li><strong>Leader election</strong> ✅ — <code>apps/leader_election.py</code> (<code>leader_election</code>): fair leader
+  election among five parties via shared 5-party GHZ randomness. The highest party
+  count (5) and the most fidelity-demanding app in the suite (F½util 0.97).</li>
+<li><strong>Prepare-and-measure BB84</strong> ✅ — <code>apps/bb84.py</code> (<code>bb84</code>): the original BB84, where
+  Alice <em>sends the qubit itself</em> (random bit, random basis) and Bob measures. Added a
+  single-qubit-transmission primitive to the api — <code>Host.qsend</code> / <code>Host.qrecv</code> (a
+  blocking rendezvous so the register stays small) — and a <code>qubit_sent</code> trace event
+  (schema/api bumped to 0.2.0). The only app in the single-qubit-transmission demand
+  class (no shared pairs); the characterizer now counts <code>qubit_sent</code> as demand.</li>
+<li><strong>More protocol apps from the literature</strong> <em>(planned)</em> — see <a href="#14-remaining-work-todo">§14</a>.</li>
+</ul>
+<hr />
+<h2 id="14-remaining-work-todo">14. Remaining work (TODO)<a class="headerlink" href="#14-remaining-work-todo" title="Permanent link">&para;</a></h2>
+<p>Deliverables 1–5 are complete; the suite is <strong>27 core protocols + a 66-entry
+catalog</strong> (42 generated DQC instances, 3 overlapping the core; unbounded via the DQC
+generator) across <strong>3 backends</strong>. What follows is optional/incremental, roughly in
+priority order.</p>
+<h3 id="usage-docs">Usage &amp; docs<a class="headerlink" href="#usage-docs" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>Usage guide</strong> — how to run, what data you get, topologies, definable vs.
+  predefined, and the benchmark count: <a href="../usage/">usage.md</a>.</li>
+<li><strong>Characterization figures</strong> — <code>scripts/plot_curves.py</code> (+ the <code>viz</code> extra) turns
+  <code>qnetbench characterize --out</code> JSON into fidelity/staleness figures; commit a
+  regenerated <code>figures/</code> set (or a make target) so the paper's plots track the code.</li>
+</ul>
+<h3 id="release">Release<a class="headerlink" href="#release" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Publish a real PyPI release.</strong> What's on PyPI is only the <code>v0.0.1</code> name
+  reservation; the current suite (api/schema <strong>0.2.0</strong>, 22 protocols) is unreleased.
+  Bump <code>pyproject</code> version → 0.2.0, <code>python -m build</code>, <code>twine upload</code> (needs the
+  maintainer's token).</li>
+</ul>
+<h3 id="remaining-algorithms">Remaining algorithms<a class="headerlink" href="#remaining-algorithms" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>Byzantine agreement / detectable broadcast</strong> (<code>byzantine_agreement</code>) — 3-party
+  GHZ; an honest general reaches consensus, a faulty one's equivocation is detected.</li>
+<li>✅ <strong>B92 and six-state QKD</strong> (<code>b92</code>, <code>six_state</code>) — prepare-and-measure variants over
+  <code>qsend</code>/<code>qrecv</code>, with lower sifting yield / higher QBER tolerance than BB84.</li>
+<li>✅ <strong>((3,5)) threshold secret sharing</strong> (<code>threshold_secret_sharing</code>) — the canonical
+  Cleve–Gottesman–Lo scheme over the [[5,1,3]] five-qubit code: any 3 of 5 reconstruct,
+  any 2 learn nothing. A GHZ can't do this, so it needs a distance-3 code with
+  redundancy; the encoder + per-subset reconstruction table are synthesised and
+  numerically verified against the code's stabilisers.</li>
+<li>Higher-N conference key / a general ((k,n)) generator remain open.</li>
+</ul>
+<h3 id="demand-space-gaps-found-by-the-characterizer-and-closed">Demand-space gaps found by the characterizer (and closed)<a class="headerlink" href="#demand-space-gaps-found-by-the-characterizer-and-closed" title="Permanent link">&para;</a></h3>
+<p>Running <code>characterize</code> over the 21-protocol core exposed three empty regions of the
+demand space — visible by inspection of the table, not by argument. Each is now
+closed by a protocol chosen for that purpose:
+- ✅ <strong>Nothing was bursty.</strong> Every app had Fano ≤ 0.99 — the whole suite was
+  <em>sub</em>-Poissonian (more regular than random), despite several docstrings calling
+  their apps "bursty" on the strength of <code>cv</code> alone. <code>heralded_teleport</code> (probabilistic
+  BSM → geometric retry bursts after an idle session) is the first app above Poisson,
+  at <strong>Fano 2.10</strong>.
+- ✅ <strong>Nothing mixed criticality.</strong> Deadline fraction was exactly 0.00 or 1.00 for all
+  21 apps, so the urgent-vs-best-effort trade-off only ever arose <em>between</em> tenants.
+  <code>distilled_gate</code> (bulk best-effort pairs distilled, then consumed by a
+  deadline-bearing non-local gate, with an urgent fallback when distillation fails) is
+  the first app strictly between, at <strong>0.08</strong> — and the only one whose deadline
+  fraction moves with link quality.
+- ✅ <strong>Nothing wanted rate over fidelity.</strong> Every app consumed network-supplied
+  quality; none produced it. <code>distillation</code> asks for many pairs at <code>min_fidelity=0.5</code>
+  and returns <strong>0.71 utility at F=0.5</strong>, where <code>qkd</code> returns exactly 0. Its <code>F½util</code>
+  is undefined because utility never halves across the swept range.</p>
+<p>Two further protocols extend coverage without closing a measured gap:
+<code>position_verification</code> (deadline is a propagation bound — a late pair is <em>insecure</em>,
+not slow) and <code>oblivious_transfer</code> (secure two-party computation). The latter was
+expected to raise the top of the classical-coupling range and did the opposite,
+landing at <strong>0.10 msg/qubit</strong> — the lowest in the suite — because its classical phase
+is batched after the quantum phase rather than interleaved. <strong>The top of the coupling
+axis is still 2.33 (<code>dqc_ghz4</code>) and no protocol found so far exceeds it.</strong></p>
+<h3 id="bugs-known-limitations">Bugs / known limitations<a class="headerlink" href="#bugs-known-limitations" title="Permanent link">&para;</a></h3>
+<p><em>No functional bugs were found in audit — the suite is deterministic per seed, with
+no deadlocks over 20 seeds × all apps, no broken catalog entries, and no register
+leaks. These are constraints to be aware of:</em>
+- <strong>Statevector scaling</strong> — the reference register is O(2ⁿ) in live qubits, so DQC and
+  multipartite apps are practical to ~n ≤ 14 (the catalog caps DQC at n ≤ 10). <em>Fix:</em>
+  a stabilizer / density-matrix backend for Clifford circuits.
+- <strong><code>qsend</code>/<code>qrecv</code> single transfer in flight per edge</strong> — fine for the 2-party
+  lockstep apps; a pipelined single-qubit protocol would need a queued quantum channel.
+- <strong>BB84 on the simulator backends</strong> uses the <code>LinkModel</code> transmission fidelity, not
+  the simulator's channel (single-qubit transmission isn't in the hybrid supply model).
+- <strong>Prepare-and-measure metrics</strong> — <code>delivered_rate</code> is pairs-only (0 for BB84); its
+  demand shows up in <code>qubits_sent</code>. A qubit-transmission rate could be added.
+- <strong>Versioning</strong> — a new event kind was treated as a minor bump (0.2.0), whereas the
+  stability policy calls additive changes a patch. Harmless; clarify the policy.</p>
+<h3 id="coverage-infrastructure-gaps">Coverage / infrastructure gaps<a class="headerlink" href="#coverage-infrastructure-gaps" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>CI runs the reference backend only.</strong> Cross-backend equivalence (SeQUeNCe/NetSquid)
+  is exercised locally in the two venvs, not in GitHub CI. <em>Fix:</em> a CI job that
+  <code>pip install</code>s SeQUeNCe to cover one simulator. (The full catalog <em>is</em> now in CI.)</li>
+<li><strong>The policy arbiter is a standalone contention sim</strong> (<code>qnetbench.contention</code>), not
+  wired into the live cooperative backend — single-tenant runs never contend.</li>
+<li><strong>The contention sim scores <em>binary</em> contracts</strong>, so it cannot represent a
+  throughput-sensitive tenant. A <code>distillation</code>-heavy mix gives fifo 0.800 /
+  fidelity_first 1.000 / edf 0.800 — <code>fidelity_first</code> <em>wins</em> and no inversion appears,
+  because a tenant declaring <code>min_fidelity=0.5</code> and no deadline is met however long it
+  waits, and the sim drains its queue. <code>staleness_tolerance</code> (what distillation
+  actually depends on — its two input pairs must be co-temporal) and <code>priority</code> are
+  read by the sim not at all. <em>Fix:</em> a finite service horizon plus utility functions
+  over delivered count and pair age, so tenants can be scored on throughput and
+  staleness instead of pass/fail. The workload now exists; the evaluation model
+  doesn't.</li>
+<li><strong><code>Demand.priority</code> is set by no application</strong> and read by no policy — a contract
+  field the api offers and the trace records, but nothing exercises. Either a
+  weighted-fair-queueing policy or a protocol class that genuinely needs weighted
+  service would close this.</li>
+<li><strong>General multi-hop routing / entanglement swapping in the backend</strong> — apps do it at
+  the protocol level over star topologies; the backend models direct links + fusion.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.tracking", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
