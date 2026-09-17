@@ -395,10 +395,22 @@ priority order.
   regenerated `figures/` set (or a make target) so the paper's plots track the code.
 
 ### Release
-- **Publish a real PyPI release.** What's on PyPI is only the `v0.0.1` name
-  reservation; the current suite (api/schema **0.2.0**, 22 protocols) is unreleased.
-  Bump `pyproject` version → 0.2.0, `python -m build`, `twine upload` (needs the
-  maintainer's token).
+- ✅ **Documentation site** — MkDocs + mkdocstrings, built from `mkdocs.yml`;
+  `mkdocs serve` to preview, `mkdocs gh-deploy` to publish to GitHub Pages.
+- **Cut the 0.1.0 release.** `pyproject` is already at `0.1.0` with a
+  [CHANGELOG](changelog.md) entry; what remains is `python -m build` and
+  `twine upload` (needs the maintainer's token), then a `v0.1.0` git tag.
+- **Keep the three version numbers separate.** The package version, `API_VERSION`,
+  and `SCHEMA_VERSION`/`SPEC_VERSION` move independently, and both contracts are
+  currently at **0.2.0** with `qnetbench/api/` and `qnetbench/trace/` untouched
+  since 0.0.2. Bumping a contract version signals a wire-format change to every
+  trace consumer, so do it only when the shim or the event schema actually changes
+  — not to match a package release. The contract versions travel in each trace's
+  `run_header`, which is where a consumer should read them from.
+- **Version the corpus, not just the schema.** 0.1.0 regenerated every published
+  trace under an unchanged `SCHEMA_VERSION` (the replay RNG fix). The manifest's
+  `sha256` values make that detectable, but only by a reader who thinks to look;
+  consider recording the producing package version in `traces/manifest.json`.
 
 ### Remaining algorithms
 - ✅ **Byzantine agreement / detectable broadcast** (`byzantine_agreement`) — 3-party

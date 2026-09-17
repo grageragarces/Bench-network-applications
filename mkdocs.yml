@@ -79,6 +79,9 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
 
 nav:
   - Home: index.md
@@ -117,6 +120,7 @@ nav:
       - qnetbench.characterize: reference/characterize.md
       - qnetbench.contention: reference/contention.md
       - qnetbench.spec: reference/spec.md
+  - Changelog: changelog.md
   - Design notes: design.md
 
 not_in_nav: |
