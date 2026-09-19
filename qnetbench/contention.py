@@ -249,8 +249,8 @@ def has_inversion(experiment: dict[str, dict[str, ContentionResult]]) -> bool:
 # aggregate demand of five tenants at one request per 30 ms (167 req/s), i.e.
 # moderate overload. It was raised from 120 when the experiment moved to 100
 # requests per tenant: over a longer run the queue no longer drains between
-# bursts, so 120 is sustained starvation (about 10% of contracts met) rather
-# than the contended regime the experiment is meant to probe.
+# bursts, so 120 leaves the link under-provisioned (about 10% of contracts met)
+# instead of in the contended regime the experiment is meant to probe.
 CAPACITY = 160.0
 LINK_FIDELITY = 0.99
 COHERENCE_TIME = 0.25

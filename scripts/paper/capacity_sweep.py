@@ -78,15 +78,17 @@ def _regime(dh_winner: str, min_inv: int, min_rate: float) -> str:
     - over-prov.:  all three policies tie on the deadline-heavy mix, so there
                    is no scheduling decision left to make;
     - contended:   the mixes disagree on at least three quarters of the draws;
-    - starvation:  the best policy meets under 5% of contracts, so any ordering
-                   is between rates too small to mean anything;
+    - under-prov.: the best policy meets under 5% of contracts, so the link is
+                   too far below aggregate demand for any ordering to mean
+                   anything. Not starvation in the scheduling sense: no tenant
+                   is being selectively deprived, there is simply no capacity;
     - draining:    everything in between, where the link is clearing the queue
                    but has not yet over-provisioned.
 
-    Contention is tested before starvation, not after. Bands are cut where a
-    *winner* changes, so one band can straddle two regimes: 100-160 runs from
-    4.6% satisfaction to 81%, and testing the low end first would label the
-    whole of it starvation. Disagreement on three quarters of the draws is the
+    Contention is tested before under-provisioning, not after. Bands are cut
+    where a *winner* changes, so one band can straddle two regimes: 100-160 runs
+    from 4.6% satisfaction to 81%, and testing the low end first would label the
+    whole of it under-provisioned. Disagreement on three quarters of the draws is the
     stronger signal, and it is the property the band is in the table for.
     """
     if dh_winner.count("/") == 2:
@@ -94,7 +96,7 @@ def _regime(dh_winner: str, min_inv: int, min_rate: float) -> str:
     if min_inv >= 3 * DRAWS // 4:
         return "contended"
     if min_rate < 0.05:
-        return "starvation"
+        return "under-prov."
     return "draining"
 
 
