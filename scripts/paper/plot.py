@@ -14,7 +14,10 @@ class out of twenty-seven overlaid curves.
 
 Individual applications are deliberately not distinguished within a panel: which
 curve is which is Table III's job, and the figure's job is the shape and spread
-of each class.
+of each class. The exception is the handful of curves the text makes a specific
+claim about -- those are labelled where they are named, because a claim the
+reader is invited to check against the figure has to be findable in it. See
+LABELS below; everything else stays anonymous.
 
     qnetbench characterize --out scripts/paper/data/    # write the curve data
     python scripts/paper/plot.py scripts/paper/data/ --out curves.pdf
@@ -64,9 +67,48 @@ CLASSES: dict[str, list[str]] = {
 # every other application drawn in grey, and the panel title says which class it
 # is, so the reader never has to tell six hues apart — which twenty-seven curves
 # overlaid on two axes did require, and which is why they were illegible.
+# Curves the prose names and asks the reader to see. Keyed by (class, row),
+# each entry is (app, x to anchor the leader at, (x, y) for the text in AXES
+# fractions). Axes fractions rather than point offsets because a panel is only
+# about 79 pt wide and a name set at 4.8 pt is half of that -- offsets that look
+# modest push the text straight out of the panel and into its neighbour.
+LABELS: dict[tuple[str, int], list[tuple[str, float, tuple[float, float]]]] = {
+    ("key distribution / correlation", 0): [("qkd", 0.60, (0.05, 0.34))],
+    ("distributed gates", 0): [("dqc_random4", 0.92, (0.03, 0.26))],
+    ("distillation", 0): [("distillation", 0.68, (0.03, 0.90))],
+    ("multipartite GHZ", 0): [
+        ("conference_key", 0.93, (0.02, 0.66)),
+        ("leader_election", 0.97, (0.02, 0.40)),
+    ],
+    ("teleportation / relay", 1): [("heralded_teleport", 0.0026, (0.26, 0.82))],
+    ("multipartite GHZ", 1): [("leader_election", 0.0010, (0.30, 0.30))],
+}
+
 HIGHLIGHT = "#2a78d6"
 GHOST = "#c9c9c4"
 INK, MUTED = "#0b0b0b", "#52514e"
+
+
+def _xy(rows, xkey):
+    key = "delivered_fidelity" if xkey == "fidelity_curve" else "pair_age_s"
+    return [r[key] for r in rows], [r["utility"] for r in rows]
+
+
+def _annotate(ax, data_by_app, labels, xkey):
+    """Point at the curves Sec. VI-B names, with a short leader line."""
+    for app, xat, (tx, ty) in labels:
+        if app not in data_by_app:
+            continue
+        xs, ys = _xy(data_by_app[app][xkey], xkey)
+        yat = min(zip(xs, ys, strict=True), key=lambda p: abs(p[0] - xat))[1]
+        ax.annotate(
+            app,
+            xy=(xat, yat), xycoords="data",
+            xytext=(tx, ty), textcoords="axes fraction",
+            fontsize=5.6, color=INK, zorder=5, ha="left", va="center",
+            bbox=dict(boxstyle="square,pad=0.12", fc="white", ec="none", alpha=0.85),
+            arrowprops=dict(arrowstyle="-", lw=0.4, color=INK, shrinkA=1, shrinkB=1.5),
+        )
 
 
 def _panel(ax, data_by_app, members, xkey, others):
@@ -125,7 +167,18 @@ def main() -> None:
         others = [a for a in data_by_app if a not in members]
         for row, xkey in enumerate(("fidelity_curve", "staleness_curve")):
             ax = axes[row][col]
+            # The distillation claim is that its output exceeds its input above
+            # F = 0.52. That is a statement about where the curve sits relative
+            # to u = F, so the line has to be on the plot for the claim to be
+            # checkable; without it the panel shows a rising curve like any
+            # other.
+            if cls == "distillation" and row == 0:
+                ax.plot([0.5, 1.0], [0.5, 1.0], color=MUTED, lw=0.5, ls=(0, (3, 2)),
+                        zorder=3, label="$u = F$")
+                ax.annotate("$u = F$", xy=(0.79, 0.79), xytext=(6, -11),
+                            textcoords="offset points", fontsize=5.6, color=MUTED, zorder=4)
             _panel(ax, data_by_app, members, xkey, others)
+            _annotate(ax, data_by_app, LABELS.get((cls, row), []), xkey)
             ax.grid(True, color=MUTED, alpha=0.15, lw=0.4)
             ax.set_axisbelow(True)
             ax.set_ylim(-0.04, 1.06)

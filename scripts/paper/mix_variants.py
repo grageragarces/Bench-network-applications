@@ -57,7 +57,7 @@ def variants(rng: random.Random) -> dict[str, tuple[list[Tenant], list[Tenant]]]
     dh = group("distributed_gate", 4, rng) + group("qkd", 1, rng)
     fh = group("bqc", 2, rng) + group("chsh", 2, rng) + group("qkd", 1, rng)
     return {
-        "default (Table IV)": (dh, fh),
+        "default (Table 4)": (dh, fh),
         "dh: 3 distributed_gate + 2 qkd": (
             group("distributed_gate", 3, rng) + group("qkd", 2, rng), fh),
         "dh: 5 distributed_gate + 0 qkd (homogeneous)": (
