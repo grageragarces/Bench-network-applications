@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"conference_key","backend":"reference","arbitration":"native","topology":"star4","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"conference_key","backend":"reference","arbitration":"native","topology":"star4","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"hub","dst":"leaf1","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":1,"src":"leaf2","dst":"hub","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":2,"src":"leaf3","dst":"hub","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
@@ -770,7 +770,7 @@
 {"t":0.3188209987850334,"kind":"classical_msg","src":"hub","dst":"leaf1","n_bytes":2}
 {"t":0.3188209987850334,"kind":"classical_msg","src":"hub","dst":"leaf2","n_bytes":2}
 {"t":0.3188209987850334,"kind":"classical_msg","src":"hub","dst":"leaf3","n_bytes":2}
-{"t":0.3198209987850334,"kind":"app_outcome","role":"hub","node":"hub","success":false,"utility":0.3125,"payload":{"rounds":64,"agree":20}}
-{"t":0.3198209987850334,"kind":"app_outcome","role":"leaf1","node":"leaf1","success":false,"utility":0.3125,"payload":{"rounds":64,"agree":20}}
-{"t":0.3198209987850334,"kind":"app_outcome","role":"leaf2","node":"leaf2","success":false,"utility":0.3125,"payload":{"rounds":64,"agree":20}}
-{"t":0.3198209987850334,"kind":"app_outcome","role":"leaf3","node":"leaf3","success":false,"utility":0.3125,"payload":{"rounds":64,"agree":20}}
+{"t":0.3198209987850334,"kind":"app_outcome","role":"hub","node":"hub","success":false,"utility":0.3125,"scores":true,"payload":{"rounds":64,"agree":20}}
+{"t":0.3198209987850334,"kind":"app_outcome","role":"leaf1","node":"leaf1","success":false,"utility":0.3125,"scores":true,"payload":{"rounds":64,"agree":20}}
+{"t":0.3198209987850334,"kind":"app_outcome","role":"leaf2","node":"leaf2","success":false,"utility":0.3125,"scores":true,"payload":{"rounds":64,"agree":20}}
+{"t":0.3198209987850334,"kind":"app_outcome","role":"leaf3","node":"leaf3","success":false,"utility":0.3125,"scores":true,"payload":{"rounds":64,"agree":20}}

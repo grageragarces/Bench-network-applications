@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"dqc_ghz4","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"dqc_ghz4","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.9,"latency_budget":null,"deadline":0.02,"staleness_tolerance":0.001,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 {"t":0.0032935277908098274,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":1}
@@ -25,5 +25,5 @@
 {"t":0.017986539413770153,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":1}
 {"t":0.017986539413770153,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":2}
 {"t":0.018986539413770154,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":2}
-{"t":0.019986539413770155,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.75,"payload":{"n_nonlocal":6,"depth":8}}
-{"t":0.019986539413770155,"kind":"app_outcome","role":"bob","node":"bob","success":false,"utility":0.75,"payload":{"n_nonlocal":6,"depth":8}}
+{"t":0.019986539413770155,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.75,"scores":true,"payload":{"n_nonlocal":6,"depth":8}}
+{"t":0.019986539413770155,"kind":"app_outcome","role":"bob","node":"bob","success":false,"utility":0.75,"scores":true,"payload":{"n_nonlocal":6,"depth":8}}

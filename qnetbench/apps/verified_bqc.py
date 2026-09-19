@@ -70,4 +70,8 @@ class VerifiedBQC:
             qubit = epr.request(1, demand)[0].qubit
             assert qubit is not None
             server_step(host, qubit, cls)  # blind: it cannot distinguish traps
-        return AppOutcome(role="bob", success=True, utility=1.0, payload={"rounds": rounds})
+        # Blind, so it cannot score the traps it could not identify.
+        return AppOutcome(
+            role="bob", success=True, utility=1.0, scores=False,
+            payload={"rounds": rounds},
+        )

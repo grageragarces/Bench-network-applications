@@ -32,10 +32,11 @@ from qnetbench.contention import (  # noqa: E402
 )
 
 INTERVAL = 0.03
-# Fewer draws than the capacity sweep: each variant rebuilds its tenants from
-# scratch, and eight variants times 32 draws is a lot of application runs for a
-# robustness check whose answer is already unanimous at eight.
-VARIANT_DRAWS = 8
+# Mix composition is the axis the inversion is least robust to, so it gets the
+# same replication as every other axis: reporting it at 8 draws while capacity
+# and coherence ran at 32 invited the question of whether the weaker result was
+# the weaker evidence.
+VARIANT_DRAWS = 32
 
 
 def group(app: str, count: int, rng: random.Random) -> list[Tenant]:

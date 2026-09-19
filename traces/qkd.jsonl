@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"qkd","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"qkd","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.9,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 {"t":0.0032935277908098274,"kind":"measurement","node":"alice","basis":"X","result":1}
@@ -1027,5 +1027,5 @@
 {"t":0.25468774436296476,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":256}
 {"t":0.25568774436296476,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":58}
 {"t":0.25568774436296476,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":58}
-{"t":0.25668774436296476,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":0.22265625,"payload":{"qber":0.06896551724137931,"key_len":57,"sifted":115}}
-{"t":0.25668774436296476,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":0.22265625,"payload":{"qber":0.06896551724137931,"key_len":57,"sifted":115}}
+{"t":0.25668774436296476,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":0.22265625,"scores":true,"payload":{"qber":0.06896551724137931,"key_len":57,"sifted":115}}
+{"t":0.25668774436296476,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":0.22265625,"scores":true,"payload":{"qber":0.06896551724137931,"key_len":57,"sifted":115}}

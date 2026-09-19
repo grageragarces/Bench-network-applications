@@ -119,8 +119,8 @@ def _half_life_ms(s: AppSignature) -> tuple[float | None, float | None, str]:
 def render_table(signatures: list[AppSignature]) -> str:
     """A compact cross-application demand-signature table."""
     header = (
-        f"{'app':24} {'parties':>7} {'cv':>6} {'fano':>6} {'msg/pair':>9} "
-        f"{'B/pair':>7} {'deadline':>8} {'F½util (±std)':>15} {'ΔF':>6} "
+        f"{'app':24} {'parties':>7} {'cv':>6} {'fano':>6} {'msg/unit':>9} "
+        f"{'B/unit':>7} {'deadline':>8} {'F½util (±std)':>15} {'ΔF':>6} "
         f"{'stale½(ms, ±std)':>18} "
         f"{'stale½r(ms)':>11}"
     )
@@ -138,7 +138,7 @@ def render_table(signatures: list[AppSignature]) -> str:
             seeded = True
         lines.append(
             f"{s.app:24} {t.n_parties:>7} {t.request_cv:>6.2f} {t.fano_factor:>6.2f} "
-            f"{t.msgs_per_pair:>9.2f} {t.bytes_per_pair:>7.2f} "
+            f"{t.msgs_per_pair:>9.3f} {t.bytes_per_pair:>7.2f} "
             f"{t.deadline_fraction:>8.2f} "
             f"{_fmt_pm(s.fidelity_threshold, s.fidelity_threshold_std, '.3f'):>15} "
             f"{_fmt(s.fidelity_range, '.2f'):>6} "
@@ -174,8 +174,8 @@ def render_latex(signatures: list[AppSignature]) -> str:
         "% Requires: booktabs (\\toprule etc.) and a \\code{} macro.",
         r"\begin{tabular}{@{}lrrrrrrrrrr@{}}",
         r"\toprule",
-        "Application & parties & $cv$ & Fano & msg/pair & B/pair & deadline & "
-        r"$F_{1/2}$ & $\Delta_F$ & $t_{1/2}$ (ms) & $t_{1/2}^{r}$ \\",
+        "Application & parties & $cv$ & Fano & msg/unit & B/unit & deadline & "
+        r"$F_{1/2}$ & $\Delta_F$ & $t_{1/2}$ (ms) & $t_{1/2}^{r}$ (ms) \\",
         r"\midrule",
     ]
     rows = []
@@ -203,7 +203,7 @@ def render_latex(signatures: list[AppSignature]) -> str:
             fid_cell = f"{s.fidelity_threshold:.3f}"
         rows.append(
             rf"\code{{{_tex_escape(s.app)}}} & {t.n_parties} & {t.request_cv:.2f} & "
-            rf"{t.fano_factor:.2f} & {t.msgs_per_pair:.2f} & {t.bytes_per_pair:.2f} & "
+            rf"{t.fano_factor:.2f} & {t.msgs_per_pair:.3f} & {t.bytes_per_pair:.2f} & "
             rf"{t.deadline_fraction:.2f} & "
             rf"{fid_cell} & {_fmt_tex(s.fidelity_range, '.2f')} & {half_cell} & "
             rf"{_fmt_tex(half_ms_r, '.3f')} \\"

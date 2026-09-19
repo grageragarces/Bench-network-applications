@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"leader_election","backend":"reference","arbitration":"native","topology":"star5","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"leader_election","backend":"reference","arbitration":"native","topology":"star5","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"node0","dst":"node1","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":1,"src":"node2","dst":"node0","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":2,"src":"node3","dst":"node0","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
@@ -1155,8 +1155,8 @@
 {"t":0.4294315690188388,"kind":"classical_msg","src":"node0","dst":"node2","n_bytes":2}
 {"t":0.4294315690188388,"kind":"classical_msg","src":"node0","dst":"node3","n_bytes":2}
 {"t":0.4294315690188388,"kind":"classical_msg","src":"node0","dst":"node4","n_bytes":2}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node0","node":"node0","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node1","node":"node1","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node2","node":"node2","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node3","node":"node3","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node4","node":"node4","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node0","node":"node0","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node1","node":"node1","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node2","node":"node2","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node3","node":"node3","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node4","node":"node4","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
