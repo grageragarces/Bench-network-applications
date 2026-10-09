@@ -9,7 +9,7 @@
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
 
-**27 core protocols + a 66-entry catalog** (unbounded via a circuit generator), on
+**27 core protocols + a 67-entry catalog** (unbounded via a circuit generator), on
 **3 backends** (reference, SeQUeNCe, NetSquid).
 
 📖 **New here? Read the docs: [grageragarces.github.io/Bench-network-applications](https://grageragarces.github.io/Bench-network-applications/)**

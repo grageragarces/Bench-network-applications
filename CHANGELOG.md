@@ -21,6 +21,26 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **`tie_audit`, the first contributed protocol in the catalog** (now 67 entries).
+  The core stays at 27 and the published corpus is unchanged: contributed
+  protocols are runnable by name and covered by the full-catalog CI test, and
+  promoting one is a move into `_CORE` plus a corpus regeneration. TieAudit is a
+  verified, entanglement-steered audit of sign consistency: each copy consumes n
+  Bell pairs jointly and sends n bits one way, a random affine relabelling plus a
+  diagonal-Clifford pad twirls any pair noise into a single attenuation η, and
+  hidden test copies give a confidence interval for the audited fraction that
+  holds against an untrusted source. It brings a demand pattern the core lacks —
+  jointly consumed n-pair bursts whose value decays like F^n, with one-way
+  classical traffic and no feed-forward. Reference characterization: F½util
+  0.72 ± 0.04, stale½ 0.48 ms, 0.34 messages per pair. It runs on the reference
+  and SeQUeNCe backends; NetSquid replays through the same engine.
+
+Contracts unchanged: `API_VERSION` and `SCHEMA_VERSION` stay at **0.2.0**.
+
 ## [0.1.0] — unreleased
 
 First release with the characterization made publication-grade, and the first that

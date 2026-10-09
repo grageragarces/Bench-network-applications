@@ -39,6 +39,7 @@ from qnetbench.apps.six_state import SixState
 from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.apps.teleport import Teleportation
 from qnetbench.apps.threshold_secret_sharing import ThresholdSecretSharing
+from qnetbench.apps.tie_audit import TieAudit
 from qnetbench.apps.verified_bqc import VerifiedBQC
 from qnetbench.circuits import ghz, graph_state, hea, iqp, qft, random_circuit
 
@@ -77,6 +78,11 @@ _CORE_REGISTRY: dict[str, Application] = {app.name: app for app in _CORE}
 
 # --- catalog: the core plus parameterized DQC instances (run on demand) --------
 
+# Hand-written protocols outside the core: runnable by name and covered by the
+# full-catalog CI test, but not part of the published corpus. Promoting one is a
+# move into `_CORE` plus a corpus regeneration.
+_CONTRIBUTED: tuple[Application, ...] = (TieAudit(),)
+
 _CIRCUIT_FAMILIES = {
     "ghz": ghz,
     "qft": qft,
@@ -90,6 +96,7 @@ _CATALOG_SIZES = (4, 5, 6, 7, 8, 9, 10)
 
 def _build_catalog() -> dict[str, Application]:
     catalog = dict(_CORE_REGISTRY)
+    catalog.update((app.name, app) for app in _CONTRIBUTED)
     for build in _CIRCUIT_FAMILIES.values():
         for n in _CATALOG_SIZES:
             app = DQC(build(n))
@@ -158,6 +165,7 @@ __all__ = [
     "SixState",
     "Teleportation",
     "ThresholdSecretSharing",
+    "TieAudit",
     "VerifiedBQC",
     "available_apps",
     "catalog_apps",

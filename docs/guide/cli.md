@@ -73,12 +73,13 @@ Print the available benchmarks and policies.
 
 ```bash
 qnetbench list          # the 27 core protocols
-qnetbench list --all    # the full 66-entry catalog
+qnetbench list --all    # the full 67-entry catalog
 ```
 
 The **core** is the set of distinct protocols that CI, the reference corpus and the
 cross-backend equivalence suite all iterate. The **catalog** adds the generated
-distributed-circuit instances; every catalog entry is runnable by name. See
+distributed-circuit instances and the contributed protocols; every catalog entry is
+runnable by name. See
 [Applications](applications.md).
 
 === "Python"
@@ -88,7 +89,7 @@ distributed-circuit instances; every catalog entry is runnable by name. See
     from qnetbench.policies import available_policies
 
     len(available_apps())   # 27
-    len(catalog_apps())     # 66
+    len(catalog_apps())     # 67
     available_policies()    # ['edf', 'fidelity_first', 'fifo']
     ```
 

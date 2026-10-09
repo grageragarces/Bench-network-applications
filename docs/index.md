@@ -19,13 +19,13 @@ qnetbench run qkd
 | Layer | What you get |
 |---|---|
 | **27 core protocols** | QKD variants, BQC, distributed gates, distillation, GHZ multipartite protocols, repeater chains, DQC — one per distinct demand class |
-| **66-entry catalog** | the core plus generated distributed-circuit instances; unbounded via the circuit generator |
+| **67-entry catalog** | the core plus generated distributed-circuit instances and contributed protocols; unbounded via the circuit generator |
 | **3 backends** | `reference` (pure Python, always available), `sequence` (SeQUeNCe), `netsquid` (NetSquid) |
 | **4 arbitration modes** | the backend's `native` scheduling, or `fifo` / `fidelity_first` / `edf` applied identically everywhere |
 | **Characterization** | a measured demand signature per application: burstiness, classical coupling, deadline-criticality, fidelity and staleness curves |
 | **A versioned trace** | JSONL with a JSON Schema, plus a checksummed reference corpus |
 
-That is `66 × 3 × 4 = 792` predefined runnable configurations before the circuit
+That is `67 × 3 × 4 = 804` predefined runnable configurations before the circuit
 generator, which is unbounded.
 
 ## The result the suite exists for

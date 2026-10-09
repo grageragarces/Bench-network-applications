@@ -10,14 +10,14 @@ protocols for coverage, and a **generator** for quantity.
 
 ```bash
 qnetbench list          # the 27 core protocols
-qnetbench list --all    # the 66-entry catalog
+qnetbench list --all    # the 67-entry catalog
 qnetbench run <name>    # any entry from either
 ```
 
 | Layer | Count | What it is |
 |---|---|---|
 | Core protocols | **27** | hand-written protocols spanning every demand class; CI, the reference corpus and the cross-backend equivalence suite all iterate these |
-| Runnable catalog | **66** | the core plus 39 generated distributed-circuit instances |
+| Runnable catalog | **67** | the core plus 39 generated distributed-circuit instances and 1 contributed protocol |
 | Generatable | unbounded | any circuit family × size × partition, or any Qiskit / MQT Bench circuit |
 
 ## The core
@@ -74,9 +74,43 @@ represented by a real protocol rather than a parameter setting.
 The measured signature for each of these is in [Characterization](characterization.md);
 the demand classes are not claims, they are the output of `qnetbench characterize`.
 
+## Contributed protocols
+
+Hand-written protocols that live in the catalog rather than the core: runnable by
+name and run by the full-catalog CI test, but not part of the published reference
+corpus. Promoting one to the core is a move into `_CORE` and a corpus regeneration.
+
+| App | Protocol | Demand signature |
+|---|---|---|
+| `tie_audit` | verified, entanglement-steered audit of sign consistency (the TieAudit task of [arXiv:2606.20344](https://arxiv.org/abs/2606.20344)) | **n pairs consumed jointly** per copy, so the value decays like F^n; strictly one-way classical traffic and no feed-forward; hidden test copies verify an untrusted source |
+
+`tie_audit` is a verified protocol whose classical traffic runs one way. Alice holds
+a sign per slot, Bob a matching of the slots, and Bob wants the fraction `f` of
+matched pairs whose signs disagree. Each copy steers Bob's half of n pairs with
+Alice's signs and sends n bits one way; a fresh random affine relabelling and
+Clifford phase pad, shared in advance, turns any noise into one attenuation η.
+Hidden test copies measure η on the very pairs the source delivered, which yields a
+confidence interval for `f` that holds against any source. Utility is the share of
+[0, 1] the interval rules out (zero if it misses `f`).
+
+```bash
+qnetbench run tie_audit       # P = 8 slots, 256 copies of 3 pairs each
+```
+
+The instance and budget are run configuration, set from Python:
+
+```python
+from qnetbench.harness.runner import run_once
+
+run_once("tie_audit", seed=0, cfg={"copies": 1024, "n": 4})  # tighter, on 16 slots
+```
+
+Its reference characterization: F½util 0.72 ± 0.04, stale½ 0.48 ms, 0.34
+messages per pair, Fano factor 0.33 (regular bursts of n pairs), no deadlines.
+
 ## The generated catalog
 
-The other 39 entries are `DQC` over the built-in circuit families at sizes 4–10:
+The 39 generated entries are `DQC` over the built-in circuit families at sizes 4–10:
 
 ```text
 dqc_ghz4 … dqc_ghz10          dqc_qft4 … dqc_qft10
@@ -85,8 +119,8 @@ dqc_iqp4 … dqc_iqp10          dqc_hea4 … dqc_hea10
 ```
 
 Six families × seven sizes = 42, of which three (`dqc_ghz4`, `dqc_qft4`,
-`dqc_random4`) are also in the core, giving 66 catalog entries. Each is runnable by
-name with no extra setup:
+`dqc_random4`) are also in the core. With the 27 core protocols and `tie_audit`, that
+makes 67 catalog entries. Each is runnable by name with no extra setup:
 
 ```bash
 qnetbench run dqc_iqp8
@@ -102,7 +136,7 @@ Beyond the catalog the generator is unbounded — see [Circuits](circuits.md) an
 from qnetbench.apps import available_apps, catalog_apps, get_app, register_app
 
 available_apps()          # the 27 core names
-catalog_apps()            # all 66
+catalog_apps()            # all 67
 app = get_app("bqc")      # the Application instance
 app.name, app.roles()     # ('bqc', ['alice', 'bob'])
 ```

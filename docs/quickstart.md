@@ -33,8 +33,8 @@ threshold_secret_sharing, verified_bqc
 policies:     edf, fidelity_first, fifo
 ```
 
-`qnetbench list --all` adds the generated distributed-circuit instances, for 66
-runnable benchmarks. See [Applications](guide/applications.md).
+`qnetbench list --all` adds the generated distributed-circuit instances and the
+contributed protocols, for 67 runnable benchmarks. See [Applications](guide/applications.md).
 
 ## 3. Change what you are measuring
 

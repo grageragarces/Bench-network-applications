@@ -6,7 +6,7 @@
 > characterized, cross-simulator workload instead of one bespoke toy each.
 
 **Status:** all five deliverables complete, plus a large expansion — **22 core
-protocols + a 66-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
+protocols + a 67-entry catalog** on **3 backends** (reference, SeQUeNCe, NetSquid),
 published to GitHub. This document is the architecture + roadmap; the resolved
 `[DECIDE]` sections below are kept for the record. **New here? Start with
 [usage.md](usage.md)** — how to run benchmarks, what data you get, how to point them
@@ -382,9 +382,9 @@ free.
 
 ## 14. Remaining work (TODO)
 
-Deliverables 1–5 are complete; the suite is **27 core protocols + a 66-entry
-catalog** (42 generated DQC instances, 3 overlapping the core; unbounded via the DQC
-generator) across **3 backends**. What follows is optional/incremental, roughly in
+Deliverables 1–5 are complete; the suite is **27 core protocols + a 67-entry
+catalog** (42 generated DQC instances, 3 overlapping the core, plus 1 contributed
+protocol; unbounded via the DQC generator) across **3 backends**. What follows is optional/incremental, roughly in
 priority order.
 
 ### Usage & docs
