@@ -1,0 +1,40 @@
+baseline mac-np2: macOS arm64 py3.12.13 np2.5.1
+432 traces (27 applications x 16 seeds)
+
+environment                          bytes  events  outcomes  max rel diff
+--------------------------------------------------------------------------
+Linux x86_64 py3.12.16 np2.5.1         350     432       430      1.60e-15
+Linux aarch64 py3.12.16 np2.5.1        350     432       430      1.60e-15
+Linux aarch64 py3.10.22 np2.2.6        350     432       430      1.60e-15
+macOS arm64 py3.12.13 np1.26.4         350     432       432      1.19e-16
+
+Out of 432. 'bytes' is an identical file. 'events' is the same events in order,
+with floats within a relative 1e-12. 'outcomes' is an exactly equal role, success and utility.
+
+Outcomes not exactly equal:
+  linux-amd64-np2: clock_sync.0.jsonl: utility differs by 1.1e-16
+  linux-amd64-np2: clock_sync.2.jsonl: utility differs by 1.1e-16
+  linux-arm64-np2: clock_sync.0.jsonl: utility differs by 1.1e-16
+  linux-arm64-np2: clock_sync.2.jsonl: utility differs by 1.1e-16
+  linux-arm64-py310: clock_sync.0.jsonl: utility differs by 1.1e-16
+  linux-arm64-py310: clock_sync.2.jsonl: utility differs by 1.1e-16
+
+================ same traces, from a Linux baseline
+baseline linux-arm64-np2: Linux aarch64 py3.12.16 np2.5.1
+432 traces (27 applications x 16 seeds)
+
+environment                          bytes  events  outcomes  max rel diff
+--------------------------------------------------------------------------
+Linux x86_64 py3.12.16 np2.5.1         432     432       432      0.00e+00
+Linux aarch64 py3.10.22 np2.2.6        432     432       432      0.00e+00
+macOS arm64 py3.12.13 np1.26.4         429     432       430      1.60e-15
+macOS arm64 py3.12.13 np2.5.1          350     432       430      1.60e-15
+
+Out of 432. 'bytes' is an identical file. 'events' is the same events in order,
+with floats within a relative 1e-12. 'outcomes' is an exactly equal role, success and utility.
+
+Outcomes not exactly equal:
+  mac-np1: clock_sync.0.jsonl: utility differs by 1.1e-16
+  mac-np1: clock_sync.2.jsonl: utility differs by 1.1e-16
+  mac-np2: clock_sync.0.jsonl: utility differs by 1.1e-16
+  mac-np2: clock_sync.2.jsonl: utility differs by 1.1e-16

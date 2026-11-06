@@ -2,10 +2,71 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterator
+
+import pytest
+
 from qnetbench.api.types import Demand
+from qnetbench.contention import app_profile, ranking_experiment
 from qnetbench.harness.runner import run_once
 from qnetbench.metrics import compute_report
-from qnetbench.policies import Edf, FidelityFirst, Fifo, PendingRequest
+from qnetbench.policies import (
+    Edf,
+    FidelityFirst,
+    Fifo,
+    PendingRequest,
+    available_policies,
+    builtin,
+    get_policy,
+    register_policy,
+)
+
+
+class _LastFirst:
+    """A custom policy, to exercise the registry."""
+
+    name = "last_first_for_test"
+
+    def order(self, pending: list[PendingRequest], now: float) -> list[int]:
+        return [p.req_id for p in sorted(pending, key=lambda p: -p.request_time)]
+
+
+@pytest.fixture
+def custom_policy() -> Iterator[str]:
+    name = register_policy(_LastFirst())
+    yield name
+    del builtin._REGISTRY[name]
+
+
+def test_registered_policy_resolves_by_name(custom_policy: str) -> None:
+    assert custom_policy in available_policies()
+    assert get_policy(custom_policy).name == custom_policy
+
+
+def test_register_policy_refuses_to_shadow_silently(custom_policy: str) -> None:
+    with pytest.raises(KeyError, match="already registered"):
+        register_policy(_LastFirst())
+    assert register_policy(_LastFirst(), replace=True) == custom_policy
+
+
+def test_registered_policy_runs_in_the_contention_model(custom_policy: str) -> None:
+    tenants = [app_profile("qkd", 10, 0.03, trace_seed=s) for s in range(2)]
+    results = ranking_experiment(
+        {"mix": tenants},
+        policies=("fifo", custom_policy),
+        capacity=50.0,
+        link_fidelity=0.99,
+        coherence_time=0.25,
+    )
+    assert set(results["mix"]) == {"fifo", custom_policy}
+
+
+def test_policy_mode_does_not_change_a_single_application_run(custom_policy: str) -> None:
+    """One application never has more than one pending request per link, so nothing
+    consults the policy. The documentation says so; this keeps that true."""
+    plain = [e.model_dump() for e in run_once("qkd", seed=0)[1:]]
+    arbitrated = run_once("qkd", seed=0, arbitration=f"policy:{custom_policy}")
+    assert [e.model_dump() for e in arbitrated[1:]] == plain
 
 
 def _pending(req_id: int, *, fidelity: float, deadline: float | None, t: float) -> PendingRequest:

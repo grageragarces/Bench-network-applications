@@ -3,6 +3,7 @@
 This package and `qnetbench.api` are the two frozen contracts of the suite.
 """
 
+from qnetbench.trace.compare import TraceComparison, compare_traces
 from qnetbench.trace.events import (
     SCHEMA_VERSION,
     AppOutcomeEvent,
@@ -33,7 +34,9 @@ __all__ = [
     "Measurement",
     "QubitSent",
     "RunHeader",
+    "TraceComparison",
     "TraceWriter",
+    "compare_traces",
     "parse_event",
     "read_trace",
     "write_trace",

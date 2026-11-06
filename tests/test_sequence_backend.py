@@ -34,6 +34,12 @@ def _report(app: str, seed: int = 0, topo=None):
     return compute_report(run_once(app, seed=seed, backend=BACKEND, topology=topo))
 
 
+def test_contract_override_applies_on_this_backend() -> None:
+    events = run_once("qkd", backend=BACKEND, demand_override={"min_fidelity": 0.5})
+    contracts = {e.demand.min_fidelity for e in events if e.kind == "ent_requested"}
+    assert contracts == {0.5}
+
+
 def test_all_apps_run_on_backend() -> None:
     for app in available_apps():  # default topology per app
         rep = _report(app)

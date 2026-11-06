@@ -232,6 +232,9 @@ class ReferenceBackend:
         # `coherence_time`. pair_age=0 / coherence_time=inf means fresh pairs.
         self.pair_age = pair_age
         self.coherence_time = coherence_time
+        # Contract fields replaced on every request of the run (`run_once` validates
+        # them). The trace records the contract in force, so a run stays self-describing.
+        self.demand_override: dict[str, object] = {}
         self.engine = Engine()
         seq = np.random.SeedSequence(seed)
         # Link sampling and quantum measurement must not share a stream. Link
@@ -324,6 +327,17 @@ class ReferenceBackend:
 
     # --- entanglement rendezvous + arbitration -------------------------------
 
+    def _effective_demand(self, demand: Demand) -> Demand:
+        """The contract in force for a request, after any run-level override."""
+        if not self.demand_override:
+            return demand
+        fields = {**demand.model_dump(), **self.demand_override}
+        if "latency_budget" in self.demand_override:
+            # A budget set for the run replaces an application's own deadline. The
+            # deadline would otherwise take precedence and the override would do nothing.
+            fields["deadline"] = None
+        return Demand.model_validate(fields)
+
     def _rendezvous(
         self, node: NodeId, peer: NodeId, n: int, demand: Demand
     ) -> list[EntanglementHandle]:
@@ -331,6 +345,7 @@ class ReferenceBackend:
         the edge's waiter; the second side matches it and generates the pairs for
         both. This is what makes `epr.request` on each node return halves of the
         same pairs."""
+        demand = self._effective_demand(demand)
         key = frozenset((node, peer))
         other = self._waiting.get(key)
         if other is not None and other.side != node:

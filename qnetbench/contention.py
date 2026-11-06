@@ -1,9 +1,10 @@
-"""Multi-tenant contention: the cross-policy ranking-inversion result (Deliverable 4).
+"""Multi-tenant contention: the cross-policy evaluation (Deliverable 4).
 
-The earlier phases run one application at a time, so the arbiter never has to
-choose — there is only ever one pending demand. Scheduling only matters under
-*contention*: several tenants competing for a link whose entanglement-generation
-capacity is below aggregate demand. This module runs that experiment.
+A single application never has more than one pending demand per link, so nothing has
+to choose. Scheduling only matters under *contention*: several tenants competing for
+a link whose entanglement-generation capacity is below aggregate demand. This module
+models that as a queue. Tenants are demand streams read from application traces, not
+running applications, and no backend is involved.
 
 A shared link produces one pair per service tick (capacity pairs/second). Tenants
 — parameterized by real applications' demand contracts — issue requests over time.
@@ -11,15 +12,15 @@ At each tick the chosen `Policy` orders the pending queue and one request is ser
 A served request's delivered fidelity decays with how long it waited in queue (the
 memory holding its pair decoheres), so a high-`min_fidelity` demand must be served
 promptly, while a deadline demand must be served before its deadline. Those two
-pressures pull different ways, so the policy that wins depends on the workload mix —
-and the ranking *inverts* between a deadline-heavy and a fidelity-heavy mix. That
-inversion is the proof that single-workload evaluation produces unreliable rankings.
+pressures pull different ways, so which policy wins depends on the workload mix, on
+the contract values the tenants declare, and on the metric used to score them.
 """
 
 from __future__ import annotations
 
 import math
 import random
+import statistics
 from dataclasses import dataclass, field, replace
 
 from qnetbench.api.types import Demand
@@ -95,6 +96,7 @@ def app_profile(
     *,
     trace_seed: int = 0,
     phase: float = 0.0,
+    demand_override: dict[str, object] | None = None,
 ) -> Tenant:
     """Build a tenant from an application's real demand contract and real arrival
     pattern, both read from an actual run.
@@ -103,9 +105,10 @@ def app_profile(
     offsets the tenant's first request. Two tenants of the same application built
     with the same seed and phase are indistinguishable — same contract, same
     arrival instants — so distinct seeds are what make a mix genuinely
-    multi-tenant rather than one stream counted several times.
+    multi-tenant rather than one stream counted several times. `demand_override`
+    is passed to `run_once`, so a tenant's varied contract still comes from a trace.
     """
-    events = run_once(app, seed=trace_seed)
+    events = run_once(app, seed=trace_seed, demand_override=demand_override)
     pattern = _arrival_pattern(events)
     for ev in events:
         if isinstance(ev, EntanglementRequested):
@@ -217,17 +220,6 @@ def ranking_experiment(
     return out
 
 
-def best_policy(results: dict[str, ContentionResult]) -> str:
-    """The policy with the highest aggregate utility for one mix.
-
-    Resolves ties by dict order, so prefer `winning_policies` wherever a tie
-    would be reported as a result: several of this experiment's operating points
-    have two or three policies on exactly the same score, and an argmax silently
-    turns that into a winner.
-    """
-    return max(results, key=lambda p: results[p].aggregate_utility)
-
-
 def winning_policies(results: dict[str, ContentionResult]) -> frozenset[str]:
     """Every policy tied for the highest aggregate utility."""
     top = max(r.aggregate_utility for r in results.values())
@@ -235,9 +227,14 @@ def winning_policies(results: dict[str, ContentionResult]) -> frozenset[str]:
 
 
 def has_inversion(experiment: dict[str, dict[str, ContentionResult]]) -> bool:
-    """True if the winning policy differs across mixes (a ranking inversion)."""
-    winners = {best_policy(res) for res in experiment.values()}
-    return len(winners) > 1
+    """True if no policy is best on every mix.
+
+    A winner is the set tied for the top score, so a policy tied for best on one mix
+    and outright best on another counts as jointly optimal. Taking an arbitrary
+    maximum instead would report disagreements that are not there.
+    """
+    winners = [winning_policies(results) for results in experiment.values()]
+    return not frozenset.intersection(*winners)
 
 
 # The canonical contention operating point (moderate overload; entanglement supply
@@ -336,39 +333,165 @@ def burstiness_mixes(
     return {"bursty": bursty, "smooth": smooth}
 
 
-def default_experiment() -> dict[str, dict[str, ContentionResult]]:
-    """The headline cross-policy evaluation (Deliverable 4)."""
-    return ranking_experiment(
-        default_mixes(),
-        capacity=CAPACITY,
-        link_fidelity=LINK_FIDELITY,
-        coherence_time=COHERENCE_TIME,
+@dataclass(frozen=True)
+class PolicySummary:
+    """One policy on one mix, across every arrival draw."""
+
+    scores: tuple[float, ...]  # aggregate contract satisfaction, one per draw
+    per_app: dict[str, float]  # mean satisfaction of each application's tenants
+
+    @property
+    def mean(self) -> float:
+        return statistics.fmean(self.scores)
+
+    @property
+    def std(self) -> float:
+        """Sample standard deviation across draws."""
+        return statistics.stdev(self.scores) if len(self.scores) > 1 else 0.0
+
+    @property
+    def worst_app(self) -> float:
+        """Satisfaction of the application this policy serves least. The aggregate
+        rate does not penalize a policy for starving one tenant to serve the rest."""
+        return min(self.per_app.values())
+
+
+@dataclass(frozen=True)
+class ReplicatedExperiment:
+    """Every policy on every mix, replicated over independent arrival draws."""
+
+    draws: int
+    n_requests: int
+    capacity: float
+    link_fidelity: float
+    coherence_time: float
+    mixes: dict[str, dict[str, PolicySummary]]
+    disagreeing_draws: int  # draws in which no policy is best on every mix
+
+    def ranked(self, mix: str) -> list[str]:
+        summaries = self.mixes[mix]
+        return sorted(summaries, key=lambda p: (-summaries[p].mean, p))
+
+    def separation(self, mix: str) -> float:
+        """The leader's lead over the next policy, in standard errors of the difference.
+        Paired across draws, since every policy is scored on the same arrivals."""
+        first, second = self.ranked(mix)[:2]
+        leads = [
+            a - b
+            for a, b in zip(
+                self.mixes[mix][first].scores, self.mixes[mix][second].scores, strict=True
+            )
+        ]
+        error = statistics.stdev(leads) / math.sqrt(len(leads)) if len(leads) > 1 else 0.0
+        return statistics.fmean(leads) / error if error > 0.0 else math.inf
+
+
+def replicated_experiment(
+    *,
+    draws: int = DRAWS,
+    n_requests: int = N_REQUESTS,
+    capacity: float = CAPACITY,
+    link_fidelity: float = LINK_FIDELITY,
+    coherence_time: float = COHERENCE_TIME,
+) -> ReplicatedExperiment:
+    """The cross-policy evaluation at full scale: independent tenants, replicated
+    over `draws` arrival draws, with ties reported as ties."""
+    scores: dict[str, dict[str, list[float]]] = {}
+    apps: dict[str, dict[str, dict[str, list[float]]]] = {}
+    disagreeing = 0
+    for seed in range(draws):
+        experiment = ranking_experiment(
+            default_mixes(n_requests, seed=seed),
+            capacity=capacity,
+            link_fidelity=link_fidelity,
+            coherence_time=coherence_time,
+        )
+        disagreeing += has_inversion(experiment)
+        for mix, results in experiment.items():
+            for policy, result in results.items():
+                scores.setdefault(mix, {}).setdefault(policy, []).append(result.aggregate_utility)
+                per_app = apps.setdefault(mix, {}).setdefault(policy, {})
+                for app, value in result.per_app.items():
+                    per_app.setdefault(app, []).append(value)
+    return ReplicatedExperiment(
+        draws=draws,
+        n_requests=n_requests,
+        capacity=capacity,
+        link_fidelity=link_fidelity,
+        coherence_time=coherence_time,
+        mixes={
+            mix: {
+                policy: PolicySummary(
+                    tuple(values),
+                    {app: statistics.fmean(v) for app, v in apps[mix][policy].items()},
+                )
+                for policy, values in by_policy.items()
+            }
+            for mix, by_policy in scores.items()
+        },
+        disagreeing_draws=disagreeing,
     )
 
 
+def render_replicated(experiment: ReplicatedExperiment) -> str:
+    """Contract satisfaction and worst-served application, per policy and mix."""
+    mixes = list(experiment.mixes)
+    policies = list(next(iter(experiment.mixes.values())))
+    width = max(max(len(m) for m in mixes), 15) + 4
+
+    def header(title: str) -> list[str]:
+        columns = f"{'policy':16}" + "".join(f"{m:>{width}}" for m in mixes)
+        return ["", title, columns, "-" * len(columns)]
+
+    lines = [
+        f"{experiment.draws} independent arrival draws, {experiment.n_requests} requests per "
+        f"tenant, {experiment.capacity:g} pairs/s,",
+        f"link fidelity {experiment.link_fidelity:g}, coherence time "
+        f"{experiment.coherence_time:g} s",
+        *header("contract satisfaction, mean ± std across draws (* = highest mean)"),
+    ]
+    for policy in policies:
+        row = f"{policy:16}"
+        for mix in mixes:
+            s = experiment.mixes[mix][policy]
+            mark = "*" if experiment.ranked(mix)[0] == policy else " "
+            row += f"{f'{s.mean:.3f} ± {s.std:.3f}{mark}':>{width}}"
+        lines.append(row)
+    lines.append(
+        f"{'separation':16}"
+        + "".join(f"{f'{experiment.separation(m):.1f} s.e.':>{width}}" for m in mixes)
+    )
+    lines.extend(header("worst-served application, mean satisfaction"))
+    for policy in policies:
+        row = f"{policy:16}"
+        for mix in mixes:
+            row += f"{experiment.mixes[mix][policy].worst_app:>{width}.3f}"
+        lines.append(row)
+    lines.append("")
+    lines.append(
+        f"The mixes share no best policy in {experiment.disagreeing_draws} of "
+        f"{experiment.draws} draws."
+    )
+    return "\n".join(lines)
+
+
 def render_experiment(experiment: dict[str, dict[str, ContentionResult]]) -> str:
-    """A policy × workload-mix utility matrix, marking each mix's winner (*)."""
+    """A policy × workload-mix matrix for one draw, marking every policy tied for best."""
     mixes = list(experiment)
     policies = list(next(iter(experiment.values())))
     width = max(len(m) for m in mixes) + 4
 
     lines = [f"{'policy':16}" + "".join(f"{m:>{width}}" for m in mixes)]
     lines.append("-" * len(lines[0]))
-    winners = {m: best_policy(experiment[m]) for m in mixes}
+    winners = {m: winning_policies(experiment[m]) for m in mixes}
     for policy in policies:
         cells = []
         for m in mixes:
             util = experiment[m][policy].aggregate_utility
-            mark = "*" if winners[m] == policy else " "
+            mark = "*" if policy in winners[m] else " "
             cells.append(f"{util:>{width - 2}.3f}{mark} ")
         lines.append(f"{policy:16}" + "".join(cells))
-    lines.append(f"{'winner':16}" + "".join(f"{winners[m]:>{width}}" for m in mixes))
-
     if has_inversion(experiment):
-        verdict = "  →  ".join(f"{m}: {winners[m]}" for m in mixes)
         lines.append("")
-        lines.append(f"RANKING INVERSION — the best policy flips across workloads ({verdict}).")
-        lines.append(
-            "Single-workload evaluation would have crowned one policy and been wrong on the other."
-        )
+        lines.append("No policy is best on every mix.")
     return "\n".join(lines)

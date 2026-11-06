@@ -43,6 +43,14 @@ def line2(
     return Topology(name="line2", nodes=(a, b), links={frozenset((a, b)): link or LinkModel()})
 
 
+def default_topology(roles: list[str], link: LinkModel | None = None) -> Topology:
+    """The default topology for an application: a direct link for two roles, or a
+    hub-and-spoke star (role[0] = hub) for multipartite applications."""
+    if len(roles) == 2:
+        return line2(roles[0], roles[1], link=link)
+    return star(roles[0], list(roles[1:]), link=link)
+
+
 def star(
     center: NodeId,
     leaves: list[NodeId],

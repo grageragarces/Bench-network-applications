@@ -31,7 +31,9 @@ class TraceWriter:
 
 
 def write_trace(path: str | Path, events: Iterable[Event]) -> None:
-    with open(path, "w", encoding="utf-8") as fh:
+    # An explicit newline: text mode would write CRLF on Windows, and published
+    # traces are checksummed byte for byte.
+    with open(path, "w", encoding="utf-8", newline="\n") as fh:
         writer = TraceWriter(fh)
         for event in events:
             writer.write(event)

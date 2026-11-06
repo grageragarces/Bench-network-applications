@@ -22,11 +22,13 @@ from __future__ import annotations
 
 import json
 import os
+import platform
 import subprocess
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+import numpy as np
 from pydantic import BaseModel
 
 import qnetbench
@@ -49,10 +51,21 @@ class RunManifest(BaseModel):
     seeds: int = 0
     apps: list[str] = []
     complete: bool = False
+    environment: dict[str, str] = {}  # empty in manifests written before this field
 
 
 def new_run_id() -> str:
     return uuid.uuid4().hex
+
+
+def runtime_environment() -> dict[str, str]:
+    """What a byte-level comparison of results depends on, beyond the code itself."""
+    return {
+        "python": platform.python_version(),
+        "numpy": np.__version__,
+        "platform": platform.platform(),
+        "machine": platform.machine(),
+    }
 
 
 def _git(*args: str) -> str | None:
@@ -92,6 +105,7 @@ def start_run(out_dir: Path, apps: list[str], seeds: int) -> RunManifest:
         seeds=seeds,
         apps=list(apps),
         complete=False,
+        environment=runtime_environment(),
     )
     write_manifest(out_dir, manifest)
     return manifest
@@ -115,7 +129,7 @@ def write_atomic(path: Path, text: str) -> None:
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(text)
+    tmp.write_text(text, encoding="utf-8", newline="\n")
     os.replace(tmp, path)
 
 

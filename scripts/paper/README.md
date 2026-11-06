@@ -81,6 +81,27 @@ Sweeps the mirror-circuit families to vary how many pairs a single outcome
 depends on, holding party count at two, and regresses the measured threshold
 against that count.
 
+## Reproducibility across environments (Section IV)
+
+    # in each environment, against the same code:
+    python scripts/paper/reproducibility.py generate OUT_DIR
+    # then, anywhere:
+    python scripts/paper/reproducibility.py compare BASELINE_DIR OTHER_DIR ... \
+        > scripts/paper/data/reproducibility/summary.txt
+
+Runs every core application over 16 seeds and compares the traces across environments,
+separating identical files from the same events with rounding-level float differences.
+The committed summary compares macOS against Linux, ARM against x86, Python 3.10 against
+3.12, and numpy 1.26, 2.2 and 2.5. `qnetbench corpus --check` is the quick version, which
+CI runs on Linux, macOS and Windows.
+
+## The headline contention table (Table 4)
+
+    qnetbench contention
+
+Reproduces the table, including the separation and the count of disagreeing draws, and
+reports the worst-served application beside it. A test pins these numbers.
+
 ## Replay outcome-preservation (Section VII)
 
     python scripts/paper/replay_equivalence.py > scripts/paper/data/replay_equivalence.txt
