@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"clock_sync","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"clock_sync","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 {"t":0.0032935277908098274,"kind":"ent_requested","req_id":1,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
@@ -513,5 +513,5 @@
 {"t":0.25468774436296476,"kind":"ent_delivered","req_id":255,"actual_fidelity":0.9394822557955788,"latency":0.0006469815834753145,"pair_age":0.0}
 {"t":0.25468774436296476,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":256}
 {"t":0.25468774436296476,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":256}
-{"t":0.25568774436296476,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":1.0,"payload":{"phi":1.0471975511965976,"phi_hat":1.0471975511965976,"error":0.0}}
-{"t":0.25568774436296476,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":1.0,"payload":{"phi":1.0471975511965976,"phi_hat":1.0471975511965976,"error":0.0}}
+{"t":0.25568774436296476,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":1.0,"scores":true,"payload":{"phi":1.0471975511965976,"phi_hat":1.0471975511965976,"error":0.0}}
+{"t":0.25568774436296476,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":1.0,"scores":true,"payload":{"phi":1.0471975511965976,"phi_hat":1.0471975511965976,"error":0.0}}

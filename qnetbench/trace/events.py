@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 
 from qnetbench.api.types import Demand, ViolationKind
 
-SCHEMA_VERSION = "0.2.0"  # 0.2.0 adds the qubit_sent event (single-qubit transmission)
+SCHEMA_VERSION = "0.3.0"  # 0.3.0 adds app_outcome.scores; 0.2.0 added qubit_sent
 
 
 class _Event(BaseModel):
@@ -85,6 +85,7 @@ class AppOutcomeEvent(_Event):
     node: str
     success: bool
     utility: float
+    scores: bool = True  # False = role cannot judge the outcome; see api.AppOutcome
     payload: dict[str, object] = Field(default_factory=dict)
 
 

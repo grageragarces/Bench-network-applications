@@ -62,5 +62,9 @@ class BQC:
             qubit = epr.request(1, demand)[0].qubit
             assert qubit is not None
             server_step(host, qubit, cls)
-        # The server is blind: it reports participation, not the computation.
-        return AppOutcome(role="bob", success=True, utility=1.0, payload={"depth": depth})
+        # The server is blind: it reports participation, not the computation, so
+        # it does not vote on utility (see api.AppOutcome.scores).
+        return AppOutcome(
+            role="bob", success=True, utility=1.0, scores=False,
+            payload={"depth": depth},
+        )

@@ -21,6 +21,11 @@
           "title": "Role",
           "type": "string"
         },
+        "scores": {
+          "default": true,
+          "title": "Scores",
+          "type": "boolean"
+        },
         "success": {
           "title": "Success",
           "type": "boolean"
@@ -353,7 +358,7 @@
           "type": "string"
         },
         "schema_version": {
-          "default": "0.2.0",
+          "default": "0.3.0",
           "title": "Schema Version",
           "type": "string"
         },

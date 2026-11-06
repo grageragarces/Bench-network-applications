@@ -8,7 +8,7 @@ Run everything from the repository root, in an environment with the package
 installed (`pip install -e ".[viz]"`). No simulator is required — all of it runs
 on the reference backend.
 
-## Demand signatures (Table III, Figure 1)
+## Demand signatures (Table 2, Figure 2)
 
     qnetbench characterize --out scripts/paper/data/
     python scripts/paper/plot.py scripts/paper/data/ --out curves.pdf
@@ -19,7 +19,7 @@ The run also writes three files of its own, so nothing downstream is hand-copied
 
 - `data/table.txt` — the rendered signature table;
 - `data/table.tex` — the same table as a booktabs `tabular`, which the manuscript
-  `\input{}`s, so Table III cannot drift from the data;
+  `\input{}`s, so Table 2 cannot drift from the data;
 - `data/manifest.json` — which run produced this directory (id, git commit, dirty
   flag, seed count, app list, and whether it finished).
 
@@ -29,11 +29,11 @@ interrupted run leaves an empty file where a reader expects a table.
 
 Every per-app file is stamped with its run id, and `plot.py` refuses to draw from
 a directory holding more than one run or an unfinished one. This is not
-hypothetical — an earlier version of Table III and Figure 1 was built from a
+hypothetical — an earlier version of Table 2 and Figure 2 was built from a
 directory holding two runs at once, because a second run was interrupted part way
 through and silently overwrote only the first half of the files.
 
-## Ranking-inversion sensitivity sweeps (Table VI, Section VIII-C)
+## Ranking-inversion sensitivity sweeps (Tables 4 and 5, Section VIII-C)
 
     python scripts/paper/capacity_sweep.py       > scripts/paper/data/capacity_sweep.txt
     python scripts/paper/coherence_sweep.py      > scripts/paper/data/coherence_sweep.txt
@@ -48,17 +48,18 @@ against 167 req/s of aggregate demand, link fidelity 0.99, coherence time
 Two conventions matter for reading the output. A *winner* is the set of policies
 tied for the top score, not an argmax: at several operating points two or three
 policies score identically, and resolving that arbitrarily invents a
-disagreement. And every point is replicated over 32 independent arrival draws,
-because a tenant's arrival sequence is drawn from a run of its application and is
-the only stochastic ingredient in an otherwise deterministic queueing model.
+disagreement. And every point is replicated over 32 repeats, each giving every
+tenant its own arrival pattern, because that pattern is read from a run of the
+tenant's application and is the only stochastic ingredient in an otherwise
+deterministic queueing model.
 `tenant_independence.py` shows what the earlier, un-replicated model cost.
 
-## The ranking-inversion figure (Figure 2)
+## The ranking-inversion figure (Figure 3)
 
     python scripts/paper/plot_inversion.py --out paper/figures/inversion.pdf
 
 Contract satisfaction against capacity for all three policies on both mixes,
-averaged over the same 32 draws the sweeps use. Each policy keeps its colour,
+averaged over the same 32 repeats the sweeps use. Each policy keeps its colour,
 dash pattern and marker in both panels, so the figure survives greyscale
 printing and colour-vision deficiency; the palette is checked against the
 adjacent-pair and normal-vision separation floors.
@@ -80,7 +81,7 @@ Sweeps the mirror-circuit families to vary how many pairs a single outcome
 depends on, holding party count at two, and regresses the measured threshold
 against that count.
 
-## Replay outcome-preservation (Section VI)
+## Replay outcome-preservation (Section VII)
 
     python scripts/paper/replay_equivalence.py > scripts/paper/data/replay_equivalence.txt
 
@@ -88,6 +89,15 @@ Runs each core application natively on the reference backend, records the
 entanglement supply that run produced, and replays exactly that supply back
 through the same engine. Isolates whether replay distorts the computation from
 whether two backends supply different entanglement.
+
+## The distillation-heavy mix (Section VIII-D)
+
+    python scripts/paper/distillation_mix.py > scripts/paper/data/distillation_mix.txt
+
+The negative result: the one mix whose tenants are rate-hungry rather than
+fidelity- or deadline-bound, which a pass/fail contract model cannot express.
+Replicated over the same 32 repeats as the other sweeps, so run rules R3 and R7
+hold for it as they do for the rest of Section VIII.
 
 The checked-in `data/` outputs are the exact ones the paper's tables and figures
 were built from.

@@ -499,6 +499,7 @@ class ReferenceBackend:
                     node=roles_to_nodes[role],
                     success=outcome.success,
                     utility=outcome.utility,
+                    scores=outcome.scores,
                     payload=outcome.payload,
                 )
             )

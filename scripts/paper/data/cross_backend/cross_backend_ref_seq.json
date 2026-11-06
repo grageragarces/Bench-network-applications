@@ -44,13 +44,13 @@
   "bqc": {
     "reference": {
       "success": false,
-      "utility": 0.9375,
+      "utility": 0.875,
       "delivered": 8,
       "rate": 276.5040201605879
     },
     "sequence": {
       "success": false,
-      "utility": 0.9375,
+      "utility": 0.875,
       "delivered": 8,
       "rate": 313.62971001948716
     }
@@ -113,14 +113,14 @@
   },
   "distillation": {
     "reference": {
-      "success": false,
-      "utility": 0.9555555555555556,
+      "success": true,
+      "utility": 0.96875,
       "delivered": 128,
       "rate": 500.92430802485615
     },
     "sequence": {
       "success": false,
-      "utility": 0.9347826086956522,
+      "utility": 0.9041666666666667,
       "delivered": 128,
       "rate": 689.8492854096548
     }
@@ -366,13 +366,13 @@
   "verified_bqc": {
     "reference": {
       "success": false,
-      "utility": 0.9375,
+      "utility": 0.875,
       "delivered": 16,
       "rate": 308.9643646970347
     },
     "sequence": {
       "success": false,
-      "utility": 0.9375,
+      "utility": 0.875,
       "delivered": 16,
       "rate": 355.4733029039726
     }

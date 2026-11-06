@@ -15,12 +15,12 @@ B. Replication: 32 independent arrival draws, 100 requests/tenant,
       fifo            0.507 +- 0.107
       fidelity_first  0.507 +- 0.107
       edf             0.809 +- 0.012
-      -> edf over fifo: +0.302 (15.9 sigma)
+      -> edf over fifo: +0.302 (17.4 sigma, paired)
    fidelity_heavy
       fifo            0.589 +- 0.044
       fidelity_first  0.683 +- 0.060
       edf             0.550 +- 0.098
-      -> fidelity_first over fifo: +0.093 (7.1 sigma)
+      -> fidelity_first over fifo: +0.093 (10.3 sigma, paired)
    inversion on 32/32 draws
 
 C. Capacity sweep under independent tenants (6 draws per point).

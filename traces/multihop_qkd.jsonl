@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"multihop_qkd","backend":"reference","arbitration":"native","topology":"star3","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"multihop_qkd","backend":"reference","arbitration":"native","topology":"star3","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"repeater","dst":"alice","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":1,"src":"bob","dst":"repeater","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
@@ -648,6 +648,6 @@
 {"t":0.3039286846845508,"kind":"classical_msg","src":"bob","dst":"repeater","n_bytes":32}
 {"t":0.3049286846845508,"kind":"classical_msg","src":"repeater","dst":"alice","n_bytes":32}
 {"t":0.3059286846845508,"kind":"classical_msg","src":"alice","dst":"repeater","n_bytes":2}
-{"t":0.3069286846845508,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":0.2421875,"payload":{"qber":0.0625,"key_len":31}}
-{"t":0.3069286846845508,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":0.2421875,"payload":{"qber":0.0625,"key_len":31}}
-{"t":0.3069286846845508,"kind":"app_outcome","role":"repeater","node":"repeater","success":true,"utility":0.24313725490196078,"payload":{"rounds":128}}
+{"t":0.3069286846845508,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":0.2421875,"scores":true,"payload":{"qber":0.0625,"key_len":31}}
+{"t":0.3069286846845508,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":0.2421875,"scores":true,"payload":{"qber":0.0625,"key_len":31}}
+{"t":0.3069286846845508,"kind":"app_outcome","role":"repeater","node":"repeater","success":true,"utility":0.24313725490196078,"scores":true,"payload":{"rounds":128}}

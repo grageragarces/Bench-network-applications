@@ -76,3 +76,11 @@ class AppOutcome(BaseModel):
     success: bool
     utility: float = Field(ge=0.0, le=1.0)
     payload: dict[str, object] = Field(default_factory=dict)
+    # A role that cannot observe whether the protocol succeeded sets this False
+    # and is left out of the run's aggregate utility. The blind-computation
+    # server is the case this exists for: blindness is exactly the property that
+    # stops it scoring the computation, so averaging its placeholder into the
+    # run's figure would halve the dynamic range the fidelity curves are read
+    # from. It still reports success and appears in the trace; it just does not
+    # vote on utility.
+    scores: bool = True

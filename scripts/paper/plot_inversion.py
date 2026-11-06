@@ -145,7 +145,7 @@ def main() -> None:
         Patch(facecolor="#0b0b0b", alpha=0.18, edgecolor=MUTED, lw=0.4),
         Line2D([], [], color=MUTED, lw=0.8, ls=":"),
     ]
-    labels += ["all 32 draws disagree", f"operating point ({CAPACITY:.0f} pairs/s)"]
+    labels += ["all 32 repeats disagree", f"operating point ({CAPACITY:.0f} pairs/s)"]
     fig.legend(
         handles, labels, frameon=False, fontsize=7.5, labelcolor=INK,
         loc="upper center", ncol=5, handlelength=2.6,

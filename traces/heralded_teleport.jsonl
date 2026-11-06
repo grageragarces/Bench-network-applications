@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"heralded_teleport","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"heralded_teleport","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":2}
 {"t":0.028969,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.85,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.03326252779080983,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.004293527790809826,"pair_age":0.0}
@@ -267,5 +267,5 @@
 {"t":0.5926362375503881,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":1}
 {"t":0.5926362375503881,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":3}
 {"t":0.5936362375503881,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":2}
-{"t":0.5946362375503881,"kind":"app_outcome","role":"bob","node":"bob","success":false,"utility":0.9583333333333334,"payload":{"delivered":24,"correct":23,"attempts":73,"pairs_per_teleport":3.0416666666666665}}
-{"t":0.5946362375503881,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.9583333333333334,"payload":{"delivered":24,"correct":23,"attempts":73,"pairs_per_teleport":3.0416666666666665}}
+{"t":0.5946362375503881,"kind":"app_outcome","role":"bob","node":"bob","success":false,"utility":0.9583333333333334,"scores":true,"payload":{"delivered":24,"correct":23,"attempts":73,"pairs_per_teleport":3.0416666666666665}}
+{"t":0.5946362375503881,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.9583333333333334,"scores":true,"payload":{"delivered":24,"correct":23,"attempts":73,"pairs_per_teleport":3.0416666666666665}}

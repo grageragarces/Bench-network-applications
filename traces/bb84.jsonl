@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"bb84","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"bb84","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"qubit_sent","src":"alice","dst":"bob","fidelity":0.95}
 {"t":0.001,"kind":"qubit_sent","src":"alice","dst":"bob","fidelity":0.95}
 {"t":0.001,"kind":"measurement","node":"bob","basis":"Z","result":0}
@@ -515,5 +515,5 @@
 {"t":0.2570000000000002,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":256}
 {"t":0.2580000000000002,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":66}
 {"t":0.2590000000000002,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":66}
-{"t":0.2600000000000002,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":0.25390625,"payload":{"qber":0.030303030303030304,"key_len":65,"sifted":131}}
-{"t":0.2600000000000002,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":0.25390625,"payload":{"qber":0.030303030303030304,"key_len":65,"sifted":131}}
+{"t":0.2600000000000002,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":0.25390625,"scores":true,"payload":{"qber":0.030303030303030304,"key_len":65,"sifted":131}}
+{"t":0.2600000000000002,"kind":"app_outcome","role":"alice","node":"alice","success":true,"utility":0.25390625,"scores":true,"payload":{"qber":0.030303030303030304,"key_len":65,"sifted":131}}

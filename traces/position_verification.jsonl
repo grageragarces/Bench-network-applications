@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"position_verification","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"position_verification","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"verifier","dst":"prover","n":1,"demand":{"min_fidelity":0.85,"latency_budget":null,"deadline":0.01,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 {"t":0.0032935277908098274,"kind":"classical_msg","src":"verifier","dst":"prover","n_bytes":1}
@@ -288,5 +288,5 @@
 {"t":0.14745660353494325,"kind":"classical_msg","src":"prover","dst":"verifier","n_bytes":1}
 {"t":0.14845660353494325,"kind":"measurement","node":"verifier","basis":"Z","result":0}
 {"t":0.14845660353494325,"kind":"classical_msg","src":"verifier","dst":"prover","n_bytes":2}
-{"t":0.14945660353494325,"kind":"app_outcome","role":"verifier","node":"verifier","success":false,"utility":0.9791666666666666,"payload":{"rounds":48,"verified":47,"late":0,"wrong":1}}
-{"t":0.14945660353494325,"kind":"app_outcome","role":"prover","node":"prover","success":false,"utility":0.9791666666666666,"payload":{"rounds":48,"verified":47,"late":0,"wrong":0}}
+{"t":0.14945660353494325,"kind":"app_outcome","role":"verifier","node":"verifier","success":false,"utility":0.9791666666666666,"scores":true,"payload":{"rounds":48,"verified":47,"late":0,"wrong":1}}
+{"t":0.14945660353494325,"kind":"app_outcome","role":"prover","node":"prover","success":false,"utility":0.9791666666666666,"scores":true,"payload":{"rounds":48,"verified":47,"late":0,"wrong":0}}
