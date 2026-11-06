@@ -23,6 +23,25 @@ a consumer checks compatibility from the file rather than from this document.
 
 ## [Unreleased]
 
+Contracts are unchanged, and so is every existing trace.
+
+### Added
+
+- **`qnetbench.tenancy`: several applications running at once on one shared link**, with a
+  policy choosing who is served next. `run_tenants` returns one trace per tenant, each valid
+  under the ordinary schema. The modelling choices are fields of `ExecutionModel`, and
+  `AS_QUEUE_MODEL` sets them the way `qnetbench.contention` assumes. It covers two-role
+  applications on one link, and tenants compete for the link only.
+- `LinkServer` (`qnetbench.backends.reference.link`), which queues requests and makes pairs.
+- Opt-in decoherence of held qubits, dephasing or depolarizing, off by default.
+  `Register.settle` applies it on its own random stream, so it moves no other draw.
+- `PendingRequest.tenant`, `contention.arrival_times`, `Engine.call_at`.
+
+### Changed
+
+- `run_once` now goes through `LinkServer`, as the one-tenant case. `qnetbench corpus --check`
+  confirms its traces are byte-identical.
+
 ## [0.2.0] — 2026-11-06
 
 Adds non-scoring roles and regenerated data, and corrects several places where the

@@ -125,6 +125,18 @@ def app_profile(
     raise ValueError(f"application {app!r} issued no entanglement requests")
 
 
+def arrival_times(tenant: Tenant) -> list[float]:
+    """When each of a tenant's requests arrives: its own gap sequence scaled to `interval`."""
+    times: list[float] = []
+    arrival = tenant.phase
+    for k in range(tenant.n_requests):
+        if k:
+            gap = tenant.pattern[(k - 1) % len(tenant.pattern)] if tenant.pattern else 1.0
+            arrival += gap * tenant.interval
+        times.append(arrival)
+    return times
+
+
 def simulate(
     tenants: list[Tenant],
     policy: Policy,
@@ -136,12 +148,7 @@ def simulate(
     """Discrete-event contention simulation over one shared link."""
     requests: list[_Req] = []
     for tenant in tenants:
-        arrival = tenant.phase
-        for k in range(tenant.n_requests):
-            if k:
-                # Replay the application's own gap sequence, scaled to `interval`.
-                gap = tenant.pattern[(k - 1) % len(tenant.pattern)] if tenant.pattern else 1.0
-                arrival += gap * tenant.interval
+        for arrival in arrival_times(tenant):
             deadline = arrival + tenant.budget if tenant.budget is not None else math.inf
             requests.append(_Req(tenant.app, arrival, tenant.min_fidelity, deadline))
     requests.sort(key=lambda r: r.arrival)

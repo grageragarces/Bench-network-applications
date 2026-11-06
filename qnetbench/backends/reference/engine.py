@@ -61,7 +61,7 @@ class Process:
 class Engine:
     def __init__(self) -> None:
         self.now: float = 0.0
-        self._heap: list[tuple[float, int, Process]] = []
+        self._heap: list[tuple[float, int, Process | Callable[[], None]]] = []
         self._seq = itertools.count()
         self._sched_sem = threading.Semaphore(0)
         self._procs: list[Process] = []
@@ -79,6 +79,13 @@ class Engine:
     def schedule(self, proc: Process, delay: float) -> None:
         """Wake `proc` after `delay` simulated seconds."""
         heapq.heappush(self._heap, (self.now + max(delay, 0.0), next(self._seq), proc))
+
+    def call_at(self, when: float, fn: Callable[[], None]) -> None:
+        """Run `fn` at simulated time `when`, on the scheduler. It must not block."""
+        heapq.heappush(self._heap, (max(when, self.now), next(self._seq), fn))
+
+    def call_later(self, delay: float, fn: Callable[[], None]) -> None:
+        self.call_at(self.now + max(delay, 0.0), fn)
 
     @property
     def current(self) -> Process:
@@ -100,11 +107,15 @@ class Engine:
         their daemon threads, exactly as they do after a deadlock.
         """
         while self._heap:
-            when, _, proc = heapq.heappop(self._heap)
-            if proc.finished:
+            when, _, item = heapq.heappop(self._heap)
+            if not isinstance(item, Process):
+                self.now = max(self.now, when)
+                item()
+                continue
+            if item.finished:
                 continue
             self.now = max(self.now, when)
-            self._switch_to(proc)
+            self._switch_to(item)
             if self._failure is not None:
                 raise self._failure
 

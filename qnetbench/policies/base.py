@@ -23,6 +23,7 @@ class PendingRequest:
     n: int
     demand: Demand
     request_time: SimTime
+    tenant: str = ""  # who asked, when several applications share a link
 
     def effective_deadline(self) -> float:
         """Absolute time this request must be served by, or +inf if unbounded."""

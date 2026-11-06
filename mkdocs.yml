@@ -119,6 +119,7 @@ nav:
       - qnetbench.trace: reference/trace.md
       - qnetbench.characterize: reference/characterize.md
       - qnetbench.contention: reference/contention.md
+      - qnetbench.tenancy: reference/tenancy.md
       - qnetbench.spec: reference/spec.md
   - Changelog: changelog.md
   - Design notes: design.md

@@ -26,6 +26,7 @@ tools depend on them, and they are versioned independently of the rest of the su
 | [`qnetbench.metrics`](metrics.md) | traces to the standard report |
 | [`qnetbench.characterize`](characterize.md) | demand-signature extraction and the curves |
 | [`qnetbench.contention`](contention.md) | the multi-tenant cross-policy experiment |
+| [`qnetbench.tenancy`](tenancy.md) | several applications running at once on one link |
 | [`qnetbench.spec`](spec.md) | JSON Schema generation and the reference corpus |
 
 ## The shape of a dependency

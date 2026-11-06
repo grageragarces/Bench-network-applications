@@ -83,3 +83,21 @@ def test_qkd_qber_agrees_across_backends() -> None:
     theory = 2 * (1 - 0.9) / 3  # ≈ 0.0667
     assert abs(qber("reference") - theory) < 0.05
     assert abs(qber(BACKEND) - theory) < 0.05
+
+
+def test_concurrent_execution_runs_on_the_sequence_supply():
+    from qnetbench.tenancy import TenantSpec, contract_satisfaction, run_tenants
+    from qnetbench.topology import LinkModel
+    from qnetbench.trace.events import EntanglementDelivered
+
+    tenants = [TenantSpec("key", "qkd", {"rounds": 10}), TenantSpec("bell", "chsh", {"rounds": 10})]
+    link = LinkModel(1.0 / 160, 0.99, 0.0)
+    runs = [
+        run_tenants(tenants, seed=1, arbitration="policy:edf", link=link, supply="sequence")
+        for _ in range(2)
+    ]
+    assert runs[0].traces == runs[1].traces
+    assert runs[0].supply == "sequence"
+    for trace in runs[0].traces.values():
+        assert sum(isinstance(e, EntanglementDelivered) for e in trace) == 10
+        assert contract_satisfaction(trace) >= 0.0

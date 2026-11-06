@@ -32,7 +32,8 @@ from qnetbench.api.types import (
     ViolationKind,
 )
 from qnetbench.backends.reference.engine import Engine, Process
-from qnetbench.backends.reference.qstate import Register, gate_matrix
+from qnetbench.backends.reference.link import LinkRequest, LinkServer
+from qnetbench.backends.reference.qstate import MemoryNoise, Register, gate_matrix
 from qnetbench.policies.base import Policy
 from qnetbench.topology import Topology
 from qnetbench.trace.events import (
@@ -48,6 +49,7 @@ from qnetbench.trace.events import (
 )
 
 BACKEND_NAME = "reference"
+_MAXIMALLY_MIXED = 0.25  # the fidelity of a pair that carries no entanglement
 
 
 def _age_fidelity(f0: float, age: float, coherence_time: float) -> float:
@@ -82,17 +84,23 @@ class _Qubit:
         self._qid = qid
 
     def apply(self, gate: Gate, *params: float) -> None:
+        self._reg.settle(self._qid)
         self._reg.apply_1q(self._qid, gate_matrix(gate.value, params))
 
     def cnot(self, target: Qubit) -> None:
         assert isinstance(target, _Qubit)
+        self._reg.settle(self._qid)
+        self._reg.settle(target._qid)
         self._reg.cnot(self._qid, target._qid)
 
     def cz(self, target: Qubit) -> None:
         assert isinstance(target, _Qubit)
+        self._reg.settle(self._qid)
+        self._reg.settle(target._qid)
         self._reg.cz(self._qid, target._qid)
 
     def measure(self, basis: Basis = Basis.Z) -> int:
+        self._reg.settle(self._qid)
         return self._reg.measure(self._qid, basis.value)
 
     def free(self) -> None:
@@ -160,6 +168,18 @@ class _Waiter:
         self.result: list[EntanglementHandle] | None = None
 
 
+class _Transfer:
+    """A matched request: both sides are parked until its last pair arrives."""
+
+    def __init__(self, matched: _Waiter, caller: Process, node: NodeId, gov: Demand) -> None:
+        self.matched = matched
+        self.caller = caller
+        self.node = node
+        self.gov = gov
+        self.waiter_handles: list[EntanglementHandle] = []
+        self.caller_handles: list[EntanglementHandle] = []
+
+
 class _EPRSocket:
     def __init__(self, backend: ReferenceBackend, node: NodeId, peer: NodeId) -> None:
         self._backend = backend
@@ -191,7 +211,10 @@ class _HostImpl:
         return _ClassicalSocket(self._backend, self._node, peer)
 
     def qalloc(self) -> Qubit:
-        return _Qubit(self._backend.register, self._backend.register.alloc())
+        register = self._backend.register
+        qid = register.alloc()
+        register.stamp(qid, self.now(), self._node)
+        return _Qubit(register, qid)
 
     def qsend(self, peer: NodeId, qubit: Qubit) -> None:
         self._backend._qsend(self._node, peer, qubit)
@@ -222,6 +245,7 @@ class ReferenceBackend:
         policy: Policy | None = None,
         pair_age: float = 0.0,
         coherence_time: float = math.inf,
+        engine: Engine | None = None,
     ) -> None:
         self.topology = topology
         self.seed = seed
@@ -235,7 +259,15 @@ class ReferenceBackend:
         # Contract fields replaced on every request of the run (`run_once` validates
         # them). The trace records the contract in force, so a run stays self-describing.
         self.demand_override: dict[str, object] = {}
-        self.engine = Engine()
+        # Everything below until the seeds is set by `qnetbench.tenancy`, which runs several
+        # backends on one engine and one link. Defaults give a single application on its own.
+        self.engine = engine or Engine()
+        self.shared_link: LinkServer | None = None
+        self.tenant = ""
+        self.queue_wait_aging = False  # a pair ages by its request's time in the queue
+        self.arrivals: tuple[float, ...] = ()  # earliest time of each side's k-th request
+        self._arrival_counts: dict[NodeId, int] = {}
+        self._links: dict[frozenset[str], LinkServer] = {}
         seq = np.random.SeedSequence(seed)
         # Link sampling and quantum measurement must not share a stream. Link
         # sampling draws two values per delivered pair (_sample_pairs), while a
@@ -261,6 +293,17 @@ class ReferenceBackend:
             node: np.random.default_rng(s)
             for node, s in zip(topology.nodes, node_seeds, strict=True)
         }
+        # Spawned last so that it moves none of the streams above.
+        self._memory_seed = seq.spawn(1)[0]
+        self._started: tuple[Application, dict[Role, NodeId]] | None = None
+        self._outcomes: dict[Role, AppOutcome] = {}
+        self._finished_at: SimTime = 0.0
+
+    def enable_memory(self, coherence_time: float, noise: MemoryNoise) -> None:
+        """Make qubits decay while they are held. Off by default."""
+        self.register.enable_memory(
+            self.now, coherence_time, noise, np.random.default_rng(self._memory_seed)
+        )
 
     # --- infrastructure ------------------------------------------------------
 
@@ -286,6 +329,7 @@ class ReferenceBackend:
         if waiter is not None:  # a receiver is already waiting — deliver to it
             recv_proc, slot = waiter
             slot.append(qubit._qid)
+            self.register.reassign(qubit._qid, dst)
             self.engine.schedule(recv_proc, link.attempt_latency)
             self.engine.wait(link.attempt_latency)
         else:  # park until a receiver arrives
@@ -298,6 +342,7 @@ class ReferenceBackend:
         pending = self._qsend_pending.pop(key, None)
         if pending is not None:  # a sender is already waiting — take its qubit
             send_proc, qid = pending
+            self.register.reassign(qid, dst)
             self.engine.schedule(send_proc, latency)
             self.engine.wait(latency)
             return _Qubit(self.register, qid)
@@ -345,12 +390,12 @@ class ReferenceBackend:
         the edge's waiter; the second side matches it and generates the pairs for
         both. This is what makes `epr.request` on each node return halves of the
         same pairs."""
-        demand = self._effective_demand(demand)
+        demand = self._pace(node, self._effective_demand(demand))
         key = frozenset((node, peer))
         other = self._waiting.get(key)
         if other is not None and other.side != node:
             del self._waiting[key]
-            return self._generate(matched=other, node=node, peer=peer, n=n, demand=demand)
+            return self._submit(matched=other, node=node, peer=peer, n=n, demand=demand)
 
         req_id = next(self._req_ids)
         self._emit(
@@ -364,13 +409,41 @@ class ReferenceBackend:
         assert waiter.result is not None
         return waiter.result
 
-    def _generate(
+    def _pace(self, node: NodeId, demand: Demand) -> Demand:
+        """Hold this side's k-th request until its scheduled arrival, if it has one.
+
+        Pacing shapes the workload, so it costs nothing physically: an application's
+        deadline runs from when the request goes out, and the qubits it holds are not
+        charged for the wait. Without this, an application that prepares a qubit before
+        asking for a pair would decay merely because the schedule spaces its requests.
+        """
+        k = self._arrival_counts.get(node, 0)
+        self._arrival_counts[node] = k + 1
+        if k >= len(self.arrivals):
+            return demand
+        delay = self.arrivals[k] - self.now()
+        if delay <= 0.0:
+            return demand
+        self.register.pause(node, delay)
+        self.engine.wait(delay)
+        if demand.deadline is None:
+            return demand
+        return demand.model_copy(update={"deadline": demand.deadline + delay})
+
+    def _link_for(self, node: NodeId, peer: NodeId) -> LinkServer:
+        if self.shared_link is not None:
+            return self.shared_link
+        key = frozenset((node, peer))
+        link = self._links.get(key)
+        if link is None:
+            # A single application has one request outstanding per link, so this queue
+            # never holds more than one and `self.policy` has nothing to order.
+            link = self._links[key] = LinkServer(self.engine, self._sample_pairs)
+        return link
+
+    def _submit(
         self, matched: _Waiter, node: NodeId, peer: NodeId, n: int, demand: Demand
     ) -> list[EntanglementHandle]:
-        # A single application drives one rendezvous at a time, so there is never a
-        # queue to order here and `self.policy` is not consulted. Arbitration only
-        # bites under multi-tenant contention, which is modelled separately in
-        # `qnetbench.contention` (the cross-policy ranking-inversion result).
         if n != matched.n:
             raise ValueError(
                 f"entanglement rendezvous size mismatch on {node!r}↔{peer!r}: "
@@ -378,20 +451,49 @@ class ReferenceBackend:
                 "pair request must agree on the count."
             )
         gov = _merge_demands(matched.demand, demand)
-        pairs = n
+        transfer = _Transfer(matched, self.engine.current, node, gov)
 
-        total_latency, sampled = self._sample_pairs(node, peer, pairs)
-        pair_age = self.pair_age
+        def served(link_latency: float, sampled: list[float], waited: float, last: bool) -> None:
+            pair_age = self.pair_age + waited if self.queue_wait_aging else self.pair_age
+            self._deliver(transfer, link_latency, sampled, pair_age, last)
+
+        def dropped(pairs: int) -> None:
+            self._deliver(transfer, 0.0, [_MAXIMALLY_MIXED] * pairs, self.pair_age, True)
+
+        self._link_for(node, peer).submit(
+            LinkRequest(
+                src=node,
+                dst=peer,
+                remaining=n,
+                demand=gov,
+                arrival=matched.arrival,
+                on_served=served,
+                on_dropped=dropped,
+                tenant=self.tenant,
+            )
+        )
+        self.engine.park()
+        return transfer.caller_handles
+
+    def _deliver(
+        self,
+        transfer: _Transfer,
+        link_latency: float,
+        sampled: list[float],
+        pair_age: float,
+        last: bool,
+    ) -> None:
+        matched, gov = transfer.matched, transfer.gov
         fidelities = [_age_fidelity(f, pair_age, self.coherence_time) for f in sampled]
         pair_qubits = [self.register.make_bell_pair(fid) for fid in fidelities]
 
         request_time = matched.arrival
-        delivery_time = self.now() + total_latency
+        delivery_time = self.now() + link_latency
         latency = delivery_time - request_time
 
-        waiter_handles: list[EntanglementHandle] = []
-        caller_handles: list[EntanglementHandle] = []
         for (qa, qb), fid in zip(pair_qubits, fidelities, strict=True):
+            self.register.stamp(qa, delivery_time, matched.side)
+            self.register.stamp(qb, delivery_time, transfer.node)
             violations = self._contract_violations(gov, fid, delivery_time, request_time, pair_age)
             self._emit(
                 EntanglementDelivered(
@@ -406,20 +508,19 @@ class ReferenceBackend:
                 self._emit(
                     ContractViolation(t=delivery_time, req_id=matched.req_id, violation=kind)
                 )
-            waiter_handles.append(
+            transfer.waiter_handles.append(
                 self._build_handle(matched.req_id, qa, fid, latency, pair_age, violations, gov)
             )
-            caller_handles.append(
+            transfer.caller_handles.append(
                 self._build_handle(matched.req_id, qb, fid, latency, pair_age, violations, gov)
             )
 
-        # Both sides observe delivery only after the generation latency elapses:
-        # hand the parked waiter its half (waking it at the delivery time) and block
-        # this (second) side for the same duration, so both resume together.
-        matched.result = waiter_handles
-        self.engine.schedule(matched.proc, total_latency)
-        self.engine.wait(total_latency)
-        return caller_handles
+        # Both sides observe delivery only after the last pair's generation latency
+        # elapses, so both resume together.
+        if last:
+            matched.result = transfer.waiter_handles
+            self.engine.schedule(matched.proc, link_latency)
+            self.engine.schedule(transfer.caller, link_latency)
 
     def _build_handle(
         self,
@@ -472,22 +573,35 @@ class ReferenceBackend:
     def run(
         self, app: Application, cfg: dict[str, object], roles_to_nodes: dict[Role, NodeId]
     ) -> list[Event]:
-        outcomes: dict[Role, AppOutcome] = {}
+        self.start(app, cfg, roles_to_nodes)
+        self.engine.run()
+        return self.collect()
+
+    def start(
+        self, app: Application, cfg: dict[str, object], roles_to_nodes: dict[Role, NodeId]
+    ) -> None:
+        """Spawn the application's roles on the engine, without running it."""
+        self._started = (app, roles_to_nodes)
 
         def make_runner(role: Role, node: NodeId) -> Callable[[], None]:
             def runner() -> None:
                 host = _HostImpl(self, node, self._node_rng[node])
-                outcomes[role] = app.run(host, role, cfg)
+                self._outcomes[role] = app.run(host, role, cfg)
+                self._finished_at = self.now()
 
             return runner
 
+        prefix = f"{self.tenant}/" if self.tenant else ""
         for role in app.roles():
             node = roles_to_nodes[role]
-            proc = self.engine.spawn(make_runner(role, node), name=f"{app.name}:{role}")
+            proc = self.engine.spawn(make_runner(role, node), name=f"{prefix}{app.name}:{role}")
             self.engine.schedule(proc, 0.0)
 
-        self.engine.run()
-
+    def collect(self) -> list[Event]:
+        """The trace of the application `start` began, once the engine has finished."""
+        assert self._started is not None, "call start() first"
+        app, roles_to_nodes = self._started
+        outcomes = self._outcomes
         missing = set(roles_to_nodes) - set(outcomes)
         if missing:
             raise RuntimeError(
@@ -509,7 +623,7 @@ class ReferenceBackend:
         for role, outcome in outcomes.items():
             events.append(
                 AppOutcomeEvent(
-                    t=self.now(),
+                    t=self._finished_at,
                     role=role,
                     node=roles_to_nodes[role],
                     success=outcome.success,

@@ -146,6 +146,50 @@ This isolates the burstiness axis of the characterization, which a fixed-cadence
 arrival model simply cannot express — under it every tenant is smooth, regardless
 of how the application actually behaves.
 
+## Executing the mix
+
+The queue model assumes what a tenant's service is worth. [`qnetbench.tenancy`](../reference/tenancy.md)
+runs the applications instead, on one shared link, so what comes back is measured:
+
+```python
+from qnetbench.tenancy import TenantSpec, application_utility, contract_satisfaction, run_tenants
+from qnetbench.topology import LinkModel
+
+run = run_tenants(
+    [
+        TenantSpec("gate", "distributed_gate", {"reps": 50}),
+        TenantSpec("key", "qkd", {"rounds": 50}),
+    ],
+    arbitration="policy:edf",
+    link=LinkModel(attempt_latency=1 / 160, link_fidelity=0.99, fidelity_std=0.0),
+    classical_latency=1e-3,
+    coherence_time=0.25,
+)
+for name, trace in run.traces.items():
+    print(name, contract_satisfaction(trace), application_utility(trace))
+```
+
+Fixing the seed fixes the supply, so policies are compared on the same sequence of pairs.
+`run.write(directory)` saves one ordinary trace per tenant and a small manifest.
+
+The modelling choices are settings:
+
+| `ExecutionModel` field | Default | Alternatives |
+|---|---|---|
+| `arrivals` | `"paced"`: a request goes out no earlier than its tenant's schedule | `"closed_loop"` |
+| `aging` | `"held_qubits"`: a new pair is fresh, and held qubits decay | `"queue_wait"`, `"none"` |
+| `memory_noise` | `"dephasing"` | `"depolarizing"` |
+| `missed_deadline` | `"serve_late"`, with a violation in the trace | `"drop"`: no link capacity is used, and the application gets a maximally mixed pair |
+| `service_unit` | `"pair"`: the policy chooses again after every pair | `"request"` |
+| `service` | `"on_demand"`: the supply's own timing | `"ticks"`: one pair per period |
+
+`AS_QUEUE_MODEL` sets these the way the queue model assumes. Applications block on each pair,
+which that model does not capture, so to keep its open-loop arrivals with real applications,
+give each request its own `TenantSpec`.
+
+It covers two-role applications on one link. Tenants compete for the link only, not for memory
+qubits or node time, so node-level scheduling is out of scope.
+
 ## Honest scope
 
 Disagreement requires the two workloads to place opposed demands on the link, and it is
@@ -159,3 +203,6 @@ that fixes all three has not established a general ranking.
 [`Tenant`, `ContentionResult`, `app_profile`, `simulate`, `ranking_experiment`,
 `default_mixes`, `burstiness_mixes`, `replicated_experiment`, `render_replicated`,
 `render_experiment`, `winning_policies`, `has_inversion`](../reference/contention.md).
+
+[`run_tenants`, `TenantSpec`, `TenantsRun`, `ExecutionModel`, `AS_QUEUE_MODEL`,
+`contract_satisfaction`, `application_utility`, `queue_model_on_link`](../reference/tenancy.md).
