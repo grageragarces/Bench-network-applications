@@ -27,6 +27,7 @@ run_once(
     cfg: dict[str, object] | None = None,
     pair_age: float = 0.0,
     coherence_time: float = math.inf,
+    demand_override: dict[str, object] | None = None,
 ) -> list[Event]
 ```
 
@@ -40,9 +41,11 @@ run_once(
 | `cfg` | per-run application configuration (below) |
 | `pair_age` | deliver every pair already this many seconds old (reference backend only) |
 | `coherence_time` | decoherence time constant used to age those pairs (reference backend only) |
+| `demand_override` | replace `min_fidelity`, `latency_budget`, `staleness_tolerance` or `priority` on every entanglement request; a `latency_budget` also clears the application's own deadline, and the trace records the contract in force |
 
-The four arguments the CLI does not expose are `topology`, `cfg`, `pair_age` and
-`coherence_time`. Reach for Python when you need them.
+The arguments the CLI does not expose are `cfg`, `pair_age` and `coherence_time`, plus
+any `topology` beyond the default one with different link parameters. Reach for Python
+when you need them.
 
 ## Configuring an application
 

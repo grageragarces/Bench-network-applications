@@ -1,31 +1,48 @@
 # Contention
 
-This is the result the suite exists to produce.
+A single application has nothing to arbitrate, since it never has more than one
+pending request per link. Scheduling only matters under **contention**: several tenants
+competing for a link whose entanglement supply is below aggregate demand.
+`qnetbench contention` models that, and shows that which policy comes out best
+**depends on the workload, the declared contracts and the metric**.
 
-Running one application at a time, an arbiter almost never has to choose — there is
-one pending demand and every policy agrees. Scheduling only matters under
-**contention**: several tenants competing for a link whose entanglement supply is
-below aggregate demand. `qnetbench contention` sets that up and shows that the best
-policy **depends on what the workload is made of**.
+This is a queueing model. Tenants are demand streams read from application traces, not
+running applications, and no backend is involved.
 
 ```console
 $ qnetbench contention
-policy              deadline_heavy    fidelity_heavy
-----------------------------------------------------
-fifo                       0.800             0.867
-fidelity_first             0.800             0.933*
-edf                        0.817*            0.900
-winner                         edf    fidelity_first
+32 independent arrival draws, 100 requests per tenant, 160 pairs/s,
+link fidelity 0.99, coherence time 0.25 s
 
-RANKING INVERSION — the best policy flips across workloads (deadline_heavy: edf  →  fidelity_heavy: fidelity_first).
-Single-workload evaluation would have crowned one policy and been wrong on the other.
+contract satisfaction, mean ± std across draws (* = highest mean)
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                 0.507 ± 0.107      0.589 ± 0.044
+fidelity_first       0.507 ± 0.107      0.683 ± 0.060*
+edf                  0.809 ± 0.012*     0.550 ± 0.098
+separation                17.4 s.e.          10.3 s.e.
+
+worst-served application, mean satisfaction
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                          0.449              0.208
+fidelity_first                0.449              0.212
+edf                           0.045              0.127
+
+The mixes share no best policy in 32 of 32 draws.
 ```
 
-EDF wins on deadline-heavy traffic and is beaten on fidelity-heavy traffic;
-`fidelity_first` does exactly the opposite. **A paper that evaluated on either
-workload alone would have crowned one policy and been wrong about the other.** That
-inversion is the argument that single-workload evaluation produces unreliable
-rankings — and it is why a characterized benchmark suite is worth building.
+Read the two tables together:
+
+- **The workload matters.** On aggregate satisfaction EDF leads one mix and is last on
+  the other, and `fidelity_first` does the opposite. A study using one mix alone would
+  report one winner.
+- **The metric matters.** All four `distributed_gate` tenants declare the same budget,
+  so EDF amounts to serving tenants with deadlines before those without. Its 0.809 is
+  `distributed_gate` at 1.000 and `qkd` at 0.045, so on the worst-served application it
+  comes last on both mixes.
+- **The contracts matter.** Lowering every `min_fidelity` by 0.05 or halving the deadline
+  budgets removes the disagreement between the mixes.
 
 ## How the experiment works
 
@@ -54,8 +71,8 @@ holding its pair decoheres. So:
 - a high-`min_fidelity` demand must be served *promptly* or it fails its contract;
 - a deadline demand must be served *before its deadline* or it expires unserved.
 
-Those two pressures pull in different directions. Which one a policy is good at
-decides which mix it wins — hence the inversion.
+Those two pressures pull in different directions, and which one a policy is good at
+affects which mix it wins.
 
 ## The two mixes
 
@@ -88,13 +105,12 @@ from qnetbench.contention import (
 mixes = default_mixes(seed=7)                       # independent arrivals per tenant
 exp = ranking_experiment(mixes, capacity=160.0, link_fidelity=0.99, coherence_time=0.25)
 print(render_experiment(exp))
-print(has_inversion(exp))                           # True if the winner differs across mixes
+print(has_inversion(exp))                           # True if no policy is best on every mix
 print(winning_policies(exp["deadline_heavy"]))      # every policy tied at the top
 ```
 
-Use `winning_policies` rather than `best_policy` wherever a tie would be reported
-as a result: several operating points have two or three policies on exactly the
-same score, and an argmax silently turns that into a winner.
+A winner is a set, because several operating points have two or three policies on
+exactly the same score, and an argmax would silently turn that into a winner.
 
 ### Your own mix
 
@@ -132,14 +148,14 @@ of how the application actually behaves.
 
 ## Honest scope
 
-The inversion requires the two workloads to place genuinely opposed demands on the
-link; it is not a claim that any two mixes will disagree. What the experiment
-supports is the narrower and more useful claim: **workload composition determines
-which policy wins**, so a study that evaluates on one workload has not established
-a ranking.
+Disagreement requires the two workloads to place opposed demands on the link, and it is
+not a claim that any two mixes will disagree. The contract values behind these mixes are
+also set by hand rather than derived from measurement. What the experiment supports is
+narrower: **a ranking holds for a workload, a set of contracts and a metric**, so a study
+that fixes all three has not established a general ranking.
 
 ## API
 
 [`Tenant`, `ContentionResult`, `app_profile`, `simulate`, `ranking_experiment`,
-`default_mixes`, `burstiness_mixes`, `default_experiment`, `render_experiment`,
-`best_policy`, `winning_policies`, `has_inversion`](../reference/contention.md).
+`default_mixes`, `burstiness_mixes`, `replicated_experiment`, `render_replicated`,
+`render_experiment`, `winning_policies`, `has_inversion`](../reference/contention.md).

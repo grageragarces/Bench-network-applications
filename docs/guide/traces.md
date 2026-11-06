@@ -10,7 +10,7 @@ qnetbench run qkd --out qkd.jsonl
 ```
 
 ```json
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"qkd","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"qkd","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.9,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 ```
@@ -90,24 +90,50 @@ with a manifest recording each file's `sha256` and event count:
 
 ```bash
 qnetbench corpus              # regenerate into traces/
+qnetbench corpus --check      # regenerate here and compare; writes nothing
 ```
 
 ```json
 {
-  "spec_version": "0.2.0",
+  "spec_version": "0.3.0",
   "backend": "reference",
   "seed": 0,
+  "environment": {"python": "3.12.13", "numpy": "2.5.1",
+                  "platform": "macOS-27.0.1-arm64-arm-64bit", "machine": "arm64"},
   "traces": [
     {"app": "anonymous_transmission", "file": "anonymous_transmission.jsonl",
-     "n_events": 518, "sha256": "7693df337b2952a15b65e1b9bb9c38992013a7b6e5d0459246375fac323edb3d"}
+     "n_events": 518, "sha256": "a0f8c0b235caf6ab730cbcab558621f6dc2461f0ec375cfa8f831cfeb1239f59"}
   ]
 }
 ```
 
 The committed corpus lives in
-[`traces/`](https://github.com/grageragarces/Bench-network-applications/tree/main/traces)
-and is drift-guarded in CI. A scheduling study can be run against the suite's
-workloads from these files alone, with nothing installed.
+[`traces/`](https://github.com/grageragarces/Bench-network-applications/tree/main/traces),
+and CI regenerates it on Linux, macOS and Windows. A scheduling study can be run
+against the suite's workloads from these files alone, with nothing installed.
+
+## Reproducibility
+
+Every run is deterministic in its seed. How exactly a trace reproduces depends on the
+environment:
+
+- **Same environment:** identical byte for byte.
+- **Different environment:** the same events in the same order, with floats that can
+  differ by rounding. The checksums in the manifest hold only for the environment it
+  records.
+
+Measured over 27 applications × 16 seeds (`scripts/paper/reproducibility.py`), on
+macOS and Linux, ARM and x86, Python 3.10 and 3.12, and numpy 1.26, 2.2 and 2.5:
+
+- Every one of the 432 traces held the same events everywhere, and the largest relative
+  float difference was 1.6e-15.
+- Linux runs were byte-identical to one another across architecture, Python and numpy.
+- Against the macOS and numpy 2.5 run that produced the published corpus, 350 of 432
+  were byte-identical.
+- Utility was exactly equal in all but two `clock_sync` traces, which differed by
+  1.1e-16.
+
+Windows is covered by the CI check rather than by this measurement.
 
 ## Versioning
 
@@ -120,8 +146,8 @@ from the file rather than from your changelog.
 - **Minor / major before 1.0**: may break. From 1.0 the trace schema is stable and
   a breaking change bumps the major version.
 
-The current version is **0.2.0**, which added `qubit_sent` for prepare-and-measure
-protocols.
+The current version is **0.3.0**, which added `scores` to `app_outcome`. 0.2.0 added
+`qubit_sent` for prepare-and-measure protocols.
 
 The JSON Schemas in [`docs/specs/`](../specs/README.md) are generated from the
 pydantic models by `qnetbench spec`, and a test regenerates and diffs them — so the
@@ -130,4 +156,4 @@ published contract cannot drift from the code.
 ## API
 
 [`Event` and the event models, `read_trace`, `write_trace`, `TraceWriter`,
-`parse_event`](../reference/trace.md).
+`parse_event`, `compare_traces`](../reference/trace.md).

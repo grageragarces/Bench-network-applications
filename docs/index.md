@@ -21,31 +21,37 @@ qnetbench run qkd
 | **27 core protocols** | QKD variants, BQC, distributed gates, distillation, GHZ multipartite protocols, repeater chains, DQC — one per distinct demand class |
 | **67-entry catalog** | the core plus generated distributed-circuit instances and contributed protocols; unbounded via the circuit generator |
 | **3 backends** | `reference` (pure Python, always available), `sequence` (SeQUeNCe), `netsquid` (NetSquid) |
-| **4 arbitration modes** | the backend's `native` scheduling, or `fifo` / `fidelity_first` / `edf` applied identically everywhere |
+| **3 baseline policies** | `fifo`, `fidelity_first` and `edf`, compared under contention by `qnetbench contention` |
 | **Characterization** | a measured demand signature per application: burstiness, classical coupling, deadline-criticality, fidelity and staleness curves |
 | **A versioned trace** | JSONL with a JSON Schema, plus a checksummed reference corpus |
 
-That is `67 × 3 × 4 = 804` predefined runnable configurations before the circuit
-generator, which is unbounded.
+That is `67 × 3 = 201` predefined application and backend combinations before the
+circuit generator, which is unbounded.
 
-## The result the suite exists for
+## Why contracts matter
 
-Run several tenants against one oversubscribed link and the best scheduling policy
-**flips** depending on what the workload is made of:
+Run several tenants against one oversubscribed link and which scheduling policy comes
+out best depends on the workload, the contracts and the metric:
 
 ```console
 $ qnetbench contention
-policy              deadline_heavy    fidelity_heavy
-----------------------------------------------------
-fifo                       0.800             0.867
-fidelity_first             0.800             0.933*
-edf                        0.817*            0.900
-winner                         edf    fidelity_first
+contract satisfaction, mean ± std across draws (* = highest mean)
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                 0.507 ± 0.107      0.589 ± 0.044
+fidelity_first       0.507 ± 0.107      0.683 ± 0.060*
+edf                  0.809 ± 0.012*     0.550 ± 0.098
+
+worst-served application, mean satisfaction
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                          0.449              0.208
+fidelity_first                0.449              0.212
+edf                           0.045              0.127
 ```
 
-EDF wins on deadline-heavy traffic and loses on fidelity-heavy traffic;
-`fidelity_first` does the opposite. A paper that evaluated on either workload alone
-would have crowned one policy and been wrong about the other. See
+EDF leads the deadline-heavy mix on aggregate satisfaction by serving its deadline
+tenants first, and it comes last there on the worst-served application. See
 [Contention](guide/contention.md).
 
 ## Where to go next
@@ -81,4 +87,5 @@ These are load-bearing, and everything else follows from them:
 4. **Two independent backends or it does not count.** Cross-backend equivalence is
    a tested deliverable, not an aspiration.
 5. **Runs are deterministic in their seed.** `(app, seed, backend, topology)`
-   reproduces byte for byte.
+   reproduces byte for byte in the same environment, and across environments up to
+   float rounding. See [Traces](guide/traces.md#reproducibility).

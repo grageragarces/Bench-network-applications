@@ -10,8 +10,8 @@ tools depend on them, and they are versioned independently of the rest of the su
 
 | Module | Version | What it is |
 |---|---|---|
-| [`qnetbench.api`](api.md) | `API_VERSION = 0.2.0` | the portable shim an application programs against — `Host`, `Qubit`, sockets, `Demand` |
-| [`qnetbench.trace`](trace.md) | `SCHEMA_VERSION = 0.2.0` | the JSONL event schema and its I/O |
+| [`qnetbench.api`](api.md) | `API_VERSION = 0.3.0` | the portable shim an application programs against — `Host`, `Qubit`, sockets, `Demand` |
+| [`qnetbench.trace`](trace.md) | `SCHEMA_VERSION = 0.3.0` | the JSONL event schema and its I/O |
 
 ## Everything else
 

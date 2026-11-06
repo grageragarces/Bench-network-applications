@@ -162,40 +162,46 @@ age at which utility halves (`stale½` — the staleness-tolerance curve, feedin
 scheduler/staleness work). Coupled apps (BQC, distributed gate, anonymous) and
 fidelity-thresholded ones (QKD, CHSH) separate cleanly.
 
-## Arbitration modes
+## Policies and arbitration
 
-Borrowing MQT Bench's "pick your level" model, arbitration is a run-level choice:
+`--arbitration policy:<name>` selects `fifo`, `fidelity_first` or `edf`, but a single
+application never has more than one pending request per link, so a single run has
+nothing to arbitrate and the trace differs only in its header label. Policies take
+effect under contention, below.
 
-- `native`: the backend's own default scheduling (the opt-out; what most papers
-  run today).
-- `policy:<name>`: a backend-agnostic arbiter applies a chosen policy
-  (`fifo`, `fidelity_first`, `edf`) identically on every backend.
+## Cross-policy evaluation
 
-## Cross-policy evaluation — the ranking inverts
-
-The point of a benchmark suite is to show that **single-workload evaluation is
-unreliable**. `qnetbench contention` runs several tenants (parameterized by real
-applications' demand contracts) competing for one link whose entanglement supply
-is below aggregate demand, under three published scheduling policies:
+`qnetbench contention` models several tenants (demand streams read from real
+applications' traces) competing for one link whose entanglement supply is below
+aggregate demand, under three standard scheduling policies. It is a queueing model:
+applications do not run concurrently on a backend.
 
 ```bash
 qnetbench contention
 ```
 
 ```
-policy              deadline_heavy    fidelity_heavy
-----------------------------------------------------
-fifo                       0.150             0.433
-fidelity_first             0.150             0.533*
-edf                        0.367*            0.367
-winner                         edf    fidelity_first
+contract satisfaction, mean ± std across draws (* = highest mean)
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                 0.507 ± 0.107      0.589 ± 0.044
+fidelity_first       0.507 ± 0.107      0.683 ± 0.060*
+edf                  0.809 ± 0.012*     0.550 ± 0.098
+
+worst-served application, mean satisfaction
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                          0.449              0.208
+fidelity_first                0.449              0.212
+edf                           0.045              0.127
 ```
 
-**EDF wins on deadline-heavy traffic and is *last* on fidelity-heavy traffic;
-fidelity_first does the exact opposite.** The best policy flips across workload
-classes, so a paper that evaluated on either workload alone would have crowned one
-policy and been wrong about the other. That inversion is the suite's reason to
-exist.
+On aggregate satisfaction EDF leads one mix and is last on the other, and
+`fidelity_first` does the opposite, so a study using one mix alone would report one
+winner. The winner also depends on what is measured and declared. EDF's 0.809 is
+`distributed_gate` at 1.000 and `qkd` at 0.045, so it comes last on the worst-served
+application, and lowering every tenant's `min_fidelity` by 0.05 removes the disagreement
+between the mixes.
 
 ## Layout
 
@@ -210,7 +216,7 @@ qnetbench/
   policies/    fifo, fidelity_first, edf + the arbitration seam
   metrics/     traces → standard report
   characterize/ demand-signature extraction (single-trace + fidelity/staleness curves)
-  contention.py multi-tenant scheduling: the cross-policy ranking-inversion result
+  contention.py multi-tenant queueing model: the cross-policy evaluation
   topology.py  network + link model
   harness/     run(app × backend × policy × topology) and the CLI
   spec.py      versioned JSON Schemas + reference-corpus generator

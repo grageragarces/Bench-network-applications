@@ -16,8 +16,7 @@ positional arguments:
     characterize        measure demand signatures (one app, or all core apps)
     spec                write the versioned trace + metric JSON Schemas
     corpus              write the published reference traces + manifest
-    contention          run the multi-tenant cross-policy evaluation (the
-                        ranking-inversion result)
+    contention          compare scheduling policies on contended workload mixes
 ```
 
 ---
@@ -30,6 +29,9 @@ Execute one benchmark and print its report.
 $ qnetbench run --help
 usage: qnetbench run [-h] [--backend BACKEND] [--arbitration ARBITRATION]
                      [--seed SEED] [--out OUT] [--json]
+                     [--link-fidelity F] [--fidelity-std S] [--attempt-latency T]
+                     [--min-fidelity F] [--latency-budget T]
+                     [--staleness-tolerance T] [--priority P]
                      APP
 ```
 
@@ -37,19 +39,23 @@ usage: qnetbench run [-h] [--backend BACKEND] [--arbitration ARBITRATION]
 |---|---|---|
 | `APP` | — | any name from `qnetbench list --all` |
 | `--backend` | `reference` | `reference`, `sequence`, or `netsquid` |
-| `--arbitration` | `native` | `native`, or `policy:fifo` / `policy:fidelity_first` / `policy:edf` |
+| `--arbitration` | `native` | `native`, or `policy:fifo` / `policy:fidelity_first` / `policy:edf`; recorded in the trace, but a single application has nothing to arbitrate |
 | `--seed` | `0` | seeds every RNG in the run; runs are deterministic in it |
 | `--out PATH` | — | also write the run's JSONL trace to `PATH` |
 | `--json` | off | print the report as JSON instead of the text rendering |
+| `--link-fidelity`, `--fidelity-std` | `0.95`, `0.01` | mean and spread of delivered fidelity, on every link of the default topology |
+| `--attempt-latency` | `0.001` | seconds per delivered pair on the reference backend; the simulator backends currently use it as the classical delay |
+| `--min-fidelity`, `--latency-budget`, `--staleness-tolerance`, `--priority` | the application's own | replace that contract field on every entanglement request; a latency budget also clears the application's own deadline |
 
 ```bash
 qnetbench run qkd
-qnetbench run bqc --arbitration policy:edf
 qnetbench run dqc_qft8 --backend sequence --seed 3
 qnetbench run distributed_gate --out run.jsonl --json
+qnetbench run qkd --link-fidelity 0.99 --min-fidelity 0.85   # vary link and contract
 ```
 
-An unknown app name exits `2` with the list hint on stderr; an unknown backend or a
+An unknown app name or an out-of-range contract exits `2` with the reason on stderr. An
+application that raises exits `1`, naming the role and the error. An unknown backend or a
 missing simulator extra raises with the install command you need.
 
 === "Python"
@@ -63,7 +69,7 @@ missing simulator extra raises with the install command you need.
     ```
 
 See [Running benchmarks](running.md) for the arguments `run_once` accepts that the
-CLI does not expose (custom topologies, per-run config, pair aging).
+CLI does not expose (other topologies, per-run config, pair aging).
 
 ---
 
@@ -170,48 +176,71 @@ checksummed manifest.
 ```bash
 qnetbench corpus                        # writes into traces/
 qnetbench corpus --out /tmp/corpus --seed 1
+qnetbench corpus --check                # regenerate traces/ here and compare; writes nothing
 ```
 
-The manifest records the spec version, the seed, and each trace's `sha256` and
-event count. This is what lets a third-party scheduler paper consume the suite's
-workloads without installing anything. See [Traces](traces.md).
+The manifest records the spec version, the seed, the environment, and each trace's
+`sha256` and event count. This is what lets a third-party scheduler paper consume the
+suite's workloads without installing anything. `--check` separates byte-identical traces
+from those differing only by float rounding, and exits `1` on anything else. See
+[Traces](traces.md#reproducibility).
 
 === "Python"
 
     ```python
-    from qnetbench.spec import generate_reference_corpus
+    from qnetbench.spec import check_reference_corpus, generate_reference_corpus
 
     manifest = generate_reference_corpus("traces", seed=0)
+    check = check_reference_corpus("traces")
     ```
 
 ---
 
 ## `qnetbench contention`
 
-Run the multi-tenant cross-policy evaluation — the ranking-inversion result.
+Compare the scheduling policies on two contended workload mixes, replicated over
+independent arrival draws.
 
 ```console
 $ qnetbench contention
-policy              deadline_heavy    fidelity_heavy
-----------------------------------------------------
-fifo                       0.800             0.867
-fidelity_first             0.800             0.933*
-edf                        0.817*            0.900
-winner                         edf    fidelity_first
+32 independent arrival draws, 100 requests per tenant, 160 pairs/s,
+link fidelity 0.99, coherence time 0.25 s
 
-RANKING INVERSION — the best policy flips across workloads (deadline_heavy: edf  →  fidelity_heavy: fidelity_first).
-Single-workload evaluation would have crowned one policy and been wrong on the other.
+contract satisfaction, mean ± std across draws (* = highest mean)
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                 0.507 ± 0.107      0.589 ± 0.044
+fidelity_first       0.507 ± 0.107      0.683 ± 0.060*
+edf                  0.809 ± 0.012*     0.550 ± 0.098
+separation                17.4 s.e.          10.3 s.e.
+
+worst-served application, mean satisfaction
+policy               deadline_heavy     fidelity_heavy
+------------------------------------------------------
+fifo                          0.449              0.208
+fidelity_first                0.449              0.212
+edf                           0.045              0.127
+
+The mixes share no best policy in 32 of 32 draws.
 ```
 
-Takes no options. To vary the mixes, capacity, or burstiness, drive
-[`qnetbench.contention`](contention.md) from Python.
+| Option | Default | Meaning |
+|---|---|---|
+| `--capacity` | `160` | link capacity, pairs/s |
+| `--coherence-time` | `0.25` | seconds |
+| `--link-fidelity` | `0.99` | fidelity of a pair served without waiting |
+| `--draws` | `32` | independent arrival draws |
+| `--requests` | `100` | requests per tenant |
+
+To vary the mixes or burstiness, drive [`qnetbench.contention`](contention.md) from
+Python.
 
 === "Python"
 
     ```python
-    from qnetbench.contention import default_experiment, render_experiment
+    from qnetbench.contention import render_replicated, replicated_experiment
 
-    print(render_experiment(default_experiment()))
+    print(render_replicated(replicated_experiment(capacity=140.0)))
     ```
 
 ---
@@ -221,7 +250,8 @@ Takes no options. To vary the mixes, capacity, or burstiness, drive
 | Code | Meaning |
 |---|---|
 | `0` | success |
-| `2` | unknown application name (the message names `list --all`) |
+| `1` | an application raised, or `corpus --check` found a real difference |
+| `2` | unknown application name (the message names `list --all`), or an invalid contract |
 
-Anything else propagates as a Python traceback — a missing simulator extra, an
-unknown backend, or a topology that lacks a node an application's roles need.
+Anything else propagates as a Python traceback, such as a missing simulator extra or an
+unknown backend.
