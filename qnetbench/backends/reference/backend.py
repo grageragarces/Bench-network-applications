@@ -453,12 +453,14 @@ class ReferenceBackend:
         gov = _merge_demands(matched.demand, demand)
         transfer = _Transfer(matched, self.engine.current, node, gov)
 
-        def served(link_latency: float, sampled: list[float], waited: float, last: bool) -> None:
-            pair_age = self.pair_age + waited if self.queue_wait_aging else self.pair_age
-            self._deliver(transfer, link_latency, sampled, pair_age, last)
+        def served(
+            link_latency: float, sampled: list[float], waited: float, last: bool, stored: float
+        ) -> None:
+            age = waited if self.queue_wait_aging else stored
+            self._deliver(transfer, link_latency, sampled, self.pair_age + age, last, stored)
 
         def dropped(pairs: int) -> None:
-            self._deliver(transfer, 0.0, [_MAXIMALLY_MIXED] * pairs, self.pair_age, True)
+            self._deliver(transfer, 0.0, [_MAXIMALLY_MIXED] * pairs, self.pair_age, True, 0.0)
 
         self._link_for(node, peer).submit(
             LinkRequest(
@@ -482,18 +484,22 @@ class ReferenceBackend:
         sampled: list[float],
         pair_age: float,
         last: bool,
+        stored: float,
     ) -> None:
         matched, gov = transfer.matched, transfer.gov
-        fidelities = [_age_fidelity(f, pair_age, self.coherence_time) for f in sampled]
-        pair_qubits = [self.register.make_bell_pair(fid) for fid in fidelities]
+        prepared = [_age_fidelity(f, pair_age, self.coherence_time) for f in sampled]
+        pair_qubits = [self.register.make_bell_pair(fid) for fid in prepared]
+        # A stored pair is made fresh and stamped with when it really was made, so its decay
+        # reaches the application through `settle`. The trace reports the same decay.
+        fidelities = [self.register.aged_fidelity(fid, stored) for fid in prepared]
 
         request_time = matched.arrival
         delivery_time = self.now() + link_latency
         latency = delivery_time - request_time
 
         for (qa, qb), fid in zip(pair_qubits, fidelities, strict=True):
-            self.register.stamp(qa, delivery_time, matched.side)
-            self.register.stamp(qb, delivery_time, transfer.node)
+            self.register.stamp(qa, delivery_time - stored, matched.side)
+            self.register.stamp(qb, delivery_time - stored, transfer.node)
             violations = self._contract_violations(gov, fid, delivery_time, request_time, pair_age)
             self._emit(
                 EntanglementDelivered(

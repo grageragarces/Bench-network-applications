@@ -121,6 +121,22 @@ class Register:
                 if holder == node and qid in self._ids:
                     self._memory.last[qid] += duration
 
+    def aged_fidelity(self, fidelity: float, age: float) -> float:
+        """The fidelity of a pair after both halves have been stored for `age` seconds.
+
+        What `settle` does to a pair, in closed form, for reporting it at delivery. With
+        p = (4F - 1) / 3, both channels shrink p or its phase part by exp(-2 age / T).
+        Dephasing leaves Z correlations alone, so it levels off near F = 1/2, not 1/4.
+        """
+        memory = self._memory
+        if memory is None or age <= 0.0 or math.isinf(memory.coherence_time):
+            return fidelity
+        survival = math.exp(-2.0 * age / memory.coherence_time)
+        weight = (4.0 * fidelity - 1.0) / 3.0
+        if memory.noise == "dephasing":
+            return fidelity - (1.0 - survival) / 2.0 * weight
+        return (1.0 + 3.0 * weight * survival) / 4.0
+
     def settle(self, qid: int) -> None:
         """Apply the decay accumulated since this qubit was last settled.
 

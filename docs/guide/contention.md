@@ -181,11 +181,15 @@ The modelling choices are settings:
 | `memory_noise` | `"dephasing"` | `"depolarizing"` |
 | `missed_deadline` | `"serve_late"`, with a violation in the trace | `"drop"`: no link capacity is used, and the application gets a maximally mixed pair |
 | `service_unit` | `"pair"`: the policy chooses again after every pair | `"request"` |
-| `service` | `"on_demand"`: the supply's own timing | `"ticks"`: one pair per period |
+| `service` | `"on_demand"`: a pair is made when wanted, on the supply's own timing | `"ticks"`: one pair per period. `"free_running"`: generates regardless and holds the newest `storage` pairs, handing over the `stored_pair` (`"newest"` or `"oldest"`) |
 
 `AS_QUEUE_MODEL` sets these the way the queue model assumes. Applications block on each pair,
 which that model does not capture, so to keep its open-loop arrivals with real applications,
 give each request its own `TenantSpec`.
+
+`supply="sequence"` or `"netsquid"` runs the same mix on a simulator's pairs. The link
+description sets the rate on all three, exactly on NetSquid and through a memory count on SeQUeNCe,
+whose rate emerges from its protocol. Check the achieved rate rather than assuming it.
 
 It covers two-role applications on one link. Tenants compete for the link only, not for memory
 qubits or node time, so node-level scheduling is out of scope.

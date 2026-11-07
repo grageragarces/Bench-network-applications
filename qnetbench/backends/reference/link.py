@@ -21,6 +21,7 @@ from qnetbench.policies.base import PendingRequest, Policy
 
 ServiceUnit = Literal["pair", "request"]
 MissedDeadline = Literal["serve_late", "drop"]
+StoredPair = Literal["newest", "oldest"]
 Supply = Callable[[NodeId, NodeId, int], tuple[float, list[float]]]
 
 
@@ -33,8 +34,9 @@ class LinkRequest:
     remaining: int
     demand: Demand
     arrival: SimTime
-    # (latency, fidelities, seconds waited before this service, is this the last service)
-    on_served: Callable[[float, list[float], float, bool], None]
+    # (latency, fidelities, seconds waited before this service, is this the last service,
+    # seconds the pair had already been stored when it was handed over)
+    on_served: Callable[[float, list[float], float, bool, float], None]
     on_dropped: Callable[[int], None]  # called with the number of pairs not delivered
     tenant: str = ""
     link_id: int = -1
@@ -61,6 +63,11 @@ class LinkServer:
     free and takes as long as `supply` says. A number is a fixed clock with one pair per
     period at multiples of it, which is what `qnetbench.contention` assumes. A tick with
     nothing to serve is simply lost.
+
+    `storage=n` is a free-running link instead. It generates whether or not anyone has asked,
+    on the supply's own timeline, and keeps the newest `n` pairs. A stored pair ages only while
+    the link is ahead of demand. `stored_pair` says which one a request takes. It ignores `period`,
+    and always serves pair by pair.
     """
 
     def __init__(
@@ -72,7 +79,14 @@ class LinkServer:
         service_unit: ServiceUnit = "request",
         missed_deadline: MissedDeadline = "serve_late",
         period: float | None = None,
+        storage: int | None = None,
+        stored_pair: StoredPair = "newest",
+        ends: tuple[NodeId, NodeId] = ("alice", "bob"),
     ) -> None:
+        self._storage = storage
+        self._stored_pair = stored_pair
+        self._ends = ends
+        self._stock: list[tuple[float, float]] = []  # (made at, fidelity), oldest first
         self._engine = engine
         self._supply = supply
         self._policy = policy
@@ -90,7 +104,49 @@ class LinkServer:
         self._queue.append(request)
         self._advance()
 
+    def start(self) -> None:
+        """Begin generating on a free-running link. Does nothing on any other."""
+        if self._storage is not None:
+            self._make_next()
+
+    def _make_next(self) -> None:
+        gap, fidelities = self._supply(*self._ends, 1)
+        self._engine.call_later(gap, lambda: self._pair_made(fidelities[0]))
+
+    def _pair_made(self, fidelity: float) -> None:
+        assert self._storage is not None
+        self._stock.append((self._engine.now, fidelity))
+        del self._stock[: -self._storage]  # the oldest pairs are discarded
+        self._serve_from_stock(self._engine.now)
+        # Nothing waiting and nothing else due means the run is over, or is deadlocked and
+        # will be reported as such. Generating on would never end.
+        if self._queue or self._engine.has_pending():
+            self._make_next()
+
+    def _serve_from_stock(self, now: float) -> None:
+        while self._stock:
+            self._drop_expired(now)
+            if not self._queue:
+                return
+            chosen = self._choose(now)
+            made_at, fidelity = self._stock.pop(-1 if self._stored_pair == "newest" else 0)
+            self._tell_policy(chosen, [fidelity], now)
+            chosen.remaining -= 1
+            finished = chosen.remaining == 0
+            if finished:
+                self._queue.remove(chosen)
+            chosen.on_served(0.0, [fidelity], now - chosen.arrival, finished, now - made_at)
+
+    def _drop_expired(self, now: float) -> None:
+        if self._missed_deadline == "drop":
+            for request in [r for r in self._queue if r.effective_deadline() < now]:
+                self._queue.remove(request)
+                request.on_dropped(request.remaining)
+
     def _advance(self) -> None:
+        if self._storage is not None:
+            self._serve_from_stock(self._engine.now)
+            return
         if self._busy or self._armed or not self._queue:
             return
         if self._period is None:
@@ -115,15 +171,13 @@ class LinkServer:
         self._serve(tick * self._period)
 
     def _serve(self, now: float) -> None:
-        if self._missed_deadline == "drop":
-            for request in [r for r in self._queue if r.effective_deadline() < now]:
-                self._queue.remove(request)
-                request.on_dropped(request.remaining)
+        self._drop_expired(now)
         if not self._queue:
             return
         chosen = self._choose(now)
         pairs = chosen.remaining if self._service_unit == "request" else 1
         latency, fidelities = self._supply(chosen.src, chosen.dst, pairs)
+        self._tell_policy(chosen, fidelities, now + (0.0 if self._period is not None else latency))
         chosen.remaining -= pairs
         finished = chosen.remaining == 0
         if finished:
@@ -136,7 +190,7 @@ class LinkServer:
         else:
             latency = 0.0  # the pair is ready on the tick
             self._engine.call_at(self._next_tick * self._period, self._release)
-        chosen.on_served(latency, fidelities, now - chosen.arrival, finished)
+        chosen.on_served(latency, fidelities, now - chosen.arrival, finished, 0.0)
 
     def _choose(self, now: float) -> LinkRequest:
         if self._policy is None or len(self._queue) == 1:
@@ -144,6 +198,12 @@ class LinkServer:
         order = self._policy.order([r.pending() for r in self._queue], now)
         by_id = {r.link_id: r for r in self._queue}
         return by_id[order[0]]
+
+    def _tell_policy(self, request: LinkRequest, fidelities: list[float], at: float) -> None:
+        hook = getattr(self._policy, "on_delivery", None)
+        if hook is not None:
+            for fidelity in fidelities:
+                hook(request.pending(), fidelity, at)
 
     def _release(self) -> None:
         self._busy = False

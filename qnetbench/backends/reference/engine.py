@@ -87,6 +87,10 @@ class Engine:
     def call_later(self, delay: float, fn: Callable[[], None]) -> None:
         self.call_at(self.now + max(delay, 0.0), fn)
 
+    def has_pending(self) -> bool:
+        """Is anything still due to happen?"""
+        return bool(self._heap)
+
     @property
     def current(self) -> Process:
         assert self._current is not None, "no process is running"

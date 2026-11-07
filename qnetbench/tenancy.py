@@ -40,7 +40,7 @@ import typing
 from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
 
@@ -50,7 +50,13 @@ from qnetbench.apps import get_app
 from qnetbench.backends.reference import ReferenceBackend
 from qnetbench.backends.reference.backend import _age_fidelity
 from qnetbench.backends.reference.engine import Engine
-from qnetbench.backends.reference.link import LinkRequest, LinkServer, MissedDeadline, ServiceUnit
+from qnetbench.backends.reference.link import (
+    LinkRequest,
+    LinkServer,
+    MissedDeadline,
+    ServiceUnit,
+    StoredPair,
+)
 from qnetbench.backends.reference.qstate import MemoryNoise
 from qnetbench.characterize.provenance import write_atomic
 from qnetbench.contention import ContentionResult, Tenant, arrival_times
@@ -63,8 +69,13 @@ from qnetbench.trace.io import write_trace
 
 Arrivals = Literal["paced", "closed_loop"]
 Aging = Literal["held_qubits", "queue_wait", "none"]
-Service = Literal["on_demand", "ticks"]
+Service = Literal["on_demand", "ticks", "free_running"]
 SupplyName = Literal["reference", "sequence", "netsquid"]
+
+# SeQUeNCe's rate emerges from its protocol rather than being set. Measured at 1 ms classical
+# delay, it makes 85, 153, 393 and 653 pairs/s with 1, 2, 5 and 10 memories, and distance barely
+# matters. So a requested rate maps to a memory count, which gets close but not exactly there.
+_SEQUENCE_PAIRS_PER_MEMORY = 75.0
 
 
 @dataclass(frozen=True)
@@ -76,16 +87,24 @@ class ExecutionModel:
     memory_noise: MemoryNoise = "dephasing"
     missed_deadline: MissedDeadline = "serve_late"
     service_unit: ServiceUnit = "pair"
-    # Not one of the six decisions. "ticks" is the queue model's clock of one pair per
-    # period, kept so the two can be compared. "on_demand" takes the supply's own timing.
+    # Not one of the six decisions. "on_demand" makes a pair when one is wanted, taking the
+    # supply's own time. "ticks" is the queue model's clock of one pair per period, kept so the
+    # two can be compared. "free_running" generates regardless on the supply's own timeline and
+    # holds the newest `storage` pairs, so a pair can age before it is delivered.
     service: Service = "on_demand"
+    storage: int = 1
+    stored_pair: StoredPair = "newest"
 
     def __post_init__(self) -> None:
         hints = typing.get_type_hints(type(self))
         for name, value in asdict(self).items():
             allowed = typing.get_args(hints[name])
-            if value not in allowed:
+            if allowed and value not in allowed:
                 raise ValueError(f"{name} must be one of {allowed}, got {value!r}")
+        if self.storage < 1:
+            raise ValueError(f"storage must be at least 1, got {self.storage}")
+        if self.service == "free_running" and self.service_unit != "pair":
+            raise ValueError('a free-running link hands over one pair at a time: use "pair"')
 
 
 # Everything set the way `qnetbench.contention` assumes, for measuring the distance to it.
@@ -160,19 +179,38 @@ def _tenant_seed(seed: int, index: int, count: int) -> int:
     return int(np.random.SeedSequence([seed, index]).generate_state(1)[0])
 
 
-def _supply_backend(supply: str, link: LinkModel, seed: int) -> ReferenceBackend:
-    topology = line2(link=link)
+def _supply_backend(
+    supply: str,
+    link: LinkModel,
+    classical_latency: float | None,
+    seed: int,
+    window_s: float,
+    **options: Any,
+) -> ReferenceBackend:
+    """One link description, mapped onto each supply. `link.attempt_latency` is the mean time
+    per pair on all three, which sets a rate on each rather than a classical delay."""
     if supply == "reference":
-        return ReferenceBackend(topology, seed=seed)
+        return ReferenceBackend(line2(link=link), seed=seed)
+    rate = 1.0 / link.attempt_latency
+    delay = link.attempt_latency if classical_latency is None else classical_latency
+    topology = line2(link=LinkModel(delay, link.link_fidelity, 0.0))
     if supply == "sequence":
         from qnetbench.backends.sequence import SequenceBackend
 
-        return SequenceBackend(topology, seed=seed)
+        options.setdefault("memo_size", max(1, round(rate / _SEQUENCE_PAIRS_PER_MEMORY)))
+        return SequenceBackend(topology, seed=seed, window_s=window_s, **options)
     if supply == "netsquid":
         from qnetbench.backends.netsquid import NetSquidBackend
 
-        return NetSquidBackend(topology, seed=seed)
+        options.setdefault("frequency", rate)
+        return NetSquidBackend(topology, seed=seed, window_s=window_s, **options)
     raise ValueError(f"supply must be one of {typing.get_args(SupplyName)}, got {supply!r}")
+
+
+def _reset(policy: object) -> None:
+    reset = getattr(policy, "reset", None)
+    if reset is not None:
+        reset()
 
 
 def run_tenants(
@@ -185,6 +223,8 @@ def run_tenants(
     coherence_time: float = math.inf,
     model: ExecutionModel | None = None,
     supply: str = "reference",
+    supply_window: float = 1.0,
+    supply_options: Mapping[str, Any] | None = None,
 ) -> TenantsRun:
     """Run `tenants` together, sharing one link, and return a trace for each.
 
@@ -196,14 +236,20 @@ def run_tenants(
     held on both sides decays twice as fast.
 
     Fixing `seed` fixes the supply, so policies are compared on the same sequence of pairs.
+    `supply_window` is how many seconds of pairs a simulator supply generates up front, and a
+    run that needs more stops with an error saying so. `supply_options` go to that backend, such
+    as `{"timing": "exponential"}` on NetSquid or `{"memo_size": 50}` on SeQUeNCe.
     """
     model = model or ExecutionModel()
     link = link or LinkModel()
     apps = _check_scope(tenants)
     label, policy = _parse_arbitration(arbitration)
+    _reset(policy)
 
     engine = Engine()
-    supplier = _supply_backend(supply, link, seed)
+    supplier = _supply_backend(
+        supply, link, classical_latency, seed, supply_window, **(supply_options or {})
+    )
     server = LinkServer(
         engine,
         lambda _src, _dst, pairs: supplier._sample_pairs("alice", "bob", pairs),
@@ -211,6 +257,8 @@ def run_tenants(
         service_unit=model.service_unit,
         missed_deadline=model.missed_deadline,
         period=link.attempt_latency if model.service == "ticks" else None,
+        storage=model.storage if model.service == "free_running" else None,
+        stored_pair=model.stored_pair,
     )
     tenant_link = (
         link
@@ -240,6 +288,7 @@ def run_tenants(
         backend.start(app, dict(tenant.cfg), {role: role for role in roles})
         backends[tenant.name] = backend
 
+    server.start()
     engine.run()
 
     return TenantsRun(
@@ -289,6 +338,7 @@ def queue_model_on_link(
     thing the applications then run on. Any gap between the queue model and execution is
     therefore down to the applications and the physics, not the server.
     """
+    _reset(policy)
     engine = Engine()
     server = LinkServer(
         engine,
@@ -299,16 +349,22 @@ def queue_model_on_link(
         period=1.0 / capacity,
     )
     arrivals = sorted(
-        ((when, tenant) for tenant in tenants for when in arrival_times(tenant)),
+        (
+            (when, index, tenant)
+            for index, tenant in enumerate(tenants)
+            for when in arrival_times(tenant)
+        ),
         key=lambda item: item[0],
     )
     met: list[tuple[str, bool]] = []
 
-    def enter(when: float, tenant: Tenant) -> None:
+    def enter(when: float, index: int, tenant: Tenant) -> None:
         deadline = when + tenant.budget if tenant.budget is not None else None
         limit = deadline if deadline is not None else math.inf
 
-        def served(_latency: float, fidelities: list[float], waited: float, _last: bool) -> None:
+        def served(
+            _latency: float, fidelities: list[float], waited: float, _last: bool, _stored: float
+        ) -> None:
             delivered = _age_fidelity(fidelities[0], waited, coherence_time)
             met.append((tenant.app, delivered >= tenant.min_fidelity and engine.now <= limit))
 
@@ -323,11 +379,12 @@ def queue_model_on_link(
             arrival=when,
             on_served=served,
             on_dropped=dropped,
+            tenant=f"{tenant.app}-{index}",
         )
         engine.call_at(when, lambda: server.submit(request))
 
-    for when, tenant in arrivals:
-        enter(when, tenant)
+    for when, index, tenant in arrivals:
+        enter(when, index, tenant)
     engine.run()
 
     result = ContentionResult(policy=policy.name)

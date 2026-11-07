@@ -64,6 +64,8 @@ def test_the_documented_defaults_hold():
         ("missed_deadline", "ignore"),
         ("service_unit", "batch"),
         ("service", "instant"),
+        ("storage", 0),
+        ("stored_pair", "random"),
     ],
 )
 def test_an_unknown_choice_is_refused(field, value):
@@ -155,11 +157,15 @@ def test_real_applications_give_the_queue_models_answer_under_its_assumptions(se
 # --- the server's behaviour ----------------------------------------------------------
 
 
-def _request(arrival, *, n=1, deadline=None, log=None, name="r"):
+def _request(
+    arrival, *, n=1, deadline=None, log=None, name="r", stored_log=None, engine_now=lambda: 0.0
+):
     log = log if log is not None else []
 
-    def served(_latency, _fidelities, _waited, last):
+    def served(_latency, _fidelities, _waited, last, stored):
         log.append((name, "served", last))
+        if stored_log is not None:
+            stored_log.append((name, round(engine_now(), 6), round(stored, 6)))
 
     def dropped(pairs):
         log.append((name, "dropped", pairs))
@@ -242,6 +248,186 @@ def test_drop_uses_no_link_capacity():
     engine.run()
     assert log == [("a", "served", True), ("b", "dropped", 2)]
     assert drawn == [1]
+
+
+# --- schedulers that keep state ------------------------------------------------------
+
+
+class _Recording:
+    """Serves the tenant it has delivered to least, and records what it was told."""
+
+    name = "recording_for_test"
+
+    def __init__(self):
+        self.resets = 0
+        self.seen = []
+        self.counts = {}
+
+    def reset(self):
+        self.resets += 1
+        self.seen = []
+        self.counts = {}
+
+    def on_delivery(self, request, fidelity, at):
+        self.seen.append((request.tenant, fidelity, at))
+        self.counts[request.tenant] = self.counts.get(request.tenant, 0) + 1
+
+    def order(self, pending, now):
+        def key(p):
+            return (self.counts.get(p.tenant, 0), p.request_time, p.req_id)
+
+        return [p.req_id for p in sorted(pending, key=key)]
+
+
+@pytest.fixture
+def recording():
+    from qnetbench.policies.builtin import _REGISTRY, register_policy
+
+    policy = _Recording()
+    register_policy(policy)
+    yield policy
+    del _REGISTRY[policy.name]
+
+
+@pytest.mark.parametrize("service", ["on_demand", "ticks", "free_running"])
+def test_a_policy_is_told_about_each_delivery(recording, service):
+    tenants = _tenants({"qkd": {"rounds": 10}, "chsh": {"rounds": 6}})
+    model = ExecutionModel(arrivals="closed_loop", service=service)
+    arbitration = "policy:recording_for_test"
+    run = run_tenants(tenants, seed=0, arbitration=arbitration, link=LINK, model=model)
+    assert recording.counts == {"t0": 10, "t1": 6}
+    assert {fidelity for _, fidelity, _ in recording.seen} == {0.99}
+    for name in ("t0", "t1"):
+        told = [at for tenant, _, at in recording.seen if tenant == name]
+        delivered = [e.t for e in run.traces[name] if isinstance(e, EntanglementDelivered)]
+        assert told == pytest.approx(delivered)
+
+
+def test_a_stateful_policy_starts_each_run_clean(recording):
+    tenants = _tenants({"qkd": {"rounds": 10}, "chsh": {"rounds": 10}})
+    first = run_tenants(tenants, seed=3, arbitration="policy:recording_for_test", link=LINK)
+    second = run_tenants(tenants, seed=3, arbitration="policy:recording_for_test", link=LINK)
+    assert recording.resets == 2
+    assert first.traces == second.traces
+
+
+def test_a_policy_with_no_hooks_needs_none():
+    tenants = _tenants({"qkd": {"rounds": 6}, "chsh": {"rounds": 6}})
+    run_tenants(tenants, seed=0, arbitration="policy:fifo", link=LINK)
+
+
+# --- a free-running link -------------------------------------------------------------
+
+
+def test_a_free_running_link_generates_regardless_and_keeps_the_newest_pair():
+    engine = Engine()
+    stored = []
+    server = LinkServer(engine, _supply(1.0), storage=1)
+    server.start()
+    request = _request(2.5, stored_log=stored, engine_now=lambda: engine.now, name="r")
+    engine.call_at(2.5, lambda: server.submit(request))
+    engine.run()
+    assert stored == [("r", 2.5, 0.5)]  # the pair made at 2.0, not the one made at 1.0
+
+
+def test_more_storage_lets_several_requests_be_served_at_once_newest_first():
+    engine = Engine()
+    stored = []
+    server = LinkServer(engine, _supply(1.0), storage=3)
+    server.start()
+    now = lambda: engine.now  # noqa: E731
+    a = _request(4.5, stored_log=stored, engine_now=now, name="a")
+    b = _request(4.5, stored_log=stored, engine_now=now, name="b")
+    engine.call_at(4.5, lambda: server.submit(a))
+    engine.call_at(4.5, lambda: server.submit(b))
+    engine.run()
+    assert stored == [("a", 4.5, 0.5), ("b", 4.5, 1.5)]
+
+
+def test_a_link_can_hand_over_its_oldest_stored_pair_instead():
+    engine = Engine()
+    stored = []
+    server = LinkServer(engine, _supply(1.0), storage=3, stored_pair="oldest")
+    server.start()
+    request = _request(4.5, stored_log=stored, engine_now=lambda: engine.now, name="r")
+    engine.call_at(4.5, lambda: server.submit(request))
+    engine.run()
+    assert stored == [("r", 4.5, 2.5)]  # pairs made at 2, 3 and 4 are held, and 2 goes first
+
+
+def test_under_overload_a_pair_goes_straight_to_a_waiting_request_fresh():
+    engine = Engine()
+    stored = []
+    server = LinkServer(engine, _supply(1.0), storage=5)
+    server.start()
+    now = lambda: engine.now  # noqa: E731
+    for name in "abc":
+        request = _request(0.0, stored_log=stored, engine_now=now, name=name)
+        engine.call_at(0.0, lambda r=request: server.submit(r))
+    engine.run()
+    assert stored == [("a", 1.0, 0.0), ("b", 2.0, 0.0), ("c", 3.0, 0.0)]
+
+
+def test_free_running_serves_pair_by_pair_only():
+    with pytest.raises(ValueError, match="one pair at a time"):
+        ExecutionModel(service="free_running", service_unit="request")
+
+
+FREE = ExecutionModel(arrivals="closed_loop", service="free_running", storage=1)
+
+
+def test_free_running_tenants_finish_and_stored_pairs_show_their_age():
+    # Sparse demand on a fast link: the pair each request gets has been sitting in storage.
+    fast = LinkModel(attempt_latency=1e-3, link_fidelity=0.99, fidelity_std=0.0)
+    schedule = tuple(0.1 * (k + 1) for k in range(10))
+    tenant = TenantSpec("t", "qkd", {"rounds": 10}, arrivals=schedule)
+    model = ExecutionModel(service="free_running", storage=1)
+    run = run_tenants([tenant], seed=0, link=fast, coherence_time=0.25, model=model)
+    delivered = [e for e in run.traces["t"] if isinstance(e, EntanglementDelivered)]
+    assert len(delivered) == 10
+    assert all(e.pair_age > 0.0 for e in delivered)
+    assert all(e.actual_fidelity < 0.99 for e in delivered)
+
+
+def test_free_running_under_overload_delivers_fresh_pairs():
+    slow = LinkModel(attempt_latency=0.01, link_fidelity=0.99, fidelity_std=0.0)
+    tenants = [TenantSpec(f"t{i}", "qkd", {"rounds": 12}) for i in range(4)]
+    run = run_tenants(tenants, seed=0, link=slow, coherence_time=0.25, model=FREE)
+    ages = [
+        e.pair_age
+        for trace in run.traces.values()
+        for e in trace
+        if isinstance(e, EntanglementDelivered)
+    ]
+    assert len(ages) == 48
+    assert sum(age == 0.0 for age in ages) > 40
+
+
+def test_free_running_runs_are_deterministic():
+    tenants = _tenants({"qkd": {"rounds": 20}, "chsh": {"rounds": 20}})
+    a = run_tenants(tenants, seed=7, arbitration="policy:edf", link=LINK, model=FREE)
+    b = run_tenants(tenants, seed=7, arbitration="policy:edf", link=LINK, model=FREE)
+    assert a.traces == b.traces
+
+
+def test_a_deadlock_on_a_free_running_link_is_reported_rather_than_hanging():
+    class Stuck:
+        name = "stuck_for_test"
+
+        def roles(self):
+            return ["alice", "bob"]
+
+        def run(self, host, role, cfg):
+            host.classical_socket("bob" if role == "alice" else "alice").recv()
+
+    from qnetbench.apps import _CATALOG
+
+    _CATALOG["stuck_for_test"] = Stuck()
+    try:
+        with pytest.raises(RuntimeError, match="did not complete"):
+            run_tenants([TenantSpec("t", "stuck_for_test")], link=LINK, model=FREE)
+    finally:
+        del _CATALOG["stuck_for_test"]
 
 
 # --- several tenants -----------------------------------------------------------------
@@ -539,3 +725,29 @@ def test_memory_is_off_unless_asked_for():
     register.settle(qid)
     register.pause("a", 1.0)
     assert np.array_equal(register._state, state)
+
+
+@pytest.mark.parametrize("noise", ["dephasing", "depolarizing"])
+@pytest.mark.parametrize("fidelity", [0.99, 0.8])
+def test_a_stored_pair_matches_the_fidelity_the_trace_reports(noise, fidelity):
+    # Hold both halves, then read the singlet fraction from Z, X and Y agreement.
+    age = 0.3
+    shots = 6000
+    agree = {"Z": 0, "X": 0, "Y": 0}
+    for shot in range(shots):
+        basis = "ZXY"[shot % 3]
+        register, clock = _held_register(noise, shot)
+        a, b = register.make_bell_pair(fidelity)
+        register.stamp(a, 0.0, "alice")
+        register.stamp(b, 0.0, "bob")
+        clock.t = age
+        register.settle(a)
+        register.settle(b)
+        agree[basis] += register.measure(a, basis) == register.measure(b, basis)
+    rate = {k: v / (shots / 3) for k, v in agree.items()}
+    # For Phi+: Z and X agree, Y anticorrelates, so F = (E_Z + E_X - E_Y + 1) / 4.
+    correlation = {k: 2 * v - 1 for k, v in rate.items()}
+    measured = (correlation["Z"] + correlation["X"] - correlation["Y"] + 1) / 4
+    register, _ = _held_register(noise, 0)
+    assert measured == pytest.approx(register.aged_fidelity(fidelity, age), abs=0.02)
+

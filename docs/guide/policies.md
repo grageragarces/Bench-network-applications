@@ -86,9 +86,33 @@ print(render_experiment(ranking_experiment(
 )))
 ```
 
-A policy sees only the contract and the request time, with no view of a tenant's
-history, so a policy that needs one (such as the time since a flow was last served)
-does not fit this seam yet.
+## Schedulers that keep state
+
+A policy that needs history, such as the time since a tenant was last served, can define two
+optional methods. `reset()` runs before each concurrent run, because a registered policy object is
+shared between runs. `on_delivery(request, fidelity, at)` runs for each pair the link hands over,
+with the time it arrives. `request.tenant` says who it was for.
+
+```python
+class LongestUnserved:
+    name = "longest_unserved"
+
+    def reset(self):
+        self.last = {}
+
+    def on_delivery(self, request, fidelity, at):
+        self.last[request.tenant] = at
+
+    def order(self, pending, now):
+        def age(p):
+            return now - self.last.get(p.tenant, 0.0)
+
+        ranked = sorted(pending, key=lambda p: (-age(p), p.request_time, p.req_id))
+        return [p.req_id for p in ranked]
+```
+
+These hooks run under `qnetbench.tenancy`, not in `contention.simulate`. A policy on one link can
+order requests. It can't choose a path, because the suite has no routing.
 
 ## API
 

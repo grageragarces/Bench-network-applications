@@ -35,6 +35,14 @@ Contracts are unchanged, and so is every existing trace.
 - `LinkServer` (`qnetbench.backends.reference.link`), which queues requests and makes pairs.
 - Opt-in decoherence of held qubits, dephasing or depolarizing, off by default.
   `Register.settle` applies it on its own random stream, so it moves no other draw.
+- `ExecutionModel(service="free_running", storage=n)`: a link that generates regardless of
+  demand on the supply's own timeline and holds the newest `n` pairs, so a pair can age before
+  it is delivered.
+- `run_tenants` maps one link description onto every supply. `attempt_latency` sets the rate
+  on SeQUeNCe and NetSquid too, with the new `memo_size` and `frequency` backend settings.
+  `supply_options` passes further settings through, such as NetSquid's new random `timing`.
+- Policies may define optional `reset` and `on_delivery` methods, for schedulers that keep state
+  such as the time since each tenant was last served.
 - `PendingRequest.tenant`, `contention.arrival_times`, `Engine.call_at`.
 
 ### Changed

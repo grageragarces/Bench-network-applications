@@ -22,20 +22,35 @@ def generate_supply(
     classical_latency_s: float,
     frequency: float = 2000.0,
     channel_delay_s: float | None = None,
+    timing: str = "fixed",
 ) -> Supply:
     """Run a NetSquid elementary-link simulation and return its delivered-pair stream.
 
     `frequency` is the source emission rate (Hz); `link_fidelity` is the delivered
     fidelity (via a depolarising channel); `window_s` is the run length in seconds.
+    `timing` is "fixed" for a pair every period, or "exponential" for random gaps with that mean,
+    which is how a heralded link with a small success probability per attempt behaves.
     """
     import netsquid as ns
     import netsquid.qubits.ketstates as ks
-    from netsquid.components.models.delaymodels import FixedDelayModel
+    from netsquid.components.models.delaymodels import DelayModel, FixedDelayModel
     from netsquid.components.models.qerrormodels import DepolarNoiseModel
     from netsquid.components.qchannel import QuantumChannel
     from netsquid.components.qsource import QSource, SourceStatus
     from netsquid.qubits import qubitapi as qapi
     from netsquid.qubits.state_sampler import StateSampler
+    from netsquid.util.simtools import get_random_state
+
+    class ExponentialDelayModel(DelayModel):  # type: ignore[misc]
+        def __init__(self, mean_ns: float) -> None:
+            super().__init__()
+            self.mean_ns = mean_ns
+
+        def generate_delay(self, **kwargs: object) -> float:
+            return float(get_random_state().exponential(self.mean_ns))
+
+    if timing not in ("fixed", "exponential"):
+        raise ValueError(f"timing must be 'fixed' or 'exponential', got {timing!r}")
 
     ns.sim_reset()
     ns.set_qstate_formalism(ns.QFormalism.DM)
@@ -52,7 +67,11 @@ def generate_supply(
         state_sampler=sampler,
         num_ports=2,
         status=SourceStatus.INTERNAL,
-        timing_model=FixedDelayModel(delay=period_ns),
+        timing_model=(
+            FixedDelayModel(delay=period_ns)
+            if timing == "fixed"
+            else ExponentialDelayModel(period_ns)
+        ),
     )
 
     deliveries: list[tuple[float, float]] = []

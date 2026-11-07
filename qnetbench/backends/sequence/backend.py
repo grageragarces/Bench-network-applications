@@ -29,8 +29,10 @@ class SequenceBackend(ReplayBackend):
         arbitration: str = "native",
         policy: Policy | None = None,
         window_s: float = 1.0,
+        memo_size: int = 50,
     ) -> None:
         self.window_s = window_s
+        self.memo_size = memo_size
         super().__init__(topology, seed=seed, arbitration=arbitration, policy=policy)
 
     def _make_supply(self, node: NodeId, peer: NodeId) -> Supply:
@@ -44,4 +46,5 @@ class SequenceBackend(ReplayBackend):
             link_fidelity=link.link_fidelity,
             classical_latency_s=link.attempt_latency,
             target_fidelity=max(0.0, link.link_fidelity - 1e-6),
+            memo_size=self.memo_size,
         )

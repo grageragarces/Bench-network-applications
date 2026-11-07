@@ -5,6 +5,11 @@ A `Policy` orders contending entanglement requests. It is only consulted in
 default (FIFO on the reference backend, the simulator's own layer on
 SeQUeNCe/NetSquid). Routing is a single hop in Phase 0's topologies and is added
 to this Protocol when multi-hop swapping lands.
+
+A scheduler that keeps state, such as the time since each tenant was last served, may also
+define two optional methods. `reset()` runs before each concurrent run, because a registered
+policy object is shared between runs. `on_delivery(request, fidelity, at)` runs for each pair
+the link hands over, with the time it arrives.
 """
 
 from __future__ import annotations
