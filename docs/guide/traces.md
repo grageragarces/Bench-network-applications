@@ -98,8 +98,9 @@ qnetbench corpus --check      # regenerate here and compare; writes nothing
   "spec_version": "0.3.0",
   "backend": "reference",
   "seed": 0,
-  "environment": {"python": "3.12.13", "numpy": "2.5.1",
-                  "platform": "macOS-27.0.1-arm64-arm-64bit", "machine": "arm64"},
+  "environment": {"python": "3.12.16", "numpy": "2.5.4",
+                  "platform": "Linux-6.17.8-orbstack-00308-g8f9c941121b1-x86_64-with-glibc2.41",
+                  "machine": "x86_64"},
   "traces": [
     {"app": "anonymous_transmission", "file": "anonymous_transmission.jsonl",
      "n_events": 518, "sha256": "a0f8c0b235caf6ab730cbcab558621f6dc2461f0ec375cfa8f831cfeb1239f59"}

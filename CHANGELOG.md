@@ -23,7 +23,10 @@ a consumer checks compatibility from the file rather than from this document.
 
 ## [Unreleased]
 
-Contracts are unchanged, and so is every existing trace.
+Contracts are unchanged. The published corpus is regenerated on Linux (x86_64, Python 3.12, numpy 2.5.4),
+so that CI's Linux job reproduces it byte for byte. Six traces (`chsh`, `clock_sync`, `conference_key`,
+`leader_election`, `multihop_qkd`, `qkd`) differ from the earlier macOS corpus in the last digit of some
+floats (largest relative difference 2.1e-16), and no event changes.
 
 ### Added
 

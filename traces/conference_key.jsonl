@@ -759,7 +759,7 @@
 {"t":0.31315133601010725,"kind":"classical_msg","src":"leaf3","dst":"hub","n_bytes":1}
 {"t":0.31315133601010725,"kind":"ent_requested","req_id":191,"src":"leaf3","dst":"hub","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.31571587538887513,"kind":"ent_delivered","req_id":189,"actual_fidelity":0.9559548690200151,"latency":0.0025645393787678827,"pair_age":0.0}
-{"t":0.3164842859473944,"kind":"ent_delivered","req_id":190,"actual_fidelity":0.9390972395424225,"latency":0.0033329499372871663,"pair_age":0.0}
+{"t":0.3164842859473944,"kind":"ent_delivered","req_id":190,"actual_fidelity":0.9390972395424226,"latency":0.0033329499372871663,"pair_age":0.0}
 {"t":0.3168209987850334,"kind":"ent_delivered","req_id":191,"actual_fidelity":0.9539511926014442,"latency":0.0036696627749261412,"pair_age":0.0}
 {"t":0.3168209987850334,"kind":"classical_msg","src":"hub","dst":"leaf1","n_bytes":1}
 {"t":0.3168209987850334,"kind":"classical_msg","src":"hub","dst":"leaf2","n_bytes":1}

@@ -380,7 +380,7 @@
 {"t":0.18815133601010706,"kind":"ent_requested","req_id":189,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.18971587538887497,"kind":"ent_delivered","req_id":189,"actual_fidelity":0.9559548690200151,"latency":0.0015645393787679096,"pair_age":0.0}
 {"t":0.18971587538887497,"kind":"ent_requested","req_id":190,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
-{"t":0.19048428594739428,"kind":"ent_delivered","req_id":190,"actual_fidelity":0.9390972395424225,"latency":0.0007684105585193113,"pair_age":0.0}
+{"t":0.19048428594739428,"kind":"ent_delivered","req_id":190,"actual_fidelity":0.9390972395424226,"latency":0.0007684105585193113,"pair_age":0.0}
 {"t":0.19048428594739428,"kind":"ent_requested","req_id":191,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.19082099878503325,"kind":"ent_delivered","req_id":191,"actual_fidelity":0.9539511926014442,"latency":0.00033671283763897497,"pair_age":0.0}
 {"t":0.19082099878503325,"kind":"ent_requested","req_id":192,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}

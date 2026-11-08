@@ -3,10 +3,10 @@
   "backend": "reference",
   "seed": 0,
   "environment": {
-    "python": "3.12.13",
-    "numpy": "2.5.1",
-    "platform": "macOS-27.0.1-arm64-arm-64bit",
-    "machine": "arm64"
+    "python": "3.12.16",
+    "numpy": "2.5.4",
+    "platform": "Linux-6.17.8-orbstack-00308-g8f9c941121b1-x86_64-with-glibc2.41",
+    "machine": "x86_64"
   },
   "traces": [
     {
@@ -43,19 +43,19 @@
       "app": "chsh",
       "file": "chsh.jsonl",
       "n_events": 517,
-      "sha256": "d430e6e62dd280cb7494210b0fc28068ae43227c2de0c26e3c54761d08ab7b83"
+      "sha256": "5dde6975788dfa3c399413954579fb7c30738f74e0c94bd3fb4873c58fda1027"
     },
     {
       "app": "clock_sync",
       "file": "clock_sync.jsonl",
       "n_events": 517,
-      "sha256": "ead0db8b0ea2991a1ac30f31157f11951f763d99883edb98a88a9f41383109d1"
+      "sha256": "d78c873af2d2818d4d114b5cff33c786f4bea4076f449dc9881836d0bd1a33c9"
     },
     {
       "app": "conference_key",
       "file": "conference_key.jsonl",
       "n_events": 776,
-      "sha256": "79537acbb1e6cf1bd363df8cb1f461fab6c3f1b0150a897ffc269f276aa1b308"
+      "sha256": "630c2aeaf613b84e918d1b508c897ecdb2a77cbf479c564e248780e770709f2c"
     },
     {
       "app": "distillation",
@@ -109,13 +109,13 @@
       "app": "leader_election",
       "file": "leader_election.jsonl",
       "n_events": 1162,
-      "sha256": "97b1578c54a7fcb54dc5fff51942ffd0e479c951633f89758eecff01bf588635"
+      "sha256": "3dc4a7b6496e74f561a9a9f901b277d73a4d80d04334e803c57a6bd7a7b089df"
     },
     {
       "app": "multihop_qkd",
       "file": "multihop_qkd.jsonl",
       "n_events": 653,
-      "sha256": "b200670817c3e18fb110b47fd0a569529fcc10b70ddf3c9c4855824e70174c85"
+      "sha256": "f804316ebfdf2835980d09a3319497bab8571317ac6d01d810aa943e2f3fdf9f"
     },
     {
       "app": "oblivious_transfer",
@@ -133,7 +133,7 @@
       "app": "qkd",
       "file": "qkd.jsonl",
       "n_events": 1031,
-      "sha256": "e1ef490f7f6cc39f0ab6833773e23f7911ff2466e068058e88dc237b053af713"
+      "sha256": "ea2285bf8f8362ea7842f653dbd5135e8eb44eb674af62b8bd779985486dbf5f"
     },
     {
       "app": "secret_sharing",
