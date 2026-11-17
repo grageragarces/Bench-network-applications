@@ -86,9 +86,14 @@ def section_b() -> None:
             print(f"      {p:15s} {st.mean(v):.3f} +- {st.stdev(v):.3f}")
         order = sorted(((st.mean(acc[mix][p]), p) for p in POLICIES), reverse=True)
         (m1, p1), (m2, p2) = order[0], order[1]
-        se = (st.stdev(acc[mix][p1]) ** 2 / SEEDS + st.stdev(acc[mix][p2]) ** 2 / SEEDS) ** 0.5
+        # Every policy is scored on the SAME arrival draws, so the comparison is
+        # paired: the standard error is that of the per-draw difference, not the
+        # two-sample one. Draw difficulty is shared, so the unpaired form
+        # overstates the error and understates the separation.
+        diff = [a - b for a, b in zip(acc[mix][p1], acc[mix][p2])]
+        se = st.stdev(diff) / SEEDS**0.5 if len(set(diff)) > 1 else 0.0
         sigma = (m1 - m2) / se if se else float("inf")
-        print(f"      -> {p1} over {p2}: +{m1 - m2:.3f} ({sigma:.1f} sigma)")
+        print(f"      -> {p1} over {p2}: +{m1 - m2:.3f} ({sigma:.1f} sigma, paired)")
     print(f"   inversion on {inversions}/{SEEDS} draws\n")
 
 

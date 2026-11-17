@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"leader_election","backend":"reference","arbitration":"native","topology":"star5","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"leader_election","backend":"reference","arbitration":"native","topology":"star5","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"node0","dst":"node1","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":1,"src":"node2","dst":"node0","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":2,"src":"node3","dst":"node0","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
@@ -757,7 +757,7 @@
 {"t":0.2807214042186868,"kind":"ent_requested","req_id":191,"src":"node4","dst":"node0","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.2821513360101072,"kind":"ent_delivered","req_id":188,"actual_fidelity":0.9444416673370354,"latency":0.0014299317914204246,"pair_age":0.0}
 {"t":0.2837158753888751,"kind":"ent_delivered","req_id":189,"actual_fidelity":0.9559548690200151,"latency":0.0029944711701883064,"pair_age":0.0}
-{"t":0.2844842859473944,"kind":"ent_delivered","req_id":190,"actual_fidelity":0.9390972395424225,"latency":0.00376288172870759,"pair_age":0.0}
+{"t":0.2844842859473944,"kind":"ent_delivered","req_id":190,"actual_fidelity":0.9390972395424226,"latency":0.00376288172870759,"pair_age":0.0}
 {"t":0.28482099878503336,"kind":"ent_delivered","req_id":191,"actual_fidelity":0.9539511926014442,"latency":0.004099594566346565,"pair_age":0.0}
 {"t":0.28482099878503336,"kind":"classical_msg","src":"node0","dst":"node1","n_bytes":1}
 {"t":0.28482099878503336,"kind":"classical_msg","src":"node0","dst":"node2","n_bytes":1}
@@ -1155,8 +1155,8 @@
 {"t":0.4294315690188388,"kind":"classical_msg","src":"node0","dst":"node2","n_bytes":2}
 {"t":0.4294315690188388,"kind":"classical_msg","src":"node0","dst":"node3","n_bytes":2}
 {"t":0.4294315690188388,"kind":"classical_msg","src":"node0","dst":"node4","n_bytes":2}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node0","node":"node0","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node1","node":"node1","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node2","node":"node2","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node3","node":"node3","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
-{"t":0.4304315690188388,"kind":"app_outcome","role":"node4","node":"node4","success":false,"utility":0.08333333333333333,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node0","node":"node0","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node1","node":"node1","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node2","node":"node2","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node3","node":"node3","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}
+{"t":0.4304315690188388,"kind":"app_outcome","role":"node4","node":"node4","success":false,"utility":0.08333333333333333,"scores":true,"payload":{"elections":24,"consistent":2}}

@@ -1,0 +1,16 @@
+Two position_verification tenants and three background tenants, 153 pairs/s, 16 seeds.
+Verifier utility, then finish time (s), under FIFO / fidelity-first / EDF.
+
+supply                    background                 utility             finish time
+reference                       none       0.475 0.475 0.475      1.31   1.31   1.31
+reference                        qkd       0.022 0.465 0.360      3.19   6.33   1.56
+reference                      gates       0.032 0.433 0.246      3.11   3.79   1.90
+sequence                        none       0.424 0.424 0.424      1.26   1.26   1.26
+sequence                         qkd       0.005 0.528 0.305      3.11   6.11   1.39
+sequence                       gates       0.005 0.414 0.166      3.09   3.82   1.88
+netsquid                        none       0.010 0.010 0.010      1.25   1.25   1.25
+netsquid                         qkd       0.010 0.005 0.010      3.12   6.27   1.25
+netsquid                       gates       0.010 0.005 0.010      3.12   3.76   1.85
+netsquid-exponential            none       0.501 0.501 0.501      1.29   1.29   1.29
+netsquid-exponential             qkd       0.026 0.489 0.372      3.20   6.31   1.54
+netsquid-exponential           gates       0.028 0.434 0.262      3.12   3.81   1.88

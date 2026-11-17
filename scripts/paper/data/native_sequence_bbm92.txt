@@ -1,0 +1,17 @@
+BBM92 written directly on SeQUeNCe 1.0.0, against qnetbench's engine at the same link fidelity.
+Two routers 1 km apart, 1 ms classical delay, decoherence disabled, 32 seeds per row.
+QBER = rounds breaking the Bell-pair correlation / rounds kept after sifting. The closed form for a Werner
+pair at fidelity F is 2 (1 - F) / 3.
+
+     F   kept  broken  native SeQUeNCe   qnetbench  closed form
+  0.99    442       0           0.0000      0.0050       0.0067
+  0.95    442       0           0.0000      0.0383       0.0333
+  0.85    442       0           0.0000      0.1060       0.1000
+  0.70    442       0           0.0000      0.2076       0.2000
+  0.60    442       0           0.0000      0.2642       0.2667
+
+The native protocol, including the SeQUeNCe reservation that generates the pairs, takes 54 lines
+of code. In qnetbench the same experiment is one TenantSpec, and it runs on all three supplies.
+
+SeQUeNCe's pairs carry no link noise, so a protocol written on it measures a perfect pair at every
+fidelity. Reproducing what qnetbench reports would mean adding the noise by hand.

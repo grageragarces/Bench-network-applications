@@ -30,7 +30,7 @@ LAYERS = [
     ("trace", "versioned event schema", True),
     ("apps", "applications, written once", False),
     ("api", "the portable shim", True),
-    ("backends, policies", "reference $|$ sequence $|$ netsquid", False),
+    ("backends, policies", "reference $|$ SeQUeNCe $|$ NetSquid", False),
 ]
 
 

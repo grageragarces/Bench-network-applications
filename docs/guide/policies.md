@@ -1,23 +1,15 @@
 # Arbitration and policies
 
-When several requests for entanglement contend for one link, something has to
-decide the order. In qnetbench that decision is a **run-level choice**, borrowing
-MQT Bench's "pick your level" model:
+When several requests for entanglement contend for one link, something has to decide
+the order. In qnetbench that is a `Policy`, and today policies take effect in one place:
+the [contention model](contention.md), where several tenants share a link.
 
-| Mode | What happens |
-|---|---|
-| `native` | the backend's own default scheduling — FIFO on the reference backend, the simulator's own layer on SeQUeNCe / NetSquid |
-| `policy:<name>` | a backend-agnostic arbiter applies the named policy identically on every backend |
+!!! warning "Policies do not change a single-application run"
 
-```bash
-qnetbench run bqc                              # native
-qnetbench run bqc --arbitration policy:edf
-qnetbench run bqc --arbitration policy:fidelity_first
-```
-
-`native` is the honest opt-out: it is what most papers actually run today, and
-keeping it available means a comparison against the published baseline is always
-one flag away.
+    `qnetbench run bqc --arbitration policy:edf` is accepted and recorded in the trace
+    header, but nothing consults the policy. A single application never has more than
+    one pending request per link, so there is no order to decide, and the trace is the
+    same as with `native` apart from that label.
 
 ## The built-in policies
 
@@ -60,12 +52,11 @@ reason about — which is deliberate, and is why `Demand` is declarative.
 
 ## Writing your own
 
-Anything with a `name` and an `order` method satisfies the protocol; no base class,
-no registration needed to use it from Python:
+Anything with a `name` and an `order` method satisfies the protocol, with no base
+class:
 
 ```python
-from qnetbench.harness.runner import run_once
-from qnetbench.policies.base import PendingRequest
+from qnetbench.policies import PendingRequest
 
 class PriorityWeighted:
     """Serve the highest-priority demand first, breaking ties by arrival."""
@@ -81,21 +72,48 @@ Always break ties deterministically (`request_time`, then `req_id`, as all three
 built-ins do) — a policy that orders non-deterministically breaks the suite's
 reproducibility guarantee.
 
-To make it available by name — to `run_once(arbitration="policy:priority")`, the
-CLI, and the contention experiment — add it to the registry in
-`qnetbench/policies/builtin.py`.
+To compare it with the built-ins, register it and name it in the contention experiment:
 
-## Where policies actually matter
+```python
+from qnetbench.contention import default_mixes, ranking_experiment, render_experiment
+from qnetbench.policies import register_policy
 
-Running one application at a time, the arbiter almost never has to choose: there is
-usually a single pending demand, and every policy produces the same order. Policy
-choice only shows up under **contention** — several tenants competing for a link
-whose supply is below aggregate demand.
+register_policy(PriorityWeighted())
+print(render_experiment(ranking_experiment(
+    default_mixes(100, seed=0),
+    policies=("fifo", "edf", "priority"),
+    capacity=160.0, link_fidelity=0.99, coherence_time=0.25,
+)))
+```
 
-That is what [`qnetbench contention`](contention.md) sets up, and it is where the
-suite's headline result lives: the ranking of these three policies *inverts*
-between a deadline-heavy and a fidelity-heavy workload mix.
+## Schedulers that keep state
+
+A policy that needs history, such as the time since a tenant was last served, can define two
+optional methods. `reset()` runs before each concurrent run, because a registered policy object is
+shared between runs. `on_delivery(request, fidelity, at)` runs for each pair the link hands over,
+with the time it arrives. `request.tenant` says who it was for.
+
+```python
+class LongestUnserved:
+    name = "longest_unserved"
+
+    def reset(self):
+        self.last = {}
+
+    def on_delivery(self, request, fidelity, at):
+        self.last[request.tenant] = at
+
+    def order(self, pending, now):
+        def age(p):
+            return now - self.last.get(p.tenant, 0.0)
+
+        ranked = sorted(pending, key=lambda p: (-age(p), p.request_time, p.req_id))
+        return [p.req_id for p in ranked]
+```
+
+These hooks run under `qnetbench.tenancy`, not in `contention.simulate`. A policy on one link can
+order requests. It can't choose a path, because the suite has no routing.
 
 ## API
 
-[`Policy`, `PendingRequest`, `Fifo`, `FidelityFirst`, `Edf`](../reference/policies.md).
+[`Policy`, `PendingRequest`, `Fifo`, `FidelityFirst`, `Edf`, `register_policy`](../reference/policies.md).

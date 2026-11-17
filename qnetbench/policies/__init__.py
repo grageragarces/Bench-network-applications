@@ -7,6 +7,7 @@ from qnetbench.policies.builtin import (
     Fifo,
     available_policies,
     get_policy,
+    register_policy,
 )
 
 __all__ = [
@@ -17,4 +18,5 @@ __all__ = [
     "Policy",
     "available_policies",
     "get_policy",
+    "register_policy",
 ]

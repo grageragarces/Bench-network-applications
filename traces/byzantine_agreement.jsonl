@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"byzantine_agreement","backend":"reference","arbitration":"native","topology":"star3","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"byzantine_agreement","backend":"reference","arbitration":"native","topology":"star3","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"general","dst":"lieutenant1","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0,"kind":"ent_requested","req_id":1,"src":"lieutenant2","dst":"general","n":1,"demand":{"min_fidelity":0.8,"latency_budget":null,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
@@ -513,6 +513,6 @@
 {"t":0.25752762752660946,"kind":"classical_msg","src":"lieutenant2","dst":"general","n_bytes":1}
 {"t":0.25852762752660946,"kind":"classical_msg","src":"general","dst":"lieutenant1","n_bytes":2}
 {"t":0.25852762752660946,"kind":"classical_msg","src":"general","dst":"lieutenant2","n_bytes":2}
-{"t":0.25952762752660946,"kind":"app_outcome","role":"general","node":"general","success":false,"utility":0.953125,"payload":{"rounds":64,"correct":61}}
-{"t":0.25952762752660946,"kind":"app_outcome","role":"lieutenant1","node":"lieutenant1","success":false,"utility":0.953125,"payload":{"rounds":64,"correct":61}}
-{"t":0.25952762752660946,"kind":"app_outcome","role":"lieutenant2","node":"lieutenant2","success":false,"utility":0.953125,"payload":{"rounds":64,"correct":61}}
+{"t":0.25952762752660946,"kind":"app_outcome","role":"general","node":"general","success":false,"utility":0.953125,"scores":true,"payload":{"rounds":64,"correct":61}}
+{"t":0.25952762752660946,"kind":"app_outcome","role":"lieutenant1","node":"lieutenant1","success":false,"utility":0.953125,"scores":true,"payload":{"rounds":64,"correct":61}}
+{"t":0.25952762752660946,"kind":"app_outcome","role":"lieutenant2","node":"lieutenant2","success":false,"utility":0.953125,"scores":true,"payload":{"rounds":64,"correct":61}}

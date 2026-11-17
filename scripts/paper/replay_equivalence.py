@@ -24,9 +24,8 @@ from collections import defaultdict
 from qnetbench.api.types import NodeId
 from qnetbench.apps import available_apps, get_app
 from qnetbench.backends.replay import ReplayBackend, Supply
-from qnetbench.harness.runner import _default_topology
 from qnetbench.metrics import compute_report
-from qnetbench.topology import Topology
+from qnetbench.topology import Topology, default_topology
 from qnetbench.trace.events import (
     AppOutcomeEvent,
     EntanglementDelivered,
@@ -98,7 +97,7 @@ def main() -> None:
     apps = available_apps()
     for name in apps:
         app = get_app(name)
-        topo = _default_topology(app.roles())
+        topo = default_topology(app.roles())
         roles_to_nodes = {role: role for role in app.roles()}
         from qnetbench.backends.reference.backend import ReferenceBackend
 

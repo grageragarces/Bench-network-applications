@@ -1,8 +1,9 @@
 # qnetbench trace & metric specification
 
-**Spec version: 0.2.0** (semantic-versioned; tracks the trace `schema_version`).
-0.2.0 added the `qubit_sent` event (single-qubit transmission, for prepare-and-measure
-protocols such as BB84).
+**Spec version: 0.3.0** (semantic-versioned; tracks the trace `schema_version`).
+0.3.0 added `scores` to the `app_outcome` event, so a role that cannot judge the run
+is left out of the aggregate utility. 0.2.0 added the `qubit_sent` event (single-qubit
+transmission, for prepare-and-measure protocols such as BB84).
 
 This directory is the versioned, machine-readable contract a third-party tool —
 e.g. a scheduler or routing paper — can consume without importing qnetbench.

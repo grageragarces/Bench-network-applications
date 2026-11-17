@@ -32,9 +32,10 @@ pip install "qnetbench[viz]"     # optional: scripts/plot_curves.py
 | DQC instances in the catalog | 42 | 6 circuit families (GHZ, QFT, random, graph, IQP, HEA) × 7 sizes (4–10); 3 overlap the core |
 | **Generatable (unbounded)** | ∞ | any circuit family × any size × any partition, or any MQT Bench / Qiskit circuit |
 
-Each benchmark also runs across **3 backends** × **4 arbitration modes** (native +
-`fifo`/`fidelity_first`/`edf`), so the predefined evaluation matrix is already
-**67 × 3 × 4 = 804** runnable configurations — before the unbounded circuit generator.
+Each benchmark also runs on **3 backends**, so the predefined matrix is
+**67 × 3 = 201** runs before the unbounded circuit generator. The three policies
+(`fifo`, `fidelity_first`, `edf`) do not multiply this: a single application has nothing
+to arbitrate, so they are compared under contention by `qnetbench contention`.
 
 ```bash
 qnetbench list          # the 27 core protocols + the 3 policies
@@ -92,8 +93,8 @@ qnetbench characterize --out sig/       # cross-app table + per-app curve JSON
 python scripts/plot_curves.py sig/      # -> curves.png
 ```
 
-**The cross-policy result** (`qnetbench contention`) — the multi-tenant evaluation
-that shows the policy ranking inverting across workload classes.
+**The cross-policy evaluation** (`qnetbench contention`) — a multi-tenant queueing model
+comparing the scheduling policies across workload classes.
 
 ## Topologies — predefined and custom
 
@@ -133,5 +134,7 @@ star/GHZ fusion; general multi-hop routing is on the roadmap).
 ## Reproducibility
 
 Every run is deterministic in its `seed` (per-node seeded RNG), so a `(app, seed,
-backend, topology)` tuple reproduces byte-for-byte. The published traces and JSON
-Schemas are drift-guarded in CI.
+backend, topology)` tuple reproduces byte for byte in the same environment, and across
+environments up to float rounding ([what was measured](guide/traces.md#reproducibility)).
+CI regenerates the published traces on three operating systems with
+`qnetbench corpus --check`, and diffs the JSON Schemas.

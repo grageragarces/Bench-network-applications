@@ -29,8 +29,12 @@ class NetSquidBackend(ReplayBackend):
         arbitration: str = "native",
         policy: Policy | None = None,
         window_s: float = 1.0,
+        frequency: float = 2000.0,
+        timing: str = "fixed",
     ) -> None:
         self.window_s = window_s
+        self.frequency = frequency
+        self.timing = timing
         super().__init__(topology, seed=seed, arbitration=arbitration, policy=policy)
 
     def _make_supply(self, node: NodeId, peer: NodeId) -> Supply:
@@ -41,4 +45,6 @@ class NetSquidBackend(ReplayBackend):
             window_s=self.window_s,
             link_fidelity=link.link_fidelity,
             classical_latency_s=link.attempt_latency,
+            frequency=self.frequency,
+            timing=self.timing,
         )

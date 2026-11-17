@@ -26,6 +26,7 @@ class RoleResult(BaseModel):
     node: str
     success: bool
     utility: float
+    scores: bool = True
 
 
 class Report(BaseModel):
@@ -104,7 +105,10 @@ def compute_report(events: Iterable[Event]) -> Report:
             report.classical_bytes += ev.n_bytes
         elif isinstance(ev, AppOutcomeEvent):
             roles.append(
-                RoleResult(role=ev.role, node=ev.node, success=ev.success, utility=ev.utility)
+                RoleResult(
+                    role=ev.role, node=ev.node, success=ev.success,
+                    utility=ev.utility, scores=getattr(ev, "scores", True),
+                )
             )
 
     duration = (max(times) - min(times)) if times else 0.0
@@ -129,7 +133,12 @@ def compute_report(events: Iterable[Event]) -> Report:
 
     report.roles = roles
     report.app_success = bool(roles) and all(r.success for r in roles)
-    report.app_utility = float(np.mean([r.utility for r in roles])) if roles else 0.0
+    # Average over the roles that can actually judge the outcome. A role with
+    # scores=False reports a placeholder it has no way to compute (the blind
+    # server), and folding that into the mean would compress the range the
+    # fidelity and staleness curves are read from.
+    scoring = [r for r in roles if r.scores] or roles
+    report.app_utility = float(np.mean([r.utility for r in scoring])) if scoring else 0.0
     return report
 
 

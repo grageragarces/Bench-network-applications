@@ -21,10 +21,87 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
-## [Unreleased]
+## [0.3.0] — 2026-11-17
+
+The first release on PyPI since 0.1.0: 0.2.0 was prepared but not published, and its changes are
+included here. Contracts are unchanged. The published corpus is regenerated on Linux (x86_64, Python 3.12, numpy 2.5.4),
+so that CI's Linux job reproduces it byte for byte. Six traces (`chsh`, `clock_sync`, `conference_key`,
+`leader_election`, `multihop_qkd`, `qkd`) differ from the earlier macOS corpus in the last digit of some
+floats (largest relative difference 2.1e-16), and no event changes.
 
 ### Added
 
+- **`qnetbench.tenancy`: several applications running at once on one shared link**, with a
+  policy choosing who is served next. `run_tenants` returns one trace per tenant, each valid
+  under the ordinary schema. The modelling choices are fields of `ExecutionModel`, and
+  `AS_QUEUE_MODEL` sets them the way `qnetbench.contention` assumes. It covers two-role
+  applications on one link, and tenants compete for the link only.
+- `LinkServer` (`qnetbench.backends.reference.link`), which queues requests and makes pairs.
+- Opt-in decoherence of held qubits, dephasing or depolarizing, off by default.
+  `Register.settle` applies it on its own random stream, so it moves no other draw.
+- `ExecutionModel(service="free_running", storage=n)`: a link that generates regardless of
+  demand on the supply's own timeline and holds the newest `n` pairs, so a pair can age before
+  it is delivered.
+- `run_tenants` maps one link description onto every supply. `attempt_latency` sets the rate
+  on SeQUeNCe and NetSquid too, with the new `memo_size` and `frequency` backend settings.
+  `supply_options` passes further settings through, such as NetSquid's new random `timing`.
+- Policies may define optional `reset` and `on_delivery` methods, for schedulers that keep state
+  such as the time since each tenant was last served.
+- `PendingRequest.tenant`, `contention.arrival_times`, `Engine.call_at`.
+- Experiment scripts in `scripts/paper/`, with their outputs in `scripts/paper/data/`: applications
+  executed concurrently, the supplies at one link description, closed-form checks, protocols written
+  directly on NetSquid and SeQUeNCe, and published schedulers run on the suite's workloads. Its README
+  lists each one.
+
+### Changed
+
+- `run_once` now goes through `LinkServer`, as the one-tenant case. `qnetbench corpus --check`
+  confirms its traces are byte-identical.
+
+## [0.2.0] — 2026-11-06
+
+Adds non-scoring roles and regenerated data, and corrects several places where the
+tools or documentation said more than the code does.
+
+Contracts move to **0.3.0**: `API_VERSION` and `SCHEMA_VERSION` both add `scores` to
+`AppOutcome` and to the `app_outcome` event. It is backward compatible, since it
+defaults to true.
+
+### Changed — read this before comparing numbers to 0.1.0
+
+- **`bqc` and `verified_bqc` report a different utility.** A role that cannot judge
+  the run, such as the blind-computation server, now sets `scores=False` and is left
+  out of the aggregate. Averaging its placeholder in halved the range these
+  applications' curves are read from.
+- **The published corpus and all paper data were regenerated** under contracts 0.3.0,
+  so every trace in `traces/` changed.
+- **`qnetbench contention` now runs the replicated experiment.** It used to run a
+  single draw of the superseded synchronised model at 12 requests per tenant. It now
+  replicates over 32 independent arrival draws at 100 requests per tenant, and takes
+  options for the operating point. `default_experiment` is replaced by `replicated_experiment` and
+  `render_replicated`.
+- **Ties are reported as ties.** `has_inversion` and `render_experiment` use the set of
+  policies tied for best, and `best_policy` is removed. An arbitrary maximum reported
+  disagreements that were not there.
+- **A crashed application role raises `ApplicationFailure`** naming the role and the
+  cause. It used to surface as "deadlocked on a rendezvous".
+- **Traces are always written with LF line endings**, so checksums hold on Windows.
+
+### Added
+
+- `qnetbench contention` reports the **worst-served application** beside aggregate
+  satisfaction, which does not penalize starving one tenant to serve the rest.
+- `qnetbench corpus --check` regenerates the corpus and separates byte-identical
+  traces from those differing only by float rounding. CI now runs it on Linux, macOS
+  and Windows. `compare_traces` is the same comparison as a library call.
+- `run_once(demand_override=...)`, and `--min-fidelity`, `--latency-budget`,
+  `--staleness-tolerance` and `--priority` on `qnetbench run`, vary a contract without
+  editing the application. `app_profile` accepts the same override.
+- `--link-fidelity`, `--fidelity-std` and `--attempt-latency` on `qnetbench run`.
+- `register_policy`, so a custom policy resolves by name.
+- Run and corpus manifests record the Python version, numpy version and platform.
+- `scripts/paper/reproducibility.py` measures how far a run reproduces across
+  environments, and the sweep scripts are now tracked.
 - **`tie_audit`, the first contributed protocol in the catalog** (now 67 entries).
   The core stays at 27 and the published corpus is unchanged: contributed
   protocols are runnable by name and covered by the full-catalog CI test, and
@@ -39,9 +116,18 @@ a consumer checks compatibility from the file rather than from this document.
   0.72 ± 0.04, stale½ 0.48 ms, 0.34 messages per pair. It runs on the reference
   and SeQUeNCe backends; NetSquid replays through the same engine.
 
-Contracts unchanged: `API_VERSION` and `SCHEMA_VERSION` stay at **0.2.0**.
+### Corrected in the documentation
 
-## [0.1.0] — unreleased
+- **Policy modes do nothing in a single-application run.** The documentation said an
+  arbiter applied the chosen policy. A single application never has more than one
+  pending request per link, so nothing consults the policy, and the trace differs
+  only in its header label. Policies take effect in `qnetbench.contention`.
+- **The "804 configurations" count is gone**, since it multiplied by arbitration modes
+  that do not change a run.
+- **"Byte for byte" is now qualified** by what was measured, in the Reproducibility
+  section of the Traces guide.
+
+## [0.1.0] — 2026-09-17
 
 First release with the characterization made publication-grade, and the first that
 changes published data rather than only adding to it.

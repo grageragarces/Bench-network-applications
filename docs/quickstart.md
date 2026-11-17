@@ -92,14 +92,14 @@ qnetbench characterize --out sig/   # all 27, plus per-app curve JSON
 
 See [Characterization](guide/characterization.md).
 
-## 7. Show that the policy ranking inverts
+## 7. Compare scheduling policies under contention
 
 ```bash
 qnetbench contention
 ```
 
-This is the suite's headline result — the best scheduling policy depends on the
-workload mix. See [Contention](guide/contention.md).
+Which scheduling policy comes out best depends on the workload, the declared contracts
+and the metric. See [Contention](guide/contention.md).
 
 ## Next
 

@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"oblivious_transfer","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"oblivious_transfer","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"qubit_sent","src":"alice","dst":"bob","fidelity":0.95}
 {"t":0.001,"kind":"qubit_sent","src":"alice","dst":"bob","fidelity":0.95}
 {"t":0.001,"kind":"measurement","node":"bob","basis":"Z","result":1}
@@ -1072,5 +1072,5 @@
 {"t":0.5580000000000004,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":32}
 {"t":0.5590000000000004,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":4}
 {"t":0.5600000000000004,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":2}
-{"t":0.5610000000000004,"kind":"app_outcome","role":"bob","node":"bob","success":false,"utility":0.5,"payload":{"transfers":16,"correct":8,"other_guessed":7}}
-{"t":0.5610000000000004,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.5,"payload":{"transfers":16,"correct":8,"other_guessed":0}}
+{"t":0.5610000000000004,"kind":"app_outcome","role":"bob","node":"bob","success":false,"utility":0.5,"scores":true,"payload":{"transfers":16,"correct":8,"other_guessed":7}}
+{"t":0.5610000000000004,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.5,"scores":true,"payload":{"transfers":16,"correct":8,"other_guessed":0}}

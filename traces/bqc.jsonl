@@ -1,4 +1,4 @@
-{"t":0.0,"kind":"run_header","schema_version":"0.2.0","api_version":"0.2.0","app":"bqc","backend":"reference","arbitration":"native","topology":"line2","seed":0}
+{"t":0.0,"kind":"run_header","schema_version":"0.3.0","api_version":"0.3.0","app":"bqc","backend":"reference","arbitration":"native","topology":"line2","seed":0}
 {"t":0.0,"kind":"ent_requested","req_id":0,"src":"alice","dst":"bob","n":1,"demand":{"min_fidelity":0.95,"latency_budget":0.05,"deadline":null,"staleness_tolerance":null,"priority":1.0,"purpose":"keep"}}
 {"t":0.0032935277908098274,"kind":"ent_delivered","req_id":0,"actual_fidelity":0.9410405402361426,"latency":0.0032935277908098274,"pair_age":0.0}
 {"t":0.0032935277908098274,"kind":"contract_violation","req_id":0,"violation":"fidelity"}
@@ -50,5 +50,5 @@
 {"t":0.02693267155882132,"kind":"classical_msg","src":"alice","dst":"bob","n_bytes":1}
 {"t":0.027932671558821322,"kind":"measurement","node":"bob","basis":"Z","result":0}
 {"t":0.027932671558821322,"kind":"classical_msg","src":"bob","dst":"alice","n_bytes":1}
-{"t":0.028932671558821323,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":1.0,"payload":{"depth":8}}
-{"t":0.028932671558821323,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.875,"payload":{"depth":8,"correct":7}}
+{"t":0.028932671558821323,"kind":"app_outcome","role":"bob","node":"bob","success":true,"utility":1.0,"scores":false,"payload":{"depth":8}}
+{"t":0.028932671558821323,"kind":"app_outcome","role":"alice","node":"alice","success":false,"utility":0.875,"scores":true,"payload":{"depth":8,"correct":7}}

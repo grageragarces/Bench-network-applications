@@ -37,3 +37,23 @@ jobs:
           pip install -e ".[dev]"
       - name: Pytest (reference backend + invariants)
         run: pytest
+
+  # The published corpus must reproduce wherever someone tries it, so this regenerates
+  # it on each OS. Floats may differ by rounding; any other difference fails the job.
+  reproducibility:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install (core only)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+      - name: Regenerate the reference corpus and compare
+        run: qnetbench corpus --check

@@ -1,0 +1,86 @@
+Two position_verification tenants (96 rounds, 10 ms bound) and three background tenants,
+64 seeds, closed loop, no memory decay, link fidelity 0.99, classical delay 1 ms.
+Verifier utility and verifier finish time (s) under FIFO / fidelity-first / EDF.
+
+ pairs/s bg x  background           contract                 utility             finish time     best utility           over next
+     100    1        none        as declared       0.280 0.280 0.280      1.98   1.98   1.98             fifo                tied
+     100    1        none  min_fidelity 0.95       0.280 0.280 0.280      1.98   1.98   1.98             fifo                tied
+     100    1         qkd        as declared       0.008 0.279 0.201      4.88   9.67   2.27   fidelity_first  +0.078 (10.1 s.e.)
+     100    1         qkd  min_fidelity 0.95       0.008 0.201 0.201      4.88   2.27   2.27   fidelity_first                tied
+     100    1        chsh        as declared       0.008 0.201 0.201      4.88   2.27   2.27   fidelity_first                tied
+     100    1        chsh  min_fidelity 0.95       0.008 0.201 0.201      4.88   2.27   2.27   fidelity_first                tied
+     100    1       gates        as declared       0.008 0.280 0.095      4.80   5.82   3.18   fidelity_first  +0.184 (29.6 s.e.)
+     100    1       gates  min_fidelity 0.95       0.008 0.201 0.095      4.80   2.27   3.18   fidelity_first  +0.105 (30.7 s.e.)
+     100    1         bqc        as declared       0.008 0.280 0.095      4.80   5.82   3.18   fidelity_first  +0.184 (29.6 s.e.)
+     100    1         bqc  min_fidelity 0.95       0.008 0.008 0.095      4.80   4.80   3.18              edf  +0.087 (27.9 s.e.)
+     100    4         qkd        as declared       0.008 0.275 0.201      4.88  32.67   2.27   fidelity_first  +0.075 (13.5 s.e.)
+     100    4         qkd  min_fidelity 0.95       0.008 0.201 0.201      4.88   2.27   2.27   fidelity_first                tied
+     100    4        chsh        as declared       0.008 0.201 0.201      4.88   2.27   2.27   fidelity_first                tied
+     100    4        chsh  min_fidelity 0.95       0.008 0.201 0.201      4.88   2.27   2.27   fidelity_first                tied
+     100    4       gates        as declared       0.008 0.245 0.095      4.80  17.35   3.18   fidelity_first  +0.149 (28.3 s.e.)
+     100    4       gates  min_fidelity 0.95       0.008 0.201 0.095      4.80   2.27   3.18   fidelity_first  +0.105 (30.7 s.e.)
+     100    4         bqc        as declared       0.008 0.245 0.095      4.80  17.35   3.18   fidelity_first  +0.149 (28.3 s.e.)
+     100    4         bqc  min_fidelity 0.95       0.008 0.008 0.095      4.80   4.80   3.18              edf  +0.087 (27.9 s.e.)
+     160    1        none        as declared       0.492 0.492 0.492      1.27   1.27   1.27             fifo                tied
+     160    1        none  min_fidelity 0.95       0.492 0.492 0.492      1.27   1.27   1.27             fifo                tied
+     160    1         qkd        as declared       0.031 0.493 0.372      3.07   6.07   1.52   fidelity_first  +0.121 (14.6 s.e.)
+     160    1         qkd  min_fidelity 0.95       0.031 0.372 0.372      3.07   1.52   1.52   fidelity_first                tied
+     160    1        chsh        as declared       0.031 0.372 0.372      3.07   1.52   1.52   fidelity_first                tied
+     160    1        chsh  min_fidelity 0.95       0.031 0.372 0.372      3.07   1.52   1.52   fidelity_first                tied
+     160    1       gates        as declared       0.038 0.461 0.272      3.00   3.66   1.81   fidelity_first  +0.189 (22.8 s.e.)
+     160    1       gates  min_fidelity 0.95       0.038 0.373 0.272      3.00   1.52   1.81   fidelity_first  +0.100 (23.3 s.e.)
+     160    1         bqc        as declared       0.038 0.461 0.272      3.00   3.66   1.81   fidelity_first  +0.189 (22.8 s.e.)
+     160    1         bqc  min_fidelity 0.95       0.038 0.038 0.272      3.00   3.00   1.81              edf  +0.234 (44.6 s.e.)
+     160    4         qkd        as declared       0.031 0.490 0.372      3.07  20.45   1.52   fidelity_first  +0.118 (16.7 s.e.)
+     160    4         qkd  min_fidelity 0.95       0.031 0.372 0.372      3.07   1.52   1.52   fidelity_first                tied
+     160    4        chsh        as declared       0.031 0.372 0.372      3.07   1.52   1.52   fidelity_first                tied
+     160    4        chsh  min_fidelity 0.95       0.031 0.372 0.372      3.07   1.52   1.52   fidelity_first                tied
+     160    4       gates        as declared       0.038 0.341 0.272      3.00  10.86   1.81   fidelity_first   +0.068 (9.0 s.e.)
+     160    4       gates  min_fidelity 0.95       0.038 0.373 0.272      3.00   1.52   1.81   fidelity_first  +0.100 (23.3 s.e.)
+     160    4         bqc        as declared       0.038 0.341 0.272      3.00  10.86   1.81   fidelity_first   +0.068 (9.0 s.e.)
+     160    4         bqc  min_fidelity 0.95       0.038 0.038 0.272      3.00   3.00   1.81              edf  +0.234 (44.6 s.e.)
+     240    1        none        as declared       0.708 0.708 0.708      0.88   0.88   0.88             fifo                tied
+     240    1        none  min_fidelity 0.95       0.708 0.708 0.708      0.88   0.88   0.88             fifo                tied
+     240    1         qkd        as declared       0.109 0.703 0.575      2.08   4.08   1.09   fidelity_first  +0.129 (16.9 s.e.)
+     240    1         qkd  min_fidelity 0.95       0.109 0.575 0.575      2.08   1.09   1.09   fidelity_first                tied
+     240    1        chsh        as declared       0.109 0.575 0.575      2.08   1.09   1.09   fidelity_first                tied
+     240    1        chsh  min_fidelity 0.95       0.109 0.575 0.575      2.08   1.09   1.09   fidelity_first                tied
+     240    1       gates        as declared       0.133 0.606 0.526      2.00   2.47   1.17   fidelity_first  +0.079 (11.2 s.e.)
+     240    1       gates  min_fidelity 0.95       0.133 0.575 0.526      2.00   1.09   1.17   fidelity_first  +0.049 (18.0 s.e.)
+     240    1         bqc        as declared       0.133 0.606 0.526      2.00   2.47   1.17   fidelity_first  +0.079 (11.2 s.e.)
+     240    1         bqc  min_fidelity 0.95       0.133 0.133 0.526      2.00   2.00   1.17              edf  +0.394 (75.1 s.e.)
+     240    4         qkd        as declared       0.109 0.700 0.575      2.08  13.66   1.09   fidelity_first  +0.125 (20.1 s.e.)
+     240    4         qkd  min_fidelity 0.95       0.109 0.575 0.575      2.08   1.09   1.09   fidelity_first                tied
+     240    4        chsh        as declared       0.109 0.575 0.575      2.08   1.09   1.09   fidelity_first                tied
+     240    4        chsh  min_fidelity 0.95       0.109 0.575 0.575      2.08   1.09   1.09   fidelity_first                tied
+     240    4       gates        as declared       0.133 0.306 0.526      2.00   7.25   1.17              edf  +0.221 (36.2 s.e.)
+     240    4       gates  min_fidelity 0.95       0.133 0.575 0.526      2.00   1.09   1.17   fidelity_first  +0.049 (18.0 s.e.)
+     240    4         bqc        as declared       0.133 0.306 0.526      2.00   7.25   1.17              edf  +0.221 (36.2 s.e.)
+     240    4         bqc  min_fidelity 0.95       0.133 0.133 0.526      2.00   2.00   1.17              edf  +0.394 (75.1 s.e.)
+     400    1        none        as declared       0.906 0.906 0.906      0.57   0.57   0.57             fifo                tied
+     400    1        none  min_fidelity 0.95       0.906 0.906 0.906      0.57   0.57   0.57             fifo                tied
+     400    1         qkd        as declared       0.396 0.903 0.822      1.28   2.50   0.74   fidelity_first  +0.081 (15.8 s.e.)
+     400    1         qkd  min_fidelity 0.95       0.396 0.822 0.822      1.28   0.74   0.74   fidelity_first                tied
+     400    1        chsh        as declared       0.396 0.822 0.822      1.28   0.74   0.74   fidelity_first                tied
+     400    1        chsh  min_fidelity 0.95       0.396 0.822 0.822      1.28   0.74   0.74   fidelity_first                tied
+     400    1       gates        as declared       0.450 0.667 0.819      1.20   1.51   0.74              edf  +0.152 (26.1 s.e.)
+     400    1       gates  min_fidelity 0.95       0.450 0.823 0.819      1.20   0.74   0.74   fidelity_first   +0.004 (5.1 s.e.)
+     400    1         bqc        as declared       0.450 0.667 0.819      1.20   1.51   0.74              edf  +0.152 (26.1 s.e.)
+     400    1         bqc  min_fidelity 0.95       0.450 0.450 0.819      1.20   1.20   0.74              edf  +0.369 (68.8 s.e.)
+     400    4         qkd        as declared       0.396 0.901 0.822      1.28   8.25   0.74   fidelity_first  +0.079 (15.6 s.e.)
+     400    4         qkd  min_fidelity 0.95       0.396 0.822 0.822      1.28   0.74   0.74   fidelity_first                tied
+     400    4        chsh        as declared       0.396 0.822 0.822      1.28   0.74   0.74   fidelity_first                tied
+     400    4        chsh  min_fidelity 0.95       0.396 0.822 0.822      1.28   0.74   0.74   fidelity_first                tied
+     400    4       gates        as declared       0.450 0.126 0.819      1.20   3.69   0.74              edf  +0.369 (68.8 s.e.)
+     400    4       gates  min_fidelity 0.95       0.450 0.823 0.819      1.20   0.74   0.74   fidelity_first   +0.004 (5.1 s.e.)
+     400    4         bqc        as declared       0.450 0.126 0.819      1.20   3.69   0.74              edf  +0.369 (68.8 s.e.)
+     400    4         bqc  min_fidelity 0.95       0.450 0.450 0.819      1.20   1.20   0.74              edf  +0.369 (68.8 s.e.)
+
+Verifier utility against coherence time, 160 pairs/s, as declared, FIFO / fidelity-first / EDF.
+  T2 (s)                with qkd              with gates
+     inf       0.031 0.493 0.372       0.038 0.461 0.272
+       1       0.031 0.493 0.372       0.038 0.461 0.272
+    0.25       0.031 0.492 0.371       0.038 0.460 0.271
+    0.05       0.031 0.486 0.368       0.038 0.456 0.269
+    0.01       0.029 0.463 0.348       0.036 0.433 0.257
+   0.005       0.028 0.439 0.331       0.035 0.411 0.243

@@ -1,0 +1,33 @@
+32 seeds, same fidelity spread (none) on all supplies. Mean utility per backend,
+the largest gap between backends, and that gap in paired standard errors across seeds.
+
+application                 reference   sequence   netsquid  max gap    s.e.      z  exact
+anonymous_transmission         0.9297     0.9297     0.9297   0.0000  0.0000    0.0    yes
+b92                            0.1244     0.1244     0.1244   0.0000  0.0000    0.0    yes
+bb84                           0.2490     0.2490     0.2490   0.0000  0.0000    0.0    yes
+bqc                            0.9688     0.9688     0.9688   0.0000  0.0000    0.0    yes
+byzantine_agreement            0.9546     0.9546     0.9546   0.0000  0.0000    0.0    yes
+chsh                           0.6888     0.6888     0.6888   0.0000  0.0000    0.0    yes
+clock_sync                     0.9754     0.9754     0.9754   0.0000  0.0000    0.0    yes
+conference_key                 0.4409     0.4409     0.4409   0.0000  0.0000    0.0    yes
+distillation                   0.9573     0.9573     0.9573   0.0000  0.0000    0.0    yes
+distilled_gate                 0.9974     0.9974     0.9974   0.0000  0.0000    0.0    yes
+distributed_gate               0.9648     0.9648     0.9648   0.0000  0.0000    0.0    yes
+dqc_ghz4                       0.9297     0.9297     0.9297   0.0000  0.0000    0.0    yes
+dqc_qft4                       0.7422     0.7422     0.7422   0.0000  0.0000    0.0    yes
+dqc_random4                    0.6875     0.6875     0.6875   0.0000  0.0000    0.0    yes
+entanglement_swap              0.9312     0.9312     0.9312   0.0000  0.0000    0.0    yes
+heralded_teleport              0.9647     0.9647     0.9647   0.0000  0.0000    0.0    yes
+leader_election                0.0872     0.0872     0.0872   0.0000  0.0000    0.0    yes
+multihop_qkd                   0.2181     0.2181     0.2181   0.0000  0.0000    0.0    yes
+oblivious_transfer             0.7520     0.7520     0.7520   0.0000  0.0000    0.0    yes
+position_verification          0.9661     0.9661     0.9661   0.0000  0.0000    0.0    yes
+qkd                            0.2493     0.2493     0.2493   0.0000  0.0000    0.0    yes
+secret_sharing                 0.9297     0.9297     0.9297   0.0000  0.0000    0.0    yes
+shared_randomness              0.9712     0.9712     0.9712   0.0000  0.0000    0.0    yes
+six_state                      0.1609     0.1609     0.1609   0.0000  0.0000    0.0    yes
+teleportation                  0.9702     0.9702     0.9702   0.0000  0.0000    0.0    yes
+threshold_secret_sharing       0.9253     0.9253     0.9253   0.0000  0.0000    0.0    yes
+verified_bqc                   0.9523     0.9523     0.9523   0.0000  0.0000    0.0    yes
+
+27 applications: 27 identical on every seed, 27 with a mean gap within 0.02, 0 with a gap above 3 s.e., 0 with a backend error.

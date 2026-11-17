@@ -1,0 +1,380 @@
+{
+  "anonymous_transmission": {
+    "reference": {
+      "success": false,
+      "utility": 0.921875,
+      "delivered": 128,
+      "rate": 478.7920084336382
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.921875,
+      "delivered": 128,
+      "rate": 646.2803096292321
+    }
+  },
+  "b92": {
+    "reference": {
+      "success": true,
+      "utility": 0.10546875,
+      "delivered": 0,
+      "rate": 0.0
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.10546875,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "bb84": {
+    "reference": {
+      "success": true,
+      "utility": 0.25390625,
+      "delivered": 0,
+      "rate": 0.0
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.25390625,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "bqc": {
+    "reference": {
+      "success": false,
+      "utility": 0.875,
+      "delivered": 8,
+      "rate": 299.7647698880855
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.875,
+      "delivered": 8,
+      "rate": 313.62971001948716
+    }
+  },
+  "byzantine_agreement": {
+    "reference": {
+      "success": false,
+      "utility": 0.953125,
+      "delivered": 128,
+      "rate": 478.7920084336382
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.953125,
+      "delivered": 128,
+      "rate": 646.2803096292321
+    }
+  },
+  "chsh": {
+    "reference": {
+      "success": true,
+      "utility": 0.5963692920897854,
+      "delivered": 256,
+      "rate": 925.374284533899
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.5963692920897854,
+      "delivered": 256,
+      "rate": 2459.63549571471
+    }
+  },
+  "clock_sync": {
+    "reference": {
+      "success": true,
+      "utility": 0.9747096096936216,
+      "delivered": 256,
+      "rate": 925.374284533899
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.9747096096936216,
+      "delivered": 256,
+      "rate": 2459.63549571471
+    }
+  },
+  "conference_key": {
+    "reference": {
+      "success": false,
+      "utility": 0.40625,
+      "delivered": 192,
+      "rate": 571.0328336392607
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.40625,
+      "delivered": 192,
+      "rate": 825.505674519492
+    }
+  },
+  "distillation": {
+    "reference": {
+      "success": false,
+      "utility": 0.90625,
+      "delivered": 128,
+      "rate": 480.58968421596813
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.90625,
+      "delivered": 128,
+      "rate": 682.4927674731144
+    }
+  },
+  "distilled_gate": {
+    "reference": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 27,
+      "rate": 380.02297665422384
+    },
+    "sequence": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 27,
+      "rate": 473.5566824594503
+    }
+  },
+  "distributed_gate": {
+    "reference": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 8,
+      "rate": 278.86620401877263
+    },
+    "sequence": {
+      "success": true,
+      "utility": 1.0,
+      "delivered": 8,
+      "rate": 290.8267339600369
+    }
+  },
+  "dqc_ghz4": {
+    "reference": {
+      "success": false,
+      "utility": 0.75,
+      "delivered": 6,
+      "rate": 278.6384744962834
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.75,
+      "delivered": 6,
+      "rate": 315.69746432285973
+    }
+  },
+  "dqc_qft4": {
+    "reference": {
+      "success": false,
+      "utility": 0.75,
+      "delivered": 16,
+      "rate": 323.8039578764171
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.75,
+      "delivered": 16,
+      "rate": 347.74737123955396
+    }
+  },
+  "dqc_random4": {
+    "reference": {
+      "success": false,
+      "utility": 0.75,
+      "delivered": 20,
+      "rate": 322.4890325727791
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.75,
+      "delivered": 20,
+      "rate": 353.90079402440233
+    }
+  },
+  "entanglement_swap": {
+    "reference": {
+      "success": false,
+      "utility": 0.96875,
+      "delivered": 128,
+      "rate": 478.7920084336382
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.96875,
+      "delivered": 128,
+      "rate": 646.2803096292321
+    }
+  },
+  "heralded_teleport": {
+    "reference": {
+      "success": false,
+      "utility": 0.9583333333333334,
+      "delivered": 48,
+      "rate": 81.67517632263426
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.9583333333333334,
+      "delivered": 48,
+      "rate": 85.98349851116912
+    }
+  },
+  "leader_election": {
+    "reference": {
+      "success": false,
+      "utility": 0.16666666666666666,
+      "delivered": 288,
+      "rate": 629.8672590142116
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.16666666666666666,
+      "delivered": 288,
+      "rate": 969.3007637996724
+    }
+  },
+  "multihop_qkd": {
+    "reference": {
+      "success": true,
+      "utility": 0.25814950980392154,
+      "delivered": 256,
+      "rate": 786.662635009724
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.25814950980392154,
+      "delivered": 256,
+      "rate": 1204.2790715686435
+    }
+  },
+  "oblivious_transfer": {
+    "reference": {
+      "success": false,
+      "utility": 0.625,
+      "delivered": 0,
+      "rate": 0.0
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.625,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "position_verification": {
+    "reference": {
+      "success": false,
+      "utility": 0.9791666666666666,
+      "delivered": 48,
+      "rate": 314.8204389396882
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.9791666666666666,
+      "delivered": 48,
+      "rate": 390.1783968471812
+    }
+  },
+  "qkd": {
+    "reference": {
+      "success": true,
+      "utility": 0.25390625,
+      "delivered": 256,
+      "rate": 922.0413417723628
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.25390625,
+      "delivered": 256,
+      "rate": 2436.2283328895496
+    }
+  },
+  "secret_sharing": {
+    "reference": {
+      "success": false,
+      "utility": 0.921875,
+      "delivered": 128,
+      "rate": 478.7920084336382
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.921875,
+      "delivered": 128,
+      "rate": 646.2803096292321
+    }
+  },
+  "shared_randomness": {
+    "reference": {
+      "success": true,
+      "utility": 0.984375,
+      "delivered": 128,
+      "rate": 918.6198526901852
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.984375,
+      "delivered": 128,
+      "rate": 2114.0330917008864
+    }
+  },
+  "six_state": {
+    "reference": {
+      "success": true,
+      "utility": 0.17333333333333334,
+      "delivered": 0,
+      "rate": 0.0
+    },
+    "sequence": {
+      "success": true,
+      "utility": 0.17333333333333334,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "teleportation": {
+    "reference": {
+      "success": false,
+      "utility": 0.96875,
+      "delivered": 64,
+      "rate": 475.8191476333186
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.96875,
+      "delivered": 64,
+      "rate": 643.033591281767
+    }
+  },
+  "threshold_secret_sharing": {
+    "reference": {
+      "success": false,
+      "utility": 0.921875,
+      "delivered": 0,
+      "rate": 0.0
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.921875,
+      "delivered": 0,
+      "rate": 0.0
+    }
+  },
+  "verified_bqc": {
+    "reference": {
+      "success": false,
+      "utility": 0.8888888888888888,
+      "delivered": 16,
+      "rate": 330.4923791525157
+    },
+    "sequence": {
+      "success": false,
+      "utility": 0.8888888888888888,
+      "delivered": 16,
+      "rate": 355.4733029039726
+    }
+  }
+}

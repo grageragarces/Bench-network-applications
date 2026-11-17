@@ -1,0 +1,64 @@
+Agreed model, dephasing, 0.99 link fidelity, 160 pairs/s, classical delay 1 ms.
+
+The default mixes, 16 draws: contract satisfaction, utility, and draws with no policy best on both mixes.
+    T (s)             mix            fifo  fidelity_first             edf   utility
+    0.005  deadline_heavy           0.940           0.940           0.980     0.846
+    0.005  fidelity_heavy           0.976           0.998           0.998     0.744
+                 disagree               0 of 16
+     0.01  deadline_heavy           0.940           0.940           0.980     0.846
+     0.01  fidelity_heavy           0.976           0.998           0.998     0.762
+                 disagree               0 of 16
+    0.025  deadline_heavy           0.940           0.940           0.980     0.846
+    0.025  fidelity_heavy           0.976           0.998           0.998     0.771
+                 disagree               0 of 16
+     0.05  deadline_heavy           0.940           0.940           0.980     0.846
+     0.05  fidelity_heavy           0.976           0.998           0.998     0.776
+                 disagree               0 of 16
+      0.1  deadline_heavy           0.940           0.940           0.980     0.846
+      0.1  fidelity_heavy           0.976           0.998           0.998     0.778
+                 disagree               0 of 16
+     0.25  deadline_heavy           0.940           0.940           0.980     0.846
+     0.25  fidelity_heavy           0.976           0.998           0.998     0.779
+                 disagree               0 of 16
+        1  deadline_heavy           0.940           0.940           0.980     0.846
+        1  fidelity_heavy           0.976           0.998           0.998     0.780
+                 disagree               0 of 16
+      inf  deadline_heavy           0.940           0.940           0.980     0.846
+      inf  fidelity_heavy           0.976           0.998           0.998     0.780
+                 disagree               0 of 16
+
+Three dqc tenants and two background tenants, 128 seeds: mean dqc utility, and the
+difference between EDF and FIFO with its paired standard error.
+    T (s)  background     contract            fifo  fidelity_first             edf        EDF - FIFO
+    0.005    with qkd  as declared           0.551           0.551           0.566    +0.016 ± 0.013
+    0.005    with qkd  no deadline           0.551           0.551           0.548    -0.003 ± 0.011
+    0.005  with gates  as declared           0.554           0.554           0.547    -0.007 ± 0.012
+    0.005  with gates  no deadline           0.554           0.554           0.546    -0.008 ± 0.011
+     0.01    with qkd  as declared           0.572           0.572           0.570    -0.001 ± 0.013
+     0.01    with qkd  no deadline           0.572           0.572           0.553    -0.019 ± 0.015
+     0.01  with gates  as declared           0.577           0.577           0.549    -0.028 ± 0.013
+     0.01  with gates  no deadline           0.577           0.577           0.547    -0.030 ± 0.014
+    0.025    with qkd  as declared           0.580           0.580           0.560    -0.020 ± 0.016
+    0.025    with qkd  no deadline           0.580           0.580           0.577    -0.003 ± 0.016
+    0.025  with gates  as declared           0.577           0.577           0.588    +0.011 ± 0.015
+    0.025  with gates  no deadline           0.577           0.577           0.575    -0.002 ± 0.015
+     0.05    with qkd  as declared           0.587           0.587           0.577    -0.010 ± 0.014
+     0.05    with qkd  no deadline           0.587           0.587           0.572    -0.014 ± 0.015
+     0.05  with gates  as declared           0.577           0.577           0.596    +0.020 ± 0.015
+     0.05  with gates  no deadline           0.577           0.577           0.563    -0.014 ± 0.016
+      0.1    with qkd  as declared           0.580           0.580           0.593    +0.013 ± 0.015
+      0.1    with qkd  no deadline           0.580           0.580           0.614    +0.034 ± 0.016
+      0.1  with gates  as declared           0.568           0.568           0.588    +0.020 ± 0.014
+      0.1  with gates  no deadline           0.568           0.568           0.577    +0.009 ± 0.015
+     0.25    with qkd  as declared           0.622           0.622           0.660    +0.038 ± 0.011
+     0.25    with qkd  no deadline           0.622           0.622           0.644    +0.022 ± 0.012
+     0.25  with gates  as declared           0.621           0.621           0.643    +0.022 ± 0.011
+     0.25  with gates  no deadline           0.621           0.621           0.589    -0.032 ± 0.014
+        1    with qkd  as declared           0.735           0.735           0.780    +0.045 ± 0.009
+        1    with qkd  no deadline           0.735           0.735           0.799    +0.064 ± 0.009
+        1  with gates  as declared           0.738           0.738           0.778    +0.040 ± 0.009
+        1  with gates  no deadline           0.738           0.738           0.667    -0.071 ± 0.014
+      inf    with qkd  as declared           0.906           0.906           0.906    +0.000 ± 0.000
+      inf    with qkd  no deadline           0.906           0.906           0.906    +0.000 ± 0.000
+      inf  with gates  as declared           0.906           0.906           0.906    +0.000 ± 0.000
+      inf  with gates  no deadline           0.906           0.906           0.906    +0.000 ± 0.000

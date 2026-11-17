@@ -7,19 +7,32 @@ from __future__ import annotations
 
 import math
 
+from qnetbench.api.types import Demand
 from qnetbench.apps import get_app
 from qnetbench.backends.reference import ReferenceBackend
 from qnetbench.policies import get_policy
-from qnetbench.topology import Topology, line2, star
+from qnetbench.topology import Topology, default_topology
 from qnetbench.trace.events import Event
 
+# What `run_once(demand_override=...)` may replace. `purpose` is left out because it
+# decides whether an application receives a qubit at all, so changing it would break
+# the protocol rather than vary its contract. `deadline` is left out because it is an
+# absolute time each application computes per request; use `latency_budget` instead.
+CONTRACT_OVERRIDES = frozenset(
+    {"min_fidelity", "latency_budget", "staleness_tolerance", "priority"}
+)
 
-def _default_topology(roles: list[str]) -> Topology:
-    """The default topology for an application: a direct link for two roles, or a
-    hub-and-spoke star (role[0] = hub) for multipartite applications."""
-    if len(roles) == 2:
-        return line2(roles[0], roles[1])
-    return star(roles[0], list(roles[1:]))
+
+def _checked_override(demand_override: dict[str, object] | None) -> dict[str, object]:
+    override = dict(demand_override or {})
+    unknown = set(override) - CONTRACT_OVERRIDES
+    if unknown:
+        raise ValueError(
+            f"cannot override contract field(s) {sorted(unknown)}; "
+            f"allowed: {sorted(CONTRACT_OVERRIDES)}"
+        )
+    Demand.model_validate(override)  # reject out-of-range values before the run starts
+    return override
 
 
 def _parse_arbitration(spec: str) -> tuple[str, object | None]:
@@ -41,13 +54,21 @@ def run_once(
     cfg: dict[str, object] | None = None,
     pair_age: float = 0.0,
     coherence_time: float = math.inf,
+    demand_override: dict[str, object] | None = None,
 ) -> list[Event]:
     """Execute one run and return its trace as a list of events.
 
     `pair_age`/`coherence_time` model staleness (used by characterization); they
-    are only supported on the reference backend."""
+    are only supported on the reference backend.
+
+    `demand_override` replaces contract fields on every entanglement request, which
+    is how to vary a contract without editing the application. Applications that use
+    `qsend` make no entanglement requests, so it has no effect on them. A
+    `latency_budget` also clears the application's own deadline. The trace records
+    the contract in force."""
+    override = _checked_override(demand_override)
     app = get_app(app_name)
-    topo = topology or _default_topology(app.roles())
+    topo = topology or default_topology(app.roles())
     roles_to_nodes = {role: role for role in app.roles()}
     missing = [n for n in roles_to_nodes.values() if n not in topo.nodes]
     if missing:
@@ -64,6 +85,7 @@ def run_once(
             pair_age=pair_age,
             coherence_time=coherence_time,
         )
+        ref.demand_override = override
         return ref.run(app, cfg or {}, roles_to_nodes)
 
     if (pair_age, coherence_time) != (0.0, math.inf):
@@ -80,6 +102,7 @@ def run_once(
                 "install it with: pip install qnetbench[sequence]"
             ) from exc
         seq = SequenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        seq.demand_override = override
         return seq.run(app, cfg or {}, roles_to_nodes)
 
     if backend == "netsquid":
@@ -92,6 +115,7 @@ def run_once(
                 "pip install --extra-index-url https://pypi.netsquid.org qnetbench[netsquid]"
             ) from exc
         nsq = NetSquidBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        nsq.demand_override = override
         return nsq.run(app, cfg or {}, roles_to_nodes)
 
     raise NotImplementedError(

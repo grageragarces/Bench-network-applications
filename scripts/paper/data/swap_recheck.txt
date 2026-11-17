@@ -1,0 +1,2 @@
+swap F=0.85  predicted 0.8200  measured 0.8221 ± 0.0010  z +2.05  (512 new seeds)
+swap F=0.95  predicted 0.9356  measured 0.9363 ± 0.0006  z +1.11  (512 new seeds)

@@ -10,8 +10,8 @@ tools depend on them, and they are versioned independently of the rest of the su
 
 | Module | Version | What it is |
 |---|---|---|
-| [`qnetbench.api`](api.md) | `API_VERSION = 0.2.0` | the portable shim an application programs against — `Host`, `Qubit`, sockets, `Demand` |
-| [`qnetbench.trace`](trace.md) | `SCHEMA_VERSION = 0.2.0` | the JSONL event schema and its I/O |
+| [`qnetbench.api`](api.md) | `API_VERSION = 0.3.0` | the portable shim an application programs against — `Host`, `Qubit`, sockets, `Demand` |
+| [`qnetbench.trace`](trace.md) | `SCHEMA_VERSION = 0.3.0` | the JSONL event schema and its I/O |
 
 ## Everything else
 
@@ -26,6 +26,7 @@ tools depend on them, and they are versioned independently of the rest of the su
 | [`qnetbench.metrics`](metrics.md) | traces to the standard report |
 | [`qnetbench.characterize`](characterize.md) | demand-signature extraction and the curves |
 | [`qnetbench.contention`](contention.md) | the multi-tenant cross-policy experiment |
+| [`qnetbench.tenancy`](tenancy.md) | several applications running at once on one link |
 | [`qnetbench.spec`](spec.md) | JSON Schema generation and the reference corpus |
 
 ## The shape of a dependency

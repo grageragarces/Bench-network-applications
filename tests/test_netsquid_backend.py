@@ -35,6 +35,12 @@ def _report(app: str, seed: int = 0, topo=None):
     return compute_report(run_once(app, seed=seed, backend=BACKEND, topology=topo))
 
 
+def test_contract_override_applies_on_this_backend() -> None:
+    events = run_once("qkd", backend=BACKEND, demand_override={"min_fidelity": 0.5})
+    contracts = {e.demand.min_fidelity for e in events if e.kind == "ent_requested"}
+    assert contracts == {0.5}
+
+
 def test_all_apps_run_on_backend() -> None:
     for app in available_apps():  # default topology per app
         rep = _report(app)
@@ -78,3 +84,63 @@ def test_qkd_qber_agrees_across_backends() -> None:
     theory = 2 * (1 - 0.9) / 3  # ≈ 0.0667
     assert abs(qber("reference") - theory) < 0.05
     assert abs(qber(BACKEND) - theory) < 0.05
+
+
+def test_concurrent_execution_runs_on_the_netsquid_supply():
+    from qnetbench.tenancy import TenantSpec, contract_satisfaction, run_tenants
+    from qnetbench.topology import LinkModel
+    from qnetbench.trace.events import EntanglementDelivered
+
+    tenants = [TenantSpec("key", "qkd", {"rounds": 10}), TenantSpec("bell", "chsh", {"rounds": 10})]
+    link = LinkModel(1.0 / 160, 0.99, 0.0)
+    runs = [
+        run_tenants(
+            tenants,
+            seed=1,
+            arbitration="policy:edf",
+            link=link,
+            classical_latency=1e-3,
+            supply="netsquid",
+        )
+        for _ in range(2)
+    ]
+    assert runs[0].traces == runs[1].traces
+    assert runs[0].supply == "netsquid"
+    for trace in runs[0].traces.values():
+        assert sum(isinstance(e, EntanglementDelivered) for e in trace) == 10
+        assert contract_satisfaction(trace) >= 0.0
+
+
+def test_one_link_description_sets_the_rate_on_the_netsquid_supply():
+    from qnetbench.tenancy import _supply_backend
+    from qnetbench.topology import LinkModel
+
+    link = LinkModel(1.0 / 160, 0.99, 0.0)
+    supplier = _supply_backend("netsquid", link, 1e-3, seed=1, window_s=1.0)
+    supply = next(iter(supplier._cursors.values())).supply
+    gaps = supply.inter_arrivals[1:]
+    rate = len(gaps) / sum(gaps)
+    assert rate == pytest.approx(160.0, rel=1e-3)
+    assert supply.classical_latency == 1e-3
+    assert all(f == pytest.approx(0.99, abs=1e-9) for f in supply.fidelities)
+
+
+def test_a_netsquid_source_can_have_random_timing():
+    from qnetbench.tenancy import _supply_backend
+    from qnetbench.topology import LinkModel
+
+    link = LinkModel(1.0 / 500, 0.99, 0.0)
+    supplier = _supply_backend("netsquid", link, 1e-3, seed=1, window_s=2.0, timing="exponential")
+    gaps = next(iter(supplier._cursors.values())).supply.inter_arrivals[1:]
+    mean = sum(gaps) / len(gaps)
+    spread = (sum((g - mean) ** 2 for g in gaps) / len(gaps)) ** 0.5
+    assert 1 / mean == pytest.approx(500, rel=0.1)
+    assert spread / mean == pytest.approx(1.0, abs=0.15)  # exponential, where fixed gives 0
+
+
+def test_netsquid_refuses_an_unknown_timing():
+    from qnetbench.tenancy import _supply_backend
+    from qnetbench.topology import LinkModel
+
+    with pytest.raises(ValueError, match="timing"):
+        _supply_backend("netsquid", LinkModel(1e-3, 0.99, 0.0), 1e-3, 1, 0.1, timing="poisson")

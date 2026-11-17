@@ -1,0 +1,14 @@
+distillation-heavy mix (4 distillation + 1 qkd) at capacity 160 pairs/s: 32 independent arrival draws, 100 requests/tenant.
+winner = every policy tied for the top score.
+
+   contract satisfaction, mean +- sd across draws
+      fifo            0.623 +- 0.135
+      fidelity_first  0.655 +- 0.129
+      edf             0.623 +- 0.135
+
+   winning set over the draws:
+      ff               24/32
+      edf/fifo          7/32
+      edf/ff/fifo       1/32
+
+   draws with no policy in common with the fidelity-heavy mix: 7/32

@@ -10,6 +10,11 @@
           "title": "Role",
           "type": "string"
         },
+        "scores": {
+          "default": true,
+          "title": "Scores",
+          "type": "boolean"
+        },
         "success": {
           "title": "Success",
           "type": "boolean"

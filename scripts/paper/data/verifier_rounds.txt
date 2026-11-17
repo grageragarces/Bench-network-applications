@@ -1,0 +1,9 @@
+Two position_verification tenants (96 rounds, 10 ms bound) beside three qkd tenants, 160 pairs/s, 64 seeds, closed loop.
+A round is 'in background' if requested before the last qkd tenant finished. Starved: waited more than 1 s.
+Per-seed means. 'late' counts rounds whose pair missed the bound, which is what makes a round fail.
+Solo baseline (no background, any policy): 0.496 of rounds verified, finish 1.27 s.
+
+policy           utility  finish  bg ends  rounds in bg  late in bg  starved  longest wait  rounds after  late after  verified after
+fifo               0.031    3.07     6.02         192.0       186.0     0.00          0.08           0.0         0.0             nan
+fidelity_first     0.493    6.07     4.83           3.1         2.3     2.00          4.83         188.9        94.3           0.501
+edf                0.372    1.52     6.02         192.0       120.0     0.00          0.05           0.0         0.0             nan

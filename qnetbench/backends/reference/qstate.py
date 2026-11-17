@@ -10,6 +10,11 @@ Qubit ordering is MSB-first: position 0 is the most significant bit of the index
 
 from __future__ import annotations
 
+import math
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from typing import Literal
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -60,6 +65,21 @@ def gate_matrix(name: str, params: tuple[float, ...]) -> NDArray[np.complex128]:
     raise ValueError(f"unknown gate {name!r}")
 
 
+MemoryNoise = Literal["dephasing", "depolarizing"]
+
+
+@dataclass
+class _Memory:
+    """Decoherence of stored qubits, applied lazily when a qubit is next used."""
+
+    clock: Callable[[], float]
+    coherence_time: float
+    noise: MemoryNoise
+    rng: np.random.Generator
+    last: dict[int, float] = field(default_factory=dict)  # when each qubit was last settled
+    owner: dict[int, str] = field(default_factory=dict)  # which node holds each qubit
+
+
 class Register:
     """A growable global statevector over uniquely-identified qubits."""
 
@@ -68,6 +88,75 @@ class Register:
         self._ids: list[int] = []
         self._state = np.ones(1, dtype=complex)  # zero-qubit register = scalar 1
         self._next_id = 0
+        self._memory: _Memory | None = None  # off unless `enable_memory` is called
+
+    # --- memory: off by default, and then these methods do nothing and draw nothing ---
+
+    def enable_memory(
+        self,
+        clock: Callable[[], float],
+        coherence_time: float,
+        noise: MemoryNoise,
+        rng: np.random.Generator,
+    ) -> None:
+        """Make stored qubits decay with per-qubit time constant `coherence_time`. `rng`
+        is a separate stream, so this noise does not move the measurement stream."""
+        self._memory = _Memory(clock, coherence_time, noise, rng)
+
+    def stamp(self, qid: int, when: float, node: str) -> None:
+        """Record that `node` holds `qid`, and that it starts decaying at `when`."""
+        if self._memory is not None:
+            self._memory.last[qid] = when
+            self._memory.owner[qid] = node
+
+    def reassign(self, qid: int, node: str) -> None:
+        """A qubit moved to another node. Its decay clock keeps running."""
+        if self._memory is not None:
+            self._memory.owner[qid] = node
+
+    def pause(self, node: str, duration: float) -> None:
+        """Do not charge `duration` to the qubits `node` holds."""
+        if self._memory is not None:
+            for qid, holder in self._memory.owner.items():
+                if holder == node and qid in self._ids:
+                    self._memory.last[qid] += duration
+
+    def aged_fidelity(self, fidelity: float, age: float) -> float:
+        """The fidelity of a pair after both halves have been stored for `age` seconds.
+
+        What `settle` does to a pair, in closed form, for reporting it at delivery. With
+        p = (4F - 1) / 3, both channels shrink p or its phase part by exp(-2 age / T).
+        Dephasing leaves Z correlations alone, so it levels off near F = 1/2, not 1/4.
+        """
+        memory = self._memory
+        if memory is None or age <= 0.0 or math.isinf(memory.coherence_time):
+            return fidelity
+        survival = math.exp(-2.0 * age / memory.coherence_time)
+        weight = (4.0 * fidelity - 1.0) / 3.0
+        if memory.noise == "dephasing":
+            return fidelity - (1.0 - survival) / 2.0 * weight
+        return (1.0 + 3.0 * weight * survival) / 4.0
+
+    def settle(self, qid: int) -> None:
+        """Apply the decay accumulated since this qubit was last settled.
+
+        Unravelled as a random Pauli, like `make_bell_pair`. Both channels compose over
+        intervals, so settling at each use is the same as settling continuously.
+        """
+        memory = self._memory
+        if memory is None or math.isinf(memory.coherence_time):
+            return
+        now = memory.clock()
+        elapsed = now - memory.last.get(qid, now)
+        memory.last[qid] = max(now, memory.last.get(qid, now))
+        if elapsed <= 0.0:
+            return
+        survival = math.exp(-elapsed / memory.coherence_time)
+        if memory.noise == "dephasing":
+            if memory.rng.random() < (1.0 - survival) / 2.0:
+                self.apply_1q(qid, _Z)
+        elif memory.rng.random() >= survival:
+            self.apply_1q(qid, _PAULIS[memory.rng.integers(0, 4)])
 
     @property
     def n(self) -> int:

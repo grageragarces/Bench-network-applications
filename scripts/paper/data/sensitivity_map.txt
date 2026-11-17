@@ -1,0 +1,227 @@
+Agreed model, 8 draws per cell, dephasing at 0.25 s. Fidelity margin is added to every declared min_fidelity,
+budget scale multiplies every deadline budget. Winner lists the policies tied for best at 3 places.
+
+ margin budget pairs/s link F  metric               deadline-heavy        fidelity-heavy  disagree
+  -0.05   0.25     100   0.99  satisfaction                E 0.235              QE 0.722      0/8
+  -0.05   0.25     100   0.99  worst served                E 0.043              QE 0.306      0/8
+  -0.05   0.25     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05   0.25     100   0.93  satisfaction                E 0.235              QE 0.722      0/8
+  -0.05   0.25     100   0.93  worst served                E 0.043              QE 0.306      0/8
+  -0.05   0.25     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05   0.25     160   0.99  satisfaction                E 0.456              QE 0.824      0/8
+  -0.05   0.25     160   0.99  worst served                E 0.320              QE 0.559      0/8
+  -0.05   0.25     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05   0.25     160   0.93  satisfaction                E 0.456              QE 0.824      0/8
+  -0.05   0.25     160   0.93  worst served                E 0.320              QE 0.559      0/8
+  -0.05   0.25     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05   0.25     240   0.99  satisfaction                E 0.837              QE 0.929      0/8
+  -0.05   0.25     240   0.99  worst served                E 0.797              QE 0.824      0/8
+  -0.05   0.25     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05   0.25     240   0.93  satisfaction                E 0.837              QE 0.929      0/8
+  -0.05   0.25     240   0.93  worst served                E 0.797              QE 0.824      0/8
+  -0.05   0.25     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05    0.5     100   0.99  satisfaction                E 0.419              QE 0.871      0/8
+  -0.05    0.5     100   0.99  worst served                E 0.274              QE 0.677      0/8
+  -0.05    0.5     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05    0.5     100   0.93  satisfaction                E 0.419              QE 0.871      0/8
+  -0.05    0.5     100   0.93  worst served                E 0.274              QE 0.677      0/8
+  -0.05    0.5     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05    0.5     160   0.99  satisfaction                E 0.786              QE 0.952      0/8
+  -0.05    0.5     160   0.99  worst served                E 0.732              QE 0.880      0/8
+  -0.05    0.5     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05    0.5     160   0.93  satisfaction                E 0.786              QE 0.952      0/8
+  -0.05    0.5     160   0.93  worst served                E 0.732              QE 0.880      0/8
+  -0.05    0.5     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05    0.5     240   0.99  satisfaction                E 0.978              QE 0.994      0/8
+  -0.05    0.5     240   0.99  worst served                E 0.972              QE 0.984      0/8
+  -0.05    0.5     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05    0.5     240   0.93  satisfaction                E 0.978              QE 0.994      0/8
+  -0.05    0.5     240   0.93  worst served                E 0.972              QE 0.984      0/8
+  -0.05    0.5     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05      1     100   0.99  satisfaction                E 0.804              QE 0.975      0/8
+  -0.05      1     100   0.99  worst served                E 0.755              QE 0.938      0/8
+  -0.05      1     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05      1     100   0.93  satisfaction                E 0.804              QE 0.975      0/8
+  -0.05      1     100   0.93  worst served                E 0.755              QE 0.938      0/8
+  -0.05      1     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05      1     160   0.99  satisfaction                E 0.982              QE 0.998      0/8
+  -0.05      1     160   0.99  worst served                E 0.978              QE 0.995      0/8
+  -0.05      1     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05      1     160   0.93  satisfaction                E 0.982              QE 0.998      0/8
+  -0.05      1     160   0.93  worst served                E 0.978              QE 0.995      0/8
+  -0.05      1     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05      1     240   0.99  satisfaction                E 0.999              QE 1.000      0/8
+  -0.05      1     240   0.99  worst served                E 0.999              QE 0.999      0/8
+  -0.05      1     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05      1     240   0.93  satisfaction                E 0.999              QE 1.000      0/8
+  -0.05      1     240   0.93  worst served                E 0.999              QE 0.999      0/8
+  -0.05      1     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05      2     100   0.99  satisfaction                E 0.992              QE 1.000      0/8
+  -0.05      2     100   0.99  worst served                E 0.990              QE 0.999      0/8
+  -0.05      2     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05      2     100   0.93  satisfaction                E 0.992              QE 1.000      0/8
+  -0.05      2     100   0.93  worst served                E 0.990              QE 0.999      0/8
+  -0.05      2     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05      2     160   0.99  satisfaction              FQE 0.999             FQE 1.000      0/8
+  -0.05      2     160   0.99  worst served              FQE 0.999              QE 1.000      0/8
+  -0.05      2     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05      2     160   0.93  satisfaction              FQE 0.999             FQE 1.000      0/8
+  -0.05      2     160   0.93  worst served              FQE 0.999              QE 1.000      0/8
+  -0.05      2     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  -0.05      2     240   0.99  satisfaction              FQE 1.000             FQE 1.000      0/8
+  -0.05      2     240   0.99  worst served              FQE 1.000             FQE 1.000      0/8
+  -0.05      2     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  -0.05      2     240   0.93  satisfaction              FQE 1.000             FQE 1.000      0/8
+  -0.05      2     240   0.93  worst served              FQE 1.000             FQE 1.000      0/8
+  -0.05      2     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00   0.25     100   0.99  satisfaction                E 0.235              QE 0.722      0/8
+  +0.00   0.25     100   0.99  worst served                E 0.043              QE 0.306      0/8
+  +0.00   0.25     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00   0.25     100   0.93  satisfaction                E 0.235             FQE 0.600      0/8
+  +0.00   0.25     100   0.93  worst served                E 0.043             FQE 0.000      0/8
+  +0.00   0.25     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00   0.25     160   0.99  satisfaction                E 0.456              QE 0.824      0/8
+  +0.00   0.25     160   0.99  worst served                E 0.320              QE 0.559      0/8
+  +0.00   0.25     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00   0.25     160   0.93  satisfaction                E 0.456             FQE 0.600      0/8
+  +0.00   0.25     160   0.93  worst served                E 0.320             FQE 0.000      0/8
+  +0.00   0.25     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00   0.25     240   0.99  satisfaction                E 0.837              QE 0.929      0/8
+  +0.00   0.25     240   0.99  worst served                E 0.797              QE 0.824      0/8
+  +0.00   0.25     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00   0.25     240   0.93  satisfaction                E 0.837             FQE 0.600      0/8
+  +0.00   0.25     240   0.93  worst served                E 0.797             FQE 0.000      0/8
+  +0.00   0.25     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00    0.5     100   0.99  satisfaction                E 0.419              QE 0.871      0/8
+  +0.00    0.5     100   0.99  worst served                E 0.274              QE 0.677      0/8
+  +0.00    0.5     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00    0.5     100   0.93  satisfaction                E 0.419             FQE 0.600      0/8
+  +0.00    0.5     100   0.93  worst served                E 0.274             FQE 0.000      0/8
+  +0.00    0.5     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00    0.5     160   0.99  satisfaction                E 0.786              QE 0.952      0/8
+  +0.00    0.5     160   0.99  worst served                E 0.732              QE 0.880      0/8
+  +0.00    0.5     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00    0.5     160   0.93  satisfaction                E 0.786             FQE 0.600      0/8
+  +0.00    0.5     160   0.93  worst served                E 0.732             FQE 0.000      0/8
+  +0.00    0.5     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00    0.5     240   0.99  satisfaction                E 0.978              QE 0.994      0/8
+  +0.00    0.5     240   0.99  worst served                E 0.972              QE 0.984      0/8
+  +0.00    0.5     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00    0.5     240   0.93  satisfaction                E 0.978             FQE 0.600      0/8
+  +0.00    0.5     240   0.93  worst served                E 0.972             FQE 0.000      0/8
+  +0.00    0.5     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00      1     100   0.99  satisfaction                E 0.804              QE 0.975      0/8
+  +0.00      1     100   0.99  worst served                E 0.755              QE 0.938      0/8
+  +0.00      1     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00      1     100   0.93  satisfaction                E 0.804             FQE 0.600      0/8
+  +0.00      1     100   0.93  worst served                E 0.755             FQE 0.000      0/8
+  +0.00      1     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00      1     160   0.99  satisfaction                E 0.982              QE 0.998      0/8
+  +0.00      1     160   0.99  worst served                E 0.978              QE 0.995      0/8
+  +0.00      1     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00      1     160   0.93  satisfaction                E 0.982             FQE 0.600      0/8
+  +0.00      1     160   0.93  worst served                E 0.978             FQE 0.000      0/8
+  +0.00      1     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00      1     240   0.99  satisfaction                E 0.999              QE 1.000      0/8
+  +0.00      1     240   0.99  worst served                E 0.999              QE 0.999      0/8
+  +0.00      1     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00      1     240   0.93  satisfaction                E 0.999             FQE 0.600      0/8
+  +0.00      1     240   0.93  worst served                E 0.999             FQE 0.000      0/8
+  +0.00      1     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00      2     100   0.99  satisfaction                E 0.992              QE 1.000      0/8
+  +0.00      2     100   0.99  worst served                E 0.990              QE 0.999      0/8
+  +0.00      2     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00      2     100   0.93  satisfaction                E 0.992             FQE 0.600      0/8
+  +0.00      2     100   0.93  worst served                E 0.990             FQE 0.000      0/8
+  +0.00      2     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00      2     160   0.99  satisfaction              FQE 0.999             FQE 1.000      0/8
+  +0.00      2     160   0.99  worst served              FQE 0.999              QE 1.000      0/8
+  +0.00      2     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00      2     160   0.93  satisfaction              FQE 0.999             FQE 0.600      0/8
+  +0.00      2     160   0.93  worst served              FQE 0.999             FQE 0.000      0/8
+  +0.00      2     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.00      2     240   0.99  satisfaction              FQE 1.000             FQE 1.000      0/8
+  +0.00      2     240   0.99  worst served              FQE 1.000             FQE 1.000      0/8
+  +0.00      2     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.00      2     240   0.93  satisfaction              FQE 1.000             FQE 0.600      0/8
+  +0.00      2     240   0.93  worst served              FQE 1.000             FQE 0.000      0/8
+  +0.00      2     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03   0.25     100   0.99  satisfaction                E 0.235              QE 0.722      0/8
+  +0.03   0.25     100   0.99  worst served                E 0.043              QE 0.306      0/8
+  +0.03   0.25     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03   0.25     100   0.93  satisfaction                E 0.235             FQE 0.600      0/8
+  +0.03   0.25     100   0.93  worst served                E 0.043             FQE 0.000      0/8
+  +0.03   0.25     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03   0.25     160   0.99  satisfaction                E 0.456              QE 0.824      0/8
+  +0.03   0.25     160   0.99  worst served                E 0.320              QE 0.559      0/8
+  +0.03   0.25     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03   0.25     160   0.93  satisfaction                E 0.456             FQE 0.600      0/8
+  +0.03   0.25     160   0.93  worst served                E 0.320             FQE 0.000      0/8
+  +0.03   0.25     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03   0.25     240   0.99  satisfaction                E 0.837              QE 0.929      0/8
+  +0.03   0.25     240   0.99  worst served                E 0.797              QE 0.824      0/8
+  +0.03   0.25     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03   0.25     240   0.93  satisfaction                E 0.837             FQE 0.600      0/8
+  +0.03   0.25     240   0.93  worst served                E 0.797             FQE 0.000      0/8
+  +0.03   0.25     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03    0.5     100   0.99  satisfaction                E 0.419              QE 0.871      0/8
+  +0.03    0.5     100   0.99  worst served                E 0.274              QE 0.677      0/8
+  +0.03    0.5     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03    0.5     100   0.93  satisfaction                E 0.419             FQE 0.600      0/8
+  +0.03    0.5     100   0.93  worst served                E 0.274             FQE 0.000      0/8
+  +0.03    0.5     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03    0.5     160   0.99  satisfaction                E 0.786              QE 0.952      0/8
+  +0.03    0.5     160   0.99  worst served                E 0.732              QE 0.880      0/8
+  +0.03    0.5     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03    0.5     160   0.93  satisfaction                E 0.786             FQE 0.600      0/8
+  +0.03    0.5     160   0.93  worst served                E 0.732             FQE 0.000      0/8
+  +0.03    0.5     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03    0.5     240   0.99  satisfaction                E 0.978              QE 0.994      0/8
+  +0.03    0.5     240   0.99  worst served                E 0.972              QE 0.984      0/8
+  +0.03    0.5     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03    0.5     240   0.93  satisfaction                E 0.978             FQE 0.600      0/8
+  +0.03    0.5     240   0.93  worst served                E 0.972             FQE 0.000      0/8
+  +0.03    0.5     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03      1     100   0.99  satisfaction                E 0.804              QE 0.975      0/8
+  +0.03      1     100   0.99  worst served                E 0.755              QE 0.938      0/8
+  +0.03      1     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03      1     100   0.93  satisfaction                E 0.804             FQE 0.600      0/8
+  +0.03      1     100   0.93  worst served                E 0.755             FQE 0.000      0/8
+  +0.03      1     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03      1     160   0.99  satisfaction                E 0.982              QE 0.998      0/8
+  +0.03      1     160   0.99  worst served                E 0.978              QE 0.995      0/8
+  +0.03      1     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03      1     160   0.93  satisfaction                E 0.982             FQE 0.600      0/8
+  +0.03      1     160   0.93  worst served                E 0.978             FQE 0.000      0/8
+  +0.03      1     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03      1     240   0.99  satisfaction                E 0.999              QE 1.000      0/8
+  +0.03      1     240   0.99  worst served                E 0.999              QE 0.999      0/8
+  +0.03      1     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03      1     240   0.93  satisfaction                E 0.999             FQE 0.600      0/8
+  +0.03      1     240   0.93  worst served                E 0.999             FQE 0.000      0/8
+  +0.03      1     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03      2     100   0.99  satisfaction                E 0.992              QE 1.000      0/8
+  +0.03      2     100   0.99  worst served                E 0.990              QE 0.999      0/8
+  +0.03      2     100   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03      2     100   0.93  satisfaction                E 0.992             FQE 0.600      0/8
+  +0.03      2     100   0.93  worst served                E 0.990             FQE 0.000      0/8
+  +0.03      2     100   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03      2     160   0.99  satisfaction              FQE 0.999             FQE 1.000      0/8
+  +0.03      2     160   0.99  worst served              FQE 0.999              QE 1.000      0/8
+  +0.03      2     160   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03      2     160   0.93  satisfaction              FQE 0.999             FQE 0.600      0/8
+  +0.03      2     160   0.93  worst served              FQE 0.999             FQE 0.000      0/8
+  +0.03      2     160   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+  +0.03      2     240   0.99  satisfaction              FQE 1.000             FQE 1.000      0/8
+  +0.03      2     240   0.99  worst served              FQE 1.000             FQE 1.000      0/8
+  +0.03      2     240   0.99  utility                   FQE 0.848             FQE 0.746      0/8
+  +0.03      2     240   0.93  satisfaction              FQE 1.000             FQE 0.600      0/8
+  +0.03      2     240   0.93  worst served              FQE 1.000             FQE 0.000      0/8
+  +0.03      2     240   0.93  utility                   FQE 0.811             FQE 0.675      0/8
+
+F = FIFO, Q = fidelity-first, E = EDF.
+
+Cells where most draws disagree:
+  satisfaction     0 of 72
+  worst served     0 of 72
+  utility          0 of 72

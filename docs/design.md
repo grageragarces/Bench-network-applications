@@ -226,6 +226,11 @@ picks the *level* they want rather than being locked into ours:
   hooking each simulator's internal reservation layer. We rebuild the arbiter
   once, in qnetbench; every backend then exposes the same policy semantics.
 
+*As built:* nothing consults the policy in a single-application run, because one
+application never has more than one pending request per link, and the simulators'
+supplies are generated ahead of the run. So the two modes differ only in the trace's
+header label, and policies take effect in the separate contention model.
+
 ```python
 class Policy(Protocol):
     name: str
@@ -397,13 +402,11 @@ priority order.
 ### Release
 - ✅ **Documentation site** — MkDocs + mkdocstrings, built from `mkdocs.yml`;
   `mkdocs serve` to preview, `mkdocs gh-deploy` to publish to GitHub Pages.
-- **Cut the 0.1.0 release.** `pyproject` is already at `0.1.0` with a
-  [CHANGELOG](changelog.md) entry; what remains is `python -m build` and
-  `twine upload` (needs the maintainer's token), then a `v0.1.0` git tag.
+- **Cutting a release** is `python -m build` and `twine upload` (needs the maintainer's
+  token), then a git tag, with a [CHANGELOG](changelog.md) entry.
 - **Keep the three version numbers separate.** The package version, `API_VERSION`,
   and `SCHEMA_VERSION`/`SPEC_VERSION` move independently, and both contracts are
-  currently at **0.2.0** with `qnetbench/api/` and `qnetbench/trace/` untouched
-  since 0.0.2. Bumping a contract version signals a wire-format change to every
+  currently at **0.3.0**. Bumping a contract version signals a wire-format change to every
   trace consumer, so do it only when the shim or the event schema actually changes
   — not to match a package release. The contract versions travel in each trace's
   `run_header`, which is where a consumer should read them from.

@@ -12,13 +12,31 @@ from pathlib import Path
 import pytest
 
 from qnetbench.characterize import RunConsistencyError, verify_run
-from qnetbench.characterize.provenance import MANIFEST_NAME, finish_run, start_run, write_atomic
+from qnetbench.characterize.provenance import (
+    MANIFEST_NAME,
+    finish_run,
+    load_manifest,
+    start_run,
+    write_atomic,
+)
 from qnetbench.harness.cli import main
 
 
 def _write_app(out: Path, name: str, run_id: str) -> None:
     payload = {"run_id": run_id, "signature": {"app": name}, "fidelity_curve": []}
     write_atomic(out / f"{name}.json", json.dumps(payload))
+
+
+def test_manifest_records_the_environment(tmp_path: Path) -> None:
+    environment = start_run(tmp_path, ["alpha"], seeds=1).environment
+    assert set(environment) == {"python", "numpy", "platform", "machine"}
+
+
+def test_manifest_written_before_the_environment_field_still_loads(tmp_path: Path) -> None:
+    fields = start_run(tmp_path, ["alpha"], seeds=1).model_dump()
+    del fields["environment"]
+    (tmp_path / MANIFEST_NAME).write_text(json.dumps(fields))
+    assert load_manifest(tmp_path).environment == {}
 
 
 def test_complete_run_verifies(tmp_path: Path) -> None:

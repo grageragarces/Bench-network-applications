@@ -1,0 +1,93 @@
+32 arrival draws, 100 requests per tenant, 160 pairs/s, link fidelity 0.99, coherence time 0.25 s,
+classical latency 0.001 s. Satisfaction counts fidelity and deadline, as the queue model does, and ignores staleness.
+
+Contract satisfaction
+  deadline_heavy
+    step                                fifo  fidelity_first             edf
+    queue model                        0.507           0.507           0.809
+    open: as model                     0.507           0.507           0.809
+    open: serve late                   0.178           0.178           0.809
+    open: held qubits                  0.451           0.451           1.000
+    open: on demand                    0.350           0.350           0.878
+    blocking: as model                 1.000           1.000           0.939
+    blocking: serve late               1.000           1.000           0.939
+    blocking: held qubits              1.000           1.000           1.000
+    blocking: on demand                0.932           0.932           0.976
+      with depolarizing                0.932           0.932           0.976
+  fidelity_heavy
+    step                                fifo  fidelity_first             edf
+    queue model                        0.589           0.683           0.550
+    open: as model                     0.589           0.683           0.550
+    open: serve late                   0.266           0.683           0.550
+    open: held qubits                  0.729           1.000           1.000
+    open: on demand                    0.678           0.995           0.995
+    blocking: as model                 0.635           0.985           0.960
+    blocking: serve late               0.635           0.985           0.960
+    blocking: held qubits              1.000           1.000           1.000
+    blocking: on demand                0.969           0.997           0.997
+      with depolarizing                0.969           0.997           0.997
+
+Worst-served application, satisfaction
+  deadline_heavy
+    step                                fifo  fidelity_first             edf
+    queue model                        0.446           0.446           0.045
+    open: as model                     0.446           0.446           0.045
+    open: serve late                   0.161           0.161           0.045
+    open: held qubits                  0.314           0.314           1.000
+    open: on demand                    0.187           0.187           0.847
+    blocking: as model                 1.000           1.000           0.695
+    blocking: serve late               1.000           1.000           0.695
+    blocking: held qubits              1.000           1.000           1.000
+    blocking: on demand                0.915           0.915           0.970
+      with depolarizing                0.915           0.915           0.970
+  fidelity_heavy
+    step                                fifo  fidelity_first             edf
+    queue model                        0.208           0.212           0.127
+    open: as model                     0.208           0.212           0.127
+    open: serve late                   0.068           0.212           0.127
+    open: held qubits                  0.322           1.000           1.000
+    open: on demand                    0.196           0.988           0.988
+    blocking: as model                 0.086           0.964           0.800
+    blocking: serve late               0.086           0.964           0.800
+    blocking: held qubits              1.000           1.000           1.000
+    blocking: on demand                0.923           0.993           0.993
+      with depolarizing                0.923           0.993           0.993
+
+Mean application utility, as measured
+  deadline_heavy
+    step                                fifo  fidelity_first             edf
+    blocking: as model                 0.583           0.583           0.593
+    blocking: serve late               0.583           0.583           0.593
+    blocking: held qubits              0.624           0.624           0.624
+    blocking: on demand                0.624           0.624           0.624
+      with depolarizing                0.575           0.575           0.588
+  fidelity_heavy
+    step                                fifo  fidelity_first             edf
+    blocking: as model                 0.602           0.605           0.604
+    blocking: serve late               0.602           0.605           0.604
+    blocking: held qubits              0.694           0.694           0.694
+    blocking: on demand                0.694           0.694           0.694
+      with depolarizing                0.694           0.694           0.694
+
+Draws in which no policy is best on both mixes (ties count as ties)
+    queue model               32 of 32
+    open: as model            32 of 32
+    open: serve late          32 of 32
+    open: held qubits          0 of 32
+    open: on demand            0 of 32
+    blocking: as model         0 of 32
+    blocking: serve late       0 of 32
+    blocking: held qubits      0 of 32
+    blocking: on demand        0 of 32
+      with depolarizing        0 of 32
+
+Application utility per application (blocking: on demand)
+  deadline_heavy
+    application                         fifo  fidelity_first             edf
+    distributed_gate                   0.993           0.993           0.993
+    qkd                                0.256           0.256           0.256
+  fidelity_heavy
+    application                         fifo  fidelity_first             edf
+    bqc                                0.991           0.991           0.991
+    chsh                               0.835           0.835           0.835
+    qkd                                0.256           0.256           0.256

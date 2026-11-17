@@ -17,6 +17,16 @@ import threading
 from collections.abc import Callable
 
 
+class ApplicationFailure(RuntimeError):
+    """An application role raised an exception instead of finishing.
+
+    Reported separately from a deadlock, because the two call for different fixes:
+    a role that crashed leaves its peer parked forever, so without this distinction
+    a typo in an application surfaces as "deadlocked on a rendezvous". The original
+    exception is the `__cause__`.
+    """
+
+
 class Process:
     """A cooperatively-scheduled thread. Created via `Engine.spawn`."""
 
@@ -35,6 +45,8 @@ class Process:
         self._sem.acquire()  # wait for the first hand-off from the scheduler
         try:
             self._fn()
+        except Exception as exc:
+            self._engine._record_failure(self.name, exc)
         finally:
             self.finished = True
             self._engine._yield_to_scheduler()
@@ -49,11 +61,12 @@ class Process:
 class Engine:
     def __init__(self) -> None:
         self.now: float = 0.0
-        self._heap: list[tuple[float, int, Process]] = []
+        self._heap: list[tuple[float, int, Process | Callable[[], None]]] = []
         self._seq = itertools.count()
         self._sched_sem = threading.Semaphore(0)
         self._procs: list[Process] = []
         self._current: Process | None = None
+        self._failure: ApplicationFailure | None = None
 
     # --- process lifecycle ---------------------------------------------------
 
@@ -66,6 +79,17 @@ class Engine:
     def schedule(self, proc: Process, delay: float) -> None:
         """Wake `proc` after `delay` simulated seconds."""
         heapq.heappush(self._heap, (self.now + max(delay, 0.0), next(self._seq), proc))
+
+    def call_at(self, when: float, fn: Callable[[], None]) -> None:
+        """Run `fn` at simulated time `when`, on the scheduler. It must not block."""
+        heapq.heappush(self._heap, (max(when, self.now), next(self._seq), fn))
+
+    def call_later(self, delay: float, fn: Callable[[], None]) -> None:
+        self.call_at(self.now + max(delay, 0.0), fn)
+
+    def has_pending(self) -> bool:
+        """Is anything still due to happen?"""
+        return bool(self._heap)
 
     @property
     def current(self) -> Process:
@@ -81,13 +105,28 @@ class Engine:
         self._current = None
 
     def run(self) -> None:
-        """Run until no events remain. Must be called on the main thread."""
+        """Run until no events remain, or until a process raises.
+
+        Must be called on the main thread. Peers of a failed process stay parked on
+        their daemon threads, exactly as they do after a deadlock.
+        """
         while self._heap:
-            when, _, proc = heapq.heappop(self._heap)
-            if proc.finished:
+            when, _, item = heapq.heappop(self._heap)
+            if not isinstance(item, Process):
+                self.now = max(self.now, when)
+                item()
+                continue
+            if item.finished:
                 continue
             self.now = max(self.now, when)
-            self._switch_to(proc)
+            self._switch_to(item)
+            if self._failure is not None:
+                raise self._failure
+
+    def _record_failure(self, name: str, exc: Exception) -> None:
+        failure = ApplicationFailure(f"{name} raised {type(exc).__name__}: {exc}")
+        failure.__cause__ = exc
+        self._failure = failure
 
     # --- baton hand-off (process side) ---------------------------------------
 

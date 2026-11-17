@@ -51,5 +51,18 @@ def get_policy(name: str) -> Policy:
         raise KeyError(f"unknown policy {name!r}; known: {sorted(_REGISTRY)}") from None
 
 
+def register_policy(policy: Policy, *, replace: bool = False) -> str:
+    """Add a policy under its own `name`, and return that name.
+
+    Everything name-addressed then resolves it, such as `get_policy` and
+    `contention.ranking_experiment`. The registration lives in the importing process
+    only.
+    """
+    if not replace and policy.name in _REGISTRY:
+        raise KeyError(f"policy {policy.name!r} is already registered; pass replace=True")
+    _REGISTRY[policy.name] = policy
+    return policy.name
+
+
 def available_policies() -> list[str]:
     return sorted(_REGISTRY)

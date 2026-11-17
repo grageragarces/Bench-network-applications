@@ -1,0 +1,4 @@
+# Published traces are checksummed byte for byte, so git must never rewrite their
+# line endings. Windows checkouts would otherwise turn them into CRLF.
+traces/*.jsonl -text
+traces/manifest.json -text
