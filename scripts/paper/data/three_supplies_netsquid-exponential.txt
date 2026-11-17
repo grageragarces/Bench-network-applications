@@ -1,0 +1,61 @@
+16 arrival draws, 100 requests per tenant, link fidelity 0.99, classical delay 0.001 s,
+dephasing memory at 0.25 s. Satisfaction counts fidelity and deadline; '+ staleness' also counts staleness.
+
+Timing of each supply, asked for 153 pairs/s:
+  netsquid-exponential      158.7 pairs/s   mean gap   6.30 ms   cv  0.94   mean/median  1.36   F 0.9900
+
+supply: netsquid-exponential, on demand
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             0.919           0.919           0.972
+  deadline_heavy  + staleness              0.919           0.919           0.972
+  deadline_heavy  worst served             0.899           0.899           0.965
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             0.000           0.000           0.000
+  fidelity_heavy  satisfaction             0.962           0.997           0.997
+  fidelity_heavy  + staleness              0.962           0.997           0.997
+  fidelity_heavy  worst served             0.906           0.993           0.993
+  fidelity_heavy  utility                  0.779           0.779           0.779
+  fidelity_heavy  pair age, ms             0.000           0.000           0.000
+  draws with no policy best on both mixes: 0 of 16
+
+supply: netsquid-exponential, free running, 1 pair
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             0.922           0.922           0.977
+  deadline_heavy  + staleness              0.909           0.909           0.964
+  deadline_heavy  worst served             0.902           0.902           0.971
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             0.053           0.053           0.053
+  fidelity_heavy  satisfaction             0.963           0.999           0.999
+  fidelity_heavy  + staleness              0.963           0.999           0.999
+  fidelity_heavy  worst served             0.908           0.996           0.996
+  fidelity_heavy  utility                  0.778           0.778           0.778
+  fidelity_heavy  pair age, ms             0.087           0.087           0.087
+  draws with no policy best on both mixes: 0 of 16
+
+supply: netsquid-exponential, free running, 10 pairs
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             0.914           0.914           0.963
+  deadline_heavy  + staleness              0.860           0.860           0.909
+  deadline_heavy  worst served             0.897           0.897           0.958
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             1.903           1.903           1.903
+  fidelity_heavy  satisfaction             0.942           0.972           0.972
+  fidelity_heavy  + staleness              0.942           0.972           0.972
+  fidelity_heavy  worst served             0.878           0.952           0.952
+  fidelity_heavy  utility                  0.770           0.770           0.770
+  fidelity_heavy  pair age, ms             2.525           2.525           2.525
+  draws with no policy best on both mixes: 0 of 16
+
+supply: netsquid-exponential, free running, 10 pairs, oldest first
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             0.884           0.884           0.933
+  deadline_heavy  + staleness              0.843           0.843           0.892
+  deadline_heavy  worst served             0.866           0.866           0.927
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             2.367           2.367           2.367
+  fidelity_heavy  satisfaction             0.916           0.947           0.947
+  fidelity_heavy  + staleness              0.916           0.947           0.947
+  fidelity_heavy  worst served             0.822           0.897           0.897
+  fidelity_heavy  utility                  0.766           0.766           0.766
+  fidelity_heavy  pair age, ms             3.523           3.523           3.523
+  draws with no policy best on both mixes: 0 of 16

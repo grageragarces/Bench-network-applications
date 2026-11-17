@@ -1,0 +1,122 @@
+Capacity sweep: 16 arrival draws, 100 requests per tenant. Aggregate demand is about 167 requests/s.
+
+Draws in which no policy is best on both mixes (ties count as ties)
+   pairs/s             queue model         open: on demand      blocking: as model     blocking: on demand
+        60                       6                       0                      16                       0
+        80                       2                       0                      16                       0
+       100                      12                       0                      16                       0
+       120                      16                       0                      16                       0
+       140                      16                       0                      16                       0
+       160                      16                       0                       0                       0
+       200                       0                       0                       0                       0
+       300                       0                       0                       0                       0
+
+Contract satisfaction: queue model
+  deadline_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.013           0.013           0.018
+          80           0.019           0.019           0.026
+         100           0.028           0.028           0.045
+         120           0.039           0.039           0.112
+         140           0.110           0.110           0.800
+         160           0.506           0.506           0.806
+         200           0.999           0.999           0.957
+         300           1.000           1.000           1.000
+  fidelity_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.010           0.011           0.011
+          80           0.024           0.292           0.292
+         100           0.152           0.404           0.375
+         120           0.354           0.545           0.404
+         140           0.455           0.604           0.429
+         160           0.590           0.694           0.570
+         200           0.930           0.994           0.985
+         300           0.999           1.000           1.000
+
+Contract satisfaction: open: on demand
+  deadline_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.205           0.205           0.207
+          80           0.209           0.209           0.214
+         100           0.214           0.214           0.234
+         120           0.230           0.230           0.291
+         140           0.253           0.253           0.611
+         160           0.397           0.397           0.899
+         200           0.943           0.943           0.990
+         300           1.000           1.000           1.000
+  fidelity_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.603           0.633           0.633
+          80           0.605           0.835           0.835
+         100           0.609           0.943           0.943
+         120           0.615           0.977           0.977
+         140           0.634           0.991           0.991
+         160           0.710           0.996           0.996
+         200           0.961           1.000           1.000
+         300           1.000           1.000           1.000
+
+Contract satisfaction: blocking: as model
+  deadline_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.007           0.007           0.204
+          80           0.007           0.007           0.206
+         100           0.012           0.012           0.217
+         120           0.027           0.027           0.998
+         140           0.058           0.058           0.961
+         160           1.000           1.000           0.933
+         200           1.000           1.000           0.990
+         300           1.000           1.000           1.000
+  fidelity_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.402           0.597           0.399
+          80           0.403           0.829           0.642
+         100           0.406           0.905           0.814
+         120           0.412           0.920           0.856
+         140           0.437           0.961           0.882
+         160           0.638           0.986           0.961
+         200           0.952           1.000           1.000
+         300           1.000           1.000           1.000
+
+Contract satisfaction: blocking: on demand
+  deadline_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.359           0.359           0.500
+          80           0.517           0.517           0.678
+         100           0.668           0.668           0.805
+         120           0.792           0.792           0.892
+         140           0.881           0.881           0.949
+         160           0.940           0.940           0.980
+         200           0.995           0.995           0.998
+         300           1.000           1.000           1.000
+  fidelity_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.679           0.909           0.909
+          80           0.758           0.952           0.952
+         100           0.831           0.976           0.976
+         120           0.897           0.988           0.988
+         140           0.942           0.994           0.994
+         160           0.976           0.998           0.998
+         200           0.998           1.000           1.000
+         300           1.000           1.000           1.000
+
+Mean application utility: blocking: on demand
+  deadline_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.627           0.627           0.627
+          80           0.627           0.627           0.627
+         100           0.627           0.627           0.627
+         120           0.627           0.627           0.627
+         140           0.627           0.627           0.627
+         160           0.627           0.627           0.627
+         200           0.627           0.627           0.627
+         300           0.627           0.627           0.627
+  fidelity_heavy
+     pairs/s            fifo  fidelity_first             edf
+          60           0.693           0.693           0.693
+          80           0.693           0.693           0.693
+         100           0.693           0.693           0.693
+         120           0.693           0.693           0.693
+         140           0.693           0.693           0.693
+         160           0.693           0.693           0.693
+         200           0.693           0.693           0.693
+         300           0.693           0.693           0.693

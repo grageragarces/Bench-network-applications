@@ -1,0 +1,45 @@
+1. Four distillation tenants and one qkd tenant, 160 pairs/s, 32 seeds, closed loop.
+   Output fidelity is what the application measured. Satisfaction includes staleness.
+
+    T2 (s)     unit          policy  output F    s.e.   yield  satisf.  qkd util  finish s
+      0.05     pair            fifo     0.970   0.003   0.447    1.000     0.250     1.761
+      0.05     pair  fidelity_first     0.967   0.004   0.410    1.000     0.250     3.023
+      0.05     pair             edf     0.970   0.003   0.447    1.000     0.250     1.761
+      0.05  request            fifo     0.975   0.003   0.492    1.000     0.250     1.762
+      0.05  request  fidelity_first     0.975   0.003   0.492    1.000     0.250     2.424
+      0.05  request             edf     0.975   0.003   0.492    1.000     0.250     1.762
+      0.25     pair            fifo     0.989   0.002   0.481    1.000     0.250     1.762
+      0.25     pair  fidelity_first     0.989   0.002   0.473    1.000     0.250     3.023
+      0.25     pair             edf     0.989   0.002   0.481    1.000     0.250     1.762
+      0.25  request            fifo     0.989   0.002   0.492    1.000     0.250     1.762
+      0.25  request  fidelity_first     0.989   0.002   0.492    1.000     0.250     2.424
+      0.25  request             edf     0.989   0.002   0.492    1.000     0.250     1.762
+         1     pair            fifo     0.992   0.002   0.489    1.000     0.250     1.762
+         1     pair  fidelity_first     0.991   0.002   0.487    1.000     0.250     3.023
+         1     pair             edf     0.992   0.002   0.489    1.000     0.250     1.762
+         1  request            fifo     0.992   0.002   0.492    1.000     0.250     1.762
+         1  request  fidelity_first     0.992   0.002   0.492    1.000     0.250     2.424
+         1  request             edf     0.992   0.002   0.492    1.000     0.250     1.762
+       inf     pair            fifo     0.993   0.002   0.492    1.000     0.250     1.762
+       inf     pair  fidelity_first     0.993   0.002   0.492    1.000     0.250     3.023
+       inf     pair             edf     0.993   0.002   0.492    1.000     0.250     1.762
+       inf  request            fifo     0.993   0.002   0.492    1.000     0.250     1.762
+       inf  request  fidelity_first     0.993   0.002   0.492    1.000     0.250     2.424
+       inf  request             edf     0.993   0.002   0.492    1.000     0.250     1.762
+
+2. Burstiness: five heralded_teleport tenants, FIFO, 16 draws. Its contract has no deadline
+   and pairs are fresh on the agreed model, so satisfaction cannot fall when it runs. Latency
+   is what can still show whether bursts matter. Latency in ms, bursty / smooth.
+    pairs/s  model bursty  model smooth  run bursty  run smooth    mean latency     p95 latency
+        140         0.089         0.082       1.000       1.000     25.2 / 26.4     54.0 / 55.0
+        160         0.217         0.365       1.000       1.000     19.6 / 21.4     43.4 / 46.5
+        180         0.722         1.000       1.000       1.000     15.1 / 16.1     35.2 / 37.7
+        220         0.992         1.000       1.000       1.000      10.0 / 9.9     25.1 / 25.5
+        300         1.000         1.000       1.000       1.000       5.9 / 5.5     15.4 / 14.9
+
+3. Paired differences on the distillation mix: fidelity-first minus FIFO, pair by pair.
+    T2 (s)             yield          output F        finish (s)
+      0.05    -0.036 ± 0.003    -0.003 ± 0.004    +1.263 ± 0.010
+      0.25    -0.008 ± 0.001    +0.000 ± 0.001    +1.262 ± 0.010
+         1    -0.002 ± 0.001    -0.000 ± 0.001    +1.262 ± 0.010
+       inf    +0.000 ± 0.000    +0.000 ± 0.000    +1.262 ± 0.010

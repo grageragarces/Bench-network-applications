@@ -1,0 +1,47 @@
+16 arrival draws, 100 requests per tenant, link fidelity 0.99, classical delay 0.001 s,
+dephasing memory at 0.25 s. Satisfaction counts fidelity and deadline; '+ staleness' also counts staleness.
+
+Timing of each supply, asked for 153 pairs/s:
+  netsquid      153.0 pairs/s   mean gap   6.54 ms   cv  0.00   mean/median  1.00   F 0.9900
+
+supply: netsquid, on demand
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             1.000           1.000           1.000
+  deadline_heavy  + staleness              1.000           1.000           1.000
+  deadline_heavy  worst served             1.000           1.000           1.000
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             0.000           0.000           0.000
+  fidelity_heavy  satisfaction             1.000           1.000           1.000
+  fidelity_heavy  + staleness              1.000           1.000           1.000
+  fidelity_heavy  worst served             1.000           1.000           1.000
+  fidelity_heavy  utility                  0.779           0.779           0.779
+  fidelity_heavy  pair age, ms             0.000           0.000           0.000
+  draws with no policy best on both mixes: 0 of 16
+
+supply: netsquid, free running, 1 pair
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             1.000           1.000           1.000
+  deadline_heavy  + staleness              0.997           0.997           0.997
+  deadline_heavy  worst served             1.000           1.000           1.000
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             0.013           0.013           0.013
+  fidelity_heavy  satisfaction             1.000           1.000           1.000
+  fidelity_heavy  + staleness              1.000           1.000           1.000
+  fidelity_heavy  worst served             1.000           1.000           1.000
+  fidelity_heavy  utility                  0.779           0.779           0.779
+  fidelity_heavy  pair age, ms             0.042           0.042           0.042
+  draws with no policy best on both mixes: 0 of 16
+
+supply: netsquid, free running, 10 pairs
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             1.000           1.000           1.000
+  deadline_heavy  + staleness              0.996           0.996           0.996
+  deadline_heavy  worst served             1.000           1.000           1.000
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             0.026           0.026           0.026
+  fidelity_heavy  satisfaction             0.994           0.994           0.994
+  fidelity_heavy  + staleness              0.994           0.994           0.994
+  fidelity_heavy  worst served             0.989           0.989           0.989
+  fidelity_heavy  utility                  0.779           0.779           0.779
+  fidelity_heavy  pair age, ms             0.685           0.685           0.685
+  draws with no policy best on both mixes: 0 of 16

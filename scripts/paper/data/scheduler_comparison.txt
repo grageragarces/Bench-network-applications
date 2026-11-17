@@ -1,0 +1,43 @@
+1. 8 persistent qkd flows, 160 pairs/s, 16 seeds. Age in slots.
+   policy                  mean age         A95      CVaR95  throughput        Jain     starved
+   fifo                       4.478      10.238      12.104       1.003       1.000       0.000
+   tp_max                     4.478      10.238      12.104       1.003       1.000       0.000
+   fid_max                    4.478      10.238      12.104       1.003       1.000       0.000
+   fa_index_printed         148.404     368.688     382.219       1.009       0.269       0.750
+   fa_index_intended          4.478      10.238      12.104       1.003       1.000       0.000
+   fa_thr                     4.478      10.238      12.104       1.003       1.000       0.000
+   fidelity_first             4.478      10.238      12.104       1.003       1.000       0.000
+   edf                        4.478      10.238      12.104       1.003       1.000       0.000
+
+2. The default mixes on the agreed model, 16 seeds.
+   deadline_heavy
+     policy                satisfaction  worst served   utility
+     fifo                         0.940         0.925     0.846
+     tp_max                       0.940         0.925     0.846
+     fid_max                      0.940         0.925     0.846
+     fa_index_printed             0.930         0.912     0.846
+     fa_index_intended            0.942         0.928     0.846
+     fa_thr                       0.941         0.926     0.846
+     fidelity_first               0.940         0.925     0.846
+     edf                          0.980         0.975     0.846
+   fidelity_heavy
+     policy                satisfaction  worst served   utility
+     fifo                         0.976         0.939     0.779
+     tp_max                       0.976         0.939     0.779
+     fid_max                      0.976         0.939     0.779
+     fa_index_printed             0.962         0.905     0.779
+     fa_index_intended            0.976         0.940     0.779
+     fa_thr                       0.976         0.939     0.779
+     fidelity_first               0.998         0.994     0.779
+     edf                          0.998         0.994     0.779
+
+3. Three dqc tenants with a gates background, 128 seeds.
+     policy                     dqc utility  gate utility
+     fifo                     0.621 ± 0.011         0.993
+     tp_max                   0.621 ± 0.011         0.993
+     fid_max                  0.621 ± 0.011         0.993
+     fa_index_printed         0.648 ± 0.012         0.993
+     fa_index_intended        0.621 ± 0.011         0.993
+     fa_thr                   0.621 ± 0.011         0.993
+     fidelity_first           0.621 ± 0.011         0.993
+     edf                      0.643 ± 0.012         0.993

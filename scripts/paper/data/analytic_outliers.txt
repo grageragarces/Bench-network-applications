@@ -1,0 +1,2 @@
+bqc           P(s=e)       F=0.99  predicted 0.9933  measured 0.9935 ± 0.0002  z +0.96  (512 new seeds)
+distillation  F out        F=0.70  predicted 0.7353  measured 0.7342 ± 0.0014  z -0.83  (512 new seeds)

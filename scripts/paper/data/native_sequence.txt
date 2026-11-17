@@ -1,0 +1,16 @@
+Native SeQUeNCe: the state held for each delivered pair, against its fidelity label.
+SeQUeNCe 1.0.0, default quantum manager. Two routers 1 km apart, 1 ms classical delay,
+decoherence disabled, 8 seeds per row.
+QBER is for BBM92 on a Werner pair, 2 (1 - F) / 3. 'implied' uses the stored state's Bell overlap;
+'labelled' uses the fidelity SeQUeNCe reports, which is what qnetbench and NetSquid use.
+
+ raw F  pairs   label  Bell overlap  Bell state  QBER implied  QBER labelled
+  0.99    232   0.990        1.0000        psi+        0.0000         0.0067
+  0.95    232   0.950        1.0000        psi+        0.0000         0.0333
+  0.85    232   0.850        1.0000        psi+        0.0000         0.1000
+  0.70    232   0.700        1.0000        psi+        0.0000         0.2000
+  0.60    232   0.600        1.0000        psi+        0.0000         0.2667
+
+SeQUeNCe's delivered pair is a pure Bell state whatever fidelity it reports. A protocol written natively
+on it sees a perfect pair unless the author applies the noise by hand, so the fidelity label is the only
+channel through which its link physics reaches an application. That is the channel qnetbench replays.

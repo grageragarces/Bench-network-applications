@@ -5,8 +5,8 @@ generated data those tables and figures are drawn from. The LaTeX source for the
 manuscript itself is not part of this repository; this directory is.
 
 Run everything from the repository root, in an environment with the package
-installed (`pip install -e ".[viz]"`). No simulator is required — all of it runs
-on the reference backend.
+installed (`pip install -e ".[viz]"`). Most of it runs on the reference backend with no simulator;
+the scripts that need SeQUeNCe or NetSquid are marked in the last table.
 
 ## Demand signatures (Table 2, Figure 2)
 
@@ -119,6 +119,46 @@ The negative result: the one mix whose tenants are rate-hungry rather than
 fidelity- or deadline-bound, which a pass/fail contract model cannot express.
 Replicated over the same 32 repeats as the other sweeps, so run rules R3 and R7
 hold for it as they do for the rest of Section VIII.
+
+## Concurrent execution, supplies and validation
+
+These run applications concurrently on one shared link (`qnetbench.tenancy`), compare the
+supplies at one link description, and check the engine against closed forms and against
+protocols written directly on NetSquid and SeQUeNCe. Each writes its output into `data/`
+under its own name. `.venv` is an environment with SeQUeNCe, `.venv-ns` one with NetSquid;
+they need different numpy versions. Scripts that take a supply name write a partial result
+per environment and are combined with `--merge`.
+
+| Script | What it measures | Environment |
+|---|---|---|
+| `executed_contention.py` | The default mixes as real applications, from the queue model's assumptions to the execution model one assumption at a time; `--sweep` over capacity | `.venv` |
+| `sensitivity_map.py` | Contract margin, deadline budget, capacity and link fidelity, on three metrics | `.venv` |
+| `executed_memory.py` | Which applications lose utility while waiting, and whether the policy changes it | `.venv` |
+| `coherence_sensitivity.py` | How those results move with the coherence time | `.venv` |
+| `position_mix.py` | Position verification beside other tenants, by policy, contract, capacity and coherence time | `.venv` |
+| `verifier_rounds.py` | The same, round by round, with one seed's full trace as CSV | `.venv` |
+| `distillation_and_burstiness.py` | Distillation and burstiness with applications that block | `.venv` |
+| `one_link_description.py` | Entanglement-based QKD on every supply at one link description | both, then `--merge` |
+| `three_supplies.py` | The default mixes on every supply; `--sweep` for stored pairs on a free-running link | both |
+| `position_supplies.py` | Position verification on every supply | both, then `--merge` |
+| `timing_reaches_physics.py` | Which single applications respond to the timing of a supply | both, then `--merge` |
+| `sequence_rate.py` | What sets SeQUeNCe's rate and burstiness | `.venv` |
+| `cross_backend_seeds.py` | `cross_backend.py` over 32 seeds with no fidelity spread; its docstring has the per-seed commands | both |
+| `analytic_validation.py` | Measured QBER, CHSH, teleportation, gates, swapping and distillation against closed forms | `.venv` |
+| `analytic_outliers.py`, `swap_recheck.py` | The largest deviations again, on fresh seeds | `.venv` |
+| `native_netsquid.py` | Teleportation, BBM92 and swapping written directly on NetSquid, against the engine | `.venv-ns` |
+| `native_timing_ablation.py` | The same, with two protocol-timing details switched off | `.venv-ns` |
+| `native_sequence.py` | The state SeQUeNCe stores for each delivered pair, against its fidelity label | `.venv` |
+| `native_sequence_bbm92.py` | BBM92 written directly on SeQUeNCe, against the engine | `.venv` |
+| `fidelity_age_policies.py`, `scheduler_comparison.py` | Ercetin and Gedik's schedulers, written outside the package, and run on the suite's workloads | `.venv` |
+| `staleness_spread.py` | Spread of staleness half-lives, absolute and from each curve's floor | any |
+| `contract_provenance.py` | Where each declared contract comes from, against the measured threshold | `.venv` |
+| `worked_example.py` | One small application, evaluated alone and under three schedulers | `.venv` |
+| `plot_grouped.py --out DIR` | The curves grouped by demand class, and `data/table-grouped.tex` in the same grouping | `.venv` |
+| `plot_walkthrough.py --out DIR` | The diagram of one entanglement request | `.venv` |
+
+`analytic_outliers.py`, `swap_recheck.py`, `staleness_spread.py` and `sequence_rate.py` print
+their result; the committed copies in `data/` were saved from that output.
 
 The checked-in `data/` outputs are the exact ones the paper's tables and figures
 were built from.

@@ -21,9 +21,10 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
-## [Unreleased]
+## [0.3.0] — 2026-11-17
 
-Contracts are unchanged. The published corpus is regenerated on Linux (x86_64, Python 3.12, numpy 2.5.4),
+The first release on PyPI since 0.1.0: 0.2.0 was prepared but not published, and its changes are
+included here. Contracts are unchanged. The published corpus is regenerated on Linux (x86_64, Python 3.12, numpy 2.5.4),
 so that CI's Linux job reproduces it byte for byte. Six traces (`chsh`, `clock_sync`, `conference_key`,
 `leader_election`, `multihop_qkd`, `qkd`) differ from the earlier macOS corpus in the last digit of some
 floats (largest relative difference 2.1e-16), and no event changes.
@@ -47,6 +48,10 @@ floats (largest relative difference 2.1e-16), and no event changes.
 - Policies may define optional `reset` and `on_delivery` methods, for schedulers that keep state
   such as the time since each tenant was last served.
 - `PendingRequest.tenant`, `contention.arrival_times`, `Engine.call_at`.
+- Experiment scripts in `scripts/paper/`, with their outputs in `scripts/paper/data/`: applications
+  executed concurrently, the supplies at one link description, closed-form checks, protocols written
+  directly on NetSquid and SeQUeNCe, and published schedulers run on the suite's workloads. Its README
+  lists each one.
 
 ### Changed
 

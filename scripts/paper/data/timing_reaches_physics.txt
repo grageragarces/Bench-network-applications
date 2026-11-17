@@ -1,0 +1,27 @@
+Each two-role application alone, 153 pairs/s, link fidelity 0.99, classical delay 1 ms,
+16 seeds. Mean utility with no memory decay, then with dephasing at T2 = 0.01 s.
+z is the largest gap between supplies with decay, over its paired standard error.
+
+application               no decay  reference   sequence   netsquid  netsquid-  max gap      z
+b92                          0.124      0.128      0.128      0.128      0.128    0.000    0.0
+bb84                         0.251      0.251      0.251      0.251      0.251    0.000    0.0
+bqc                          1.000      0.984      0.984      0.984      0.984    0.000    0.0
+chsh                         0.896      0.896      0.896      0.896      0.896    0.000    0.0
+clock_sync                   0.981      0.981      0.981      0.981      0.981    0.000    0.0
+distillation                 0.992      0.908      0.891      0.906      0.932    0.041    2.7
+distilled_gate               1.000      0.995      0.995      0.990      1.000    0.010    1.5
+distributed_gate             1.000      1.000      1.000      1.000      1.000    0.000    0.0
+dqc_ghz4                     1.000      0.859      0.828      0.859      0.875    0.047    1.0
+dqc_qft4                     1.000      0.609      0.609      0.656      0.594    0.062    0.8
+dqc_random4                  1.000      0.531      0.438      0.375      0.547    0.172    1.8
+heralded_teleport            0.992      0.977      0.977      0.977      0.977    0.000    0.0
+oblivious_transfer           0.965      0.793      0.793      0.793      0.793    0.000    0.0
+position_verification       0.741*      0.693      0.661      0.935      0.734    0.273   65.1
+qkd                          0.252      0.252      0.252      0.252      0.252    0.000    0.0
+shared_randomness            0.996      0.996      0.996      0.996      0.996    0.000    0.0
+six_state                    0.159      0.159      0.159      0.159      0.159    0.000    0.0
+teleportation                0.993      0.879      0.869      0.870      0.884    0.015    2.0
+verified_bqc                 1.000      0.977      0.977      0.977      0.977    0.000    0.0
+
+19 applications: 1 differ between supplies by more than 3 s.e. with decay.
+A * would mark an application whose no-decay value differed between supplies.

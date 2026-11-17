@@ -1,0 +1,73 @@
+1. Application utility while sharing the link with four qkd tenants, FIFO, 16 seeds.
+   Memory coherence time 0.25 s per qubit.
+   application               no decay  dephasing  depolarizing
+   b92                          0.127      0.127         0.127
+   bb84                         0.244      0.244         0.244
+   bqc                          0.977      0.977         0.969
+   chsh                         0.841      0.841         0.841
+   clock_sync                   0.981      0.981         0.981
+   distillation                 0.994      0.992         0.969
+   distilled_gate               1.000      0.990         0.984
+   distributed_gate             0.984      0.984         0.891
+   dqc_ghz4                     0.953      0.797         0.703
+   dqc_qft4                     0.922      0.719         0.516
+   dqc_random4                  0.844      0.516         0.641
+   heralded_teleport            0.990      0.990         0.987
+   oblivious_transfer           0.965      0.949         0.945
+   position_verification        0.030      0.030         0.030
+   qkd                          0.248      0.248         0.248
+   shared_randomness            0.996      0.996         0.996
+   six_state                    0.171      0.171         0.171
+   teleportation                0.996      0.972         0.943
+   verified_bqc                 0.987      0.987         0.978
+
+2. Three sensitive tenants (dqc_qft4, dqc_qft4, dqc_random4) and two background tenants,
+   160 pairs/s, dephasing, 256 seeds shared across policies. s.e. is across seeds.
+
+   with qkd, dqc contract as declared
+     policy                 dqc utility    background utility
+     fifo                 0.640 ± 0.008                 0.248
+     fidelity_first       0.640 ± 0.008                 0.248
+     edf                  0.671 ± 0.009                 0.248
+     edf over fifo: +0.031, 3.9 s.e. (paired)
+     edf over fidelity_first: +0.031, 3.9 s.e. (paired)
+
+   with qkd, dqc contract min_fidelity 0.95
+     policy                 dqc utility    background utility
+     fifo                 0.640 ± 0.008                 0.248
+     fidelity_first       0.663 ± 0.009                 0.248
+     edf                  0.671 ± 0.009                 0.248
+     edf over fidelity_first: +0.008, 1.0 s.e. (paired)
+     edf over fifo: +0.031, 3.9 s.e. (paired)
+
+   with qkd, dqc contract no deadline
+     policy                 dqc utility    background utility
+     fifo                 0.640 ± 0.008                 0.248
+     fidelity_first       0.640 ± 0.008                 0.248
+     edf                  0.663 ± 0.009                 0.248
+     edf over fifo: +0.023, 2.7 s.e. (paired)
+     edf over fidelity_first: +0.023, 2.7 s.e. (paired)
+
+   with gates, dqc contract as declared
+     policy                 dqc utility    background utility
+     fifo                 0.638 ± 0.008                 0.993
+     fidelity_first       0.638 ± 0.008                 0.993
+     edf                  0.661 ± 0.008                 0.993
+     edf over fifo: +0.023, 2.8 s.e. (paired)
+     edf over fidelity_first: +0.023, 2.8 s.e. (paired)
+
+   with gates, dqc contract min_fidelity 0.95
+     policy                 dqc utility    background utility
+     fifo                 0.638 ± 0.008                 0.993
+     fidelity_first       0.665 ± 0.009                 0.993
+     edf                  0.661 ± 0.008                 0.993
+     fidelity_first over edf: +0.004, 0.5 s.e. (paired)
+     fidelity_first over fifo: +0.027, 3.1 s.e. (paired)
+
+   with gates, dqc contract no deadline
+     policy                 dqc utility    background utility
+     fifo                 0.638 ± 0.008                 0.993
+     fidelity_first       0.638 ± 0.008                 0.993
+     edf                  0.594 ± 0.008                 0.993
+     fifo over fidelity_first: identical on every seed
+     fifo over edf: +0.044, 4.3 s.e. (paired)

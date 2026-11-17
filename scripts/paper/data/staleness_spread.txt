@@ -1,0 +1,38 @@
+27 applications read from scripts/paper/data/*.json
+
+measure                                         n  lowest                        highest                          ratio
+absolute, mean curve only                      13  leader_election 1.02e-05      heralded_teleport 0.00429        422.4
+absolute, with seed medians (the table)        20  leader_election 1.02e-05      heralded_teleport 0.00429        422.4
+floor-relative, mean curve                     22  leader_election 1.02e-05      distilled_gate 0.000984           97.0
+
+in the absolute set but without a floor-relative value: none
+no staleness half-life of either kind: b92, bb84, byzantine_agreement, clock_sync, oblivious_transfer, six_state, threshold_secret_sharing
+
+per application, seconds (absolute, floor-relative):
+  leader_election              1.015e-05   1.015e-05
+  conference_key               5.123e-05    4.56e-05
+  multihop_qkd                 0.0001228   0.0001228
+  chsh                         0.0001697   0.0001697
+  position_verification        0.0002229   0.0002229
+  qkd                          0.0002464   0.0002464
+  dqc_random4                  0.0004969   5.833e-05
+  dqc_qft4                     0.0006562   0.0001422
+  distillation                  0.001017   0.0006803
+  verified_bqc                  0.001375    0.000563
+  bqc                            0.00175   0.0005156
+  dqc_ghz4                       0.00175   0.0003078
+  anonymous_transmission        0.001875    0.000325
+  secret_sharing                0.001875    0.000325
+  distributed_gate              0.002906   0.0005898
+  distilled_gate                0.003267   0.0009844
+  teleportation                   0.0035   0.0006656
+  shared_randomness             0.003714   0.0006467
+  entanglement_swap              0.00404   0.0003345
+  heralded_teleport             0.004288   0.0006079
+  b92                                  -           -
+  bb84                                 -           -
+  byzantine_agreement                  -   0.0003261
+  clock_sync                           -   0.0007898
+  oblivious_transfer                   -           -
+  six_state                            -           -
+  threshold_secret_sharing             -           -
