@@ -5,6 +5,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/qnetbench.svg)](https://pypi.org/project/qnetbench/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-qnetbench-blue.svg)](https://grageragarces.github.io/Bench-network-applications/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24308090.svg)](https://doi.org/10.5281/zenodo.24308090)
 
 A benchmark suite and workload-characterization framework for **quantum-network
 applications** for the quantum internet.
@@ -289,14 +290,21 @@ The SeQUeNCe and NetSquid backends have conflicting numpy pins, so run the suite
 one virtualenv per simulator (see [Backends & environments](#backends--environments));
 each shows the reference tests plus its own simulator's, skipping the other's.
 
+## Citing
+
+If you use qnetbench, please cite the archived release. Version 1.0.0 is
+[doi:10.5281/zenodo.24308090](https://doi.org/10.5281/zenodo.24308090);
+[doi:10.5281/zenodo.24308089](https://doi.org/10.5281/zenodo.24308089) always resolves to the latest
+version.
+
 ## License
 
 Apache-2.0.
 
 ## AI usage
 
-Note that both Fable 5 and Opus 4.8 were used to help in the development of this library. 
-The commits they have contributed to are saved accordingly in the commit history.
+Note that Fable 5, Opus 4.8, Opus 5.5 and Sonnet 5.5 were used to help in the development of this library. 
+Some of the commits they have contributed to are saved accordingly in the commit history.
 
 **The documentation site was written by Claude Opus 5.** That covers everything
 under [docs/](docs/) except `usage.md`, `adopting.md`, `design.md` and `specs/`
