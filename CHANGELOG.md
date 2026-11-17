@@ -21,7 +21,7 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
-## [0.3.0] — 2026-11-17
+## [1.0.0] — 2026-11-17
 
 The first release on PyPI since 0.1.0: 0.2.0 was prepared but not published, and its changes are
 included here. Contracts are unchanged. The published corpus is regenerated on Linux (x86_64, Python 3.12, numpy 2.5.4),
