@@ -10,7 +10,7 @@
       "success": false,
       "utility": 0.921875,
       "delivered": 128,
-      "rate": 646.2803096292321
+      "rate": 652.8769782096178
     }
   },
   "b92": {
@@ -52,7 +52,7 @@
       "success": false,
       "utility": 0.875,
       "delivered": 8,
-      "rate": 313.62971001948716
+      "rate": 363.54650964628775
     }
   },
   "byzantine_agreement": {
@@ -66,7 +66,7 @@
       "success": false,
       "utility": 0.953125,
       "delivered": 128,
-      "rate": 646.2803096292321
+      "rate": 663.037528956198
     }
   },
   "chsh": {
@@ -80,7 +80,7 @@
       "success": true,
       "utility": 1.0,
       "delivered": 256,
-      "rate": 2459.63549571471
+      "rate": 2401.8856676712635
     }
   },
   "clock_sync": {
@@ -94,7 +94,7 @@
       "success": true,
       "utility": 0.9971358960205631,
       "delivered": 256,
-      "rate": 2459.63549571471
+      "rate": 2401.8856676712635
     }
   },
   "conference_key": {
@@ -108,7 +108,7 @@
       "success": false,
       "utility": 0.296875,
       "delivered": 192,
-      "rate": 825.505674519492
+      "rate": 821.9754713115441
     }
   },
   "distillation": {
@@ -122,7 +122,7 @@
       "success": false,
       "utility": 0.9041666666666667,
       "delivered": 128,
-      "rate": 689.8492854096548
+      "rate": 682.4929039369242
     }
   },
   "distilled_gate": {
@@ -136,7 +136,7 @@
       "success": true,
       "utility": 1.0,
       "delivered": 25,
-      "rate": 458.60641426034675
+      "rate": 446.3055384604812
     }
   },
   "distributed_gate": {
@@ -150,7 +150,7 @@
       "success": true,
       "utility": 1.0,
       "delivered": 8,
-      "rate": 290.8267339600369
+      "rate": 333.25782946748706
     }
   },
   "dqc_ghz4": {
@@ -164,7 +164,7 @@
       "success": false,
       "utility": 0.75,
       "delivered": 6,
-      "rate": 315.69746432285973
+      "rate": 315.7005788813672
     }
   },
   "dqc_qft4": {
@@ -178,7 +178,7 @@
       "success": false,
       "utility": 0.25,
       "delivered": 16,
-      "rate": 347.74737123955396
+      "rate": 376.40117534174675
     }
   },
   "dqc_random4": {
@@ -192,7 +192,7 @@
       "success": false,
       "utility": 0.5,
       "delivered": 20,
-      "rate": 353.90079402440233
+      "rate": 377.28321181626785
     }
   },
   "entanglement_swap": {
@@ -206,7 +206,7 @@
       "success": false,
       "utility": 0.96875,
       "delivered": 128,
-      "rate": 646.2803096292321
+      "rate": 657.9179427874379
     }
   },
   "heralded_teleport": {
@@ -220,7 +220,7 @@
       "success": false,
       "utility": 0.9583333333333334,
       "delivered": 73,
-      "rate": 133.02920366631173
+      "rate": 133.02920063604307
     }
   },
   "leader_election": {
@@ -234,7 +234,7 @@
       "success": false,
       "utility": 0.08333333333333333,
       "delivered": 288,
-      "rate": 969.3007637996724
+      "rate": 990.9862828327678
     }
   },
   "multihop_qkd": {
@@ -248,7 +248,7 @@
       "success": false,
       "utility": 0.0,
       "delivered": 256,
-      "rate": 1204.2790715686435
+      "rate": 1242.2781463203705
     }
   },
   "oblivious_transfer": {
@@ -276,7 +276,7 @@
       "success": false,
       "utility": 0.9791666666666666,
       "delivered": 48,
-      "rate": 390.1783968471812
+      "rate": 385.47095714161446
     }
   },
   "qkd": {
@@ -290,7 +290,7 @@
       "success": true,
       "utility": 0.22265625,
       "delivered": 256,
-      "rate": 2436.2283328895496
+      "rate": 2379.559767279096
     }
   },
   "secret_sharing": {
@@ -304,7 +304,7 @@
       "success": false,
       "utility": 0.921875,
       "delivered": 128,
-      "rate": 646.2803096292321
+      "rate": 659.6227034755419
     }
   },
   "shared_randomness": {
@@ -318,7 +318,7 @@
       "success": true,
       "utility": 0.9375,
       "delivered": 128,
-      "rate": 2114.0330917008864
+      "rate": 2046.4369311445612
     }
   },
   "six_state": {
@@ -346,7 +346,7 @@
       "success": true,
       "utility": 1.0,
       "delivered": 64,
-      "rate": 643.033591281767
+      "rate": 643.0366601838316
     }
   },
   "threshold_secret_sharing": {
@@ -374,7 +374,7 @@
       "success": false,
       "utility": 0.875,
       "delivered": 16,
-      "rate": 355.4733029039726
+      "rate": 385.46937060128215
     }
   }
 }

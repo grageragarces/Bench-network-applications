@@ -69,7 +69,12 @@ class Score:
     mean_age_ms: float
 
 
-OPTIONS: dict[str, dict] = {"netsquid-exponential": {"timing": "exponential"}}
+# NetSquid's source has drawn random gaps by default since release 1.1.0. The results here were
+# produced with its fixed-period source, so "netsquid" is pinned to it.
+OPTIONS: dict[str, dict] = {
+    "netsquid": {"timing": "fixed"},
+    "netsquid-exponential": {"timing": "exponential"},
+}
 
 
 def _base(supply: str) -> str:

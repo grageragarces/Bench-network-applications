@@ -55,6 +55,7 @@ POLICIES = (
 )
 REQUEST_COUNT = {"distributed_gate": "reps", "qkd": "rounds", "bqc": "depth", "chsh": "rounds"}
 FLOWS = 8
+MIX_SEEDS = 32  # the draws executed_contention.py uses, so the two scripts' mix numbers agree
 FLOW_REQUESTS = 200
 
 
@@ -179,7 +180,7 @@ def main() -> None:
                 (m, p, s)
                 for m in ("deadline_heavy", "fidelity_heavy")
                 for p in POLICIES
-                for s in range(seeds)
+                for s in range(MIX_SEEDS)
             ],
         )
         sensitive = pool.map(_sensitive, [(p, s) for p in POLICIES for s in range(128)])
@@ -194,7 +195,13 @@ def main() -> None:
             + "".join(f"{statistics.fmean(r[k] for r in rows):>12.3f}" for k in keys)
         )
 
-    lines += ["", f"2. The default mixes on the agreed model, {seeds} seeds."]
+    lines += [
+        "",
+        f"2. The default mixes on the agreed model, {MIX_SEEDS} seeds, as in "
+        "executed_contention.py.",
+        "   Utility here is the mean over tenants, so four tenants of one application weigh "
+        "four times.",
+    ]
     for mix in ("deadline_heavy", "fidelity_heavy"):
         lines.append(f"   {mix}")
         lines.append(f"     {'policy':20}{'satisfaction':>14}{'worst served':>14}{'utility':>10}")

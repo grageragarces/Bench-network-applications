@@ -122,3 +122,9 @@ def test_one_link_description_sets_the_rate_on_the_sequence_supply():
     assert 100 < rate < 220  # two memories, so close to the 160 asked for, not exact
     assert supply.classical_latency == 1e-3
     assert all(f == pytest.approx(0.99, abs=1e-9) for f in supply.fidelities)
+
+
+def test_sequence_refuses_non_werner_link_noise() -> None:
+    topo = line2(link=LinkModel(1e-3, 0.9, 0.0, "dephasing"))
+    with pytest.raises(ValueError, match="Werner"):
+        run_once("qkd", seed=0, backend="sequence", topology=topo)

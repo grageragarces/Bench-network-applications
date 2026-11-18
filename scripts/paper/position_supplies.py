@@ -23,7 +23,12 @@ DATA = Path(__file__).parent / "data"
 RATE = 153.0
 SEEDS = 16
 POLICIES = ("fifo", "fidelity_first", "edf")
-OPTIONS: dict[str, dict] = {"netsquid-exponential": {"timing": "exponential"}}
+# NetSquid's source has drawn random gaps by default since release 1.1.0. The results here were
+# produced with its fixed-period source, so "netsquid" is pinned to it.
+OPTIONS: dict[str, dict] = {
+    "netsquid": {"timing": "fixed"},
+    "netsquid-exponential": {"timing": "exponential"},
+}
 ORDER = ("reference", "sequence", "netsquid", "netsquid-exponential")
 BACKGROUND = {
     "none": None,

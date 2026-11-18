@@ -116,7 +116,7 @@ def test_one_link_description_sets_the_rate_on_the_netsquid_supply():
     from qnetbench.topology import LinkModel
 
     link = LinkModel(1.0 / 160, 0.99, 0.0)
-    supplier = _supply_backend("netsquid", link, 1e-3, seed=1, window_s=1.0)
+    supplier = _supply_backend("netsquid", link, 1e-3, seed=1, window_s=1.0, timing="fixed")
     supply = next(iter(supplier._cursors.values())).supply
     gaps = supply.inter_arrivals[1:]
     rate = len(gaps) / sum(gaps)
@@ -138,9 +138,42 @@ def test_a_netsquid_source_can_have_random_timing():
     assert spread / mean == pytest.approx(1.0, abs=0.15)  # exponential, where fixed gives 0
 
 
+def test_netsquid_timing_is_random_by_default():
+    from qnetbench.tenancy import _supply_backend
+    from qnetbench.topology import LinkModel
+
+    link = LinkModel(1.0 / 500, 0.99, 0.0)
+    supplier = _supply_backend("netsquid", link, 1e-3, seed=1, window_s=2.0)
+    gaps = next(iter(supplier._cursors.values())).supply.inter_arrivals[1:]
+    mean = sum(gaps) / len(gaps)
+    spread = (sum((g - mean) ** 2 for g in gaps) / len(gaps)) ** 0.5
+    assert spread / mean == pytest.approx(1.0, abs=0.15)
+
+
 def test_netsquid_refuses_an_unknown_timing():
     from qnetbench.tenancy import _supply_backend
     from qnetbench.topology import LinkModel
 
     with pytest.raises(ValueError, match="timing"):
         _supply_backend("netsquid", LinkModel(1e-3, 0.99, 0.0), 1e-3, 1, 0.1, timing="poisson")
+
+
+def test_netsquid_dephased_supply_reaches_the_engine_as_dephasing():
+    import statistics
+
+    from qnetbench.backends.netsquid.supply import generate_supply
+    from qnetbench.harness.runner import run_once
+    from qnetbench.topology import LinkModel, line2
+    from qnetbench.trace.events import AppOutcomeEvent
+
+    supply = generate_supply(
+        seed=0, window_s=0.2, link_fidelity=0.85, classical_latency_s=1e-3, noise="dephasing"
+    )
+    assert all(f == pytest.approx(0.85, abs=1e-9) for f in supply.fidelities)
+    topo = line2(link=LinkModel(1e-3, 0.85, 0.0, "dephasing"))
+    qbers = []
+    for seed in range(4):
+        events = run_once("qkd", seed=seed, backend="netsquid", topology=topo, cfg={"rounds": 512})
+        outcome = next(e for e in events if isinstance(e, AppOutcomeEvent))
+        qbers.append(float(outcome.payload["qber"]))
+    assert statistics.fmean(qbers) == pytest.approx(0.075, abs=0.02)

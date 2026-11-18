@@ -1,0 +1,20 @@
+Two position_verification tenants (96 rounds) and three background tenants, by timing window,
+160 pairs/s, 64 seeds, closed loop, no memory decay, link fidelity 0.99, classical delay 1 ms, contracts as declared.
+Verifier utility and verifier finish time (s) under FIFO / fidelity-first / EDF.
+
+ window (ms)  background                 utility             finish time            EDF - FIFO  best utility
+           5        none       0.212 0.212 0.212      1.27   1.27   1.27                  tied  fifo/fidelity_first/edf
+           5         qkd       0.005 0.213 0.114      3.07   6.07   1.52    +0.110 (37.4 s.e.)  fidelity_first
+           5       gates       0.006 0.202 0.081      3.00   3.66   1.77    +0.075 (29.0 s.e.)  fidelity_first
+          10        none       0.492 0.492 0.492      1.27   1.27   1.27                  tied  fifo/fidelity_first/edf
+          10         qkd       0.031 0.493 0.372      3.07   6.07   1.52    +0.342 (72.3 s.e.)  fidelity_first
+          10       gates       0.038 0.461 0.272      3.00   3.66   1.81    +0.234 (44.6 s.e.)  fidelity_first
+          20        none       0.830 0.830 0.830      1.27   1.27   1.27                  tied  fifo/fidelity_first/edf
+          20         qkd       0.231 0.828 0.760      3.07   6.07   1.52   +0.528 (119.7 s.e.)  fidelity_first
+          20       gates       0.251 0.766 0.610      3.00   3.66   1.94    +0.359 (65.1 s.e.)  fidelity_first
+          50        none       0.989 0.989 0.989      1.27   1.27   1.27                  tied  fifo/fidelity_first/edf
+          50         qkd       0.895 0.981 0.986      3.07   6.07   1.52    +0.090 (30.0 s.e.)  edf
+          50       gates       0.899 0.910 0.899      3.00   3.66   3.00                  tied  fidelity_first
+         100        none       0.992 0.992 0.992      1.27   1.27   1.27                  tied  fifo/fidelity_first/edf
+         100         qkd       0.992 0.982 0.992      3.07   6.07   1.52     +0.001 (2.4 s.e.)  edf
+         100       gates       0.992 0.923 0.970      3.00   3.66   3.64   -0.022 (-16.1 s.e.)  fifo

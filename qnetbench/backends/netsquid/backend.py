@@ -30,7 +30,7 @@ class NetSquidBackend(ReplayBackend):
         policy: Policy | None = None,
         window_s: float = 1.0,
         frequency: float = 2000.0,
-        timing: str = "fixed",
+        timing: str = "exponential",
     ) -> None:
         self.window_s = window_s
         self.frequency = frequency
@@ -47,4 +47,5 @@ class NetSquidBackend(ReplayBackend):
             classical_latency_s=link.attempt_latency,
             frequency=self.frequency,
             timing=self.timing,
+            noise=link.noise,
         )

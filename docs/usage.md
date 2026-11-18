@@ -110,6 +110,10 @@ from qnetbench.topology import line2, star, LinkModel
 link = LinkModel(link_fidelity=0.9, attempt_latency=1e-3, fidelity_std=0.0)
 run_once("qkd", topology=line2("alice", "bob", link=link))
 
+# The same fidelity with its error all on Φ- (dephasing) instead of a Werner pair:
+dephased = LinkModel(link_fidelity=0.9, noise="dephasing")
+run_once("qkd", topology=line2("alice", "bob", link=dephased))
+
 # A 4-node star for a multipartite app:
 run_once("conference_key", topology=star("hub", ["leaf1", "leaf2", "leaf3"], link=link))
 ```
@@ -122,7 +126,7 @@ star/GHZ fusion; general multi-hop routing is on the roadmap).
 
 | You can define | Predefined |
 |---|---|
-| **Topology** — nodes, edges, per-edge `LinkModel` (`link_fidelity`, `attempt_latency`, `fidelity_std`) | `line2`, `star`, and an auto per-app default |
+| **Topology** — nodes, edges, per-edge `LinkModel` (`link_fidelity`, `attempt_latency`, `fidelity_std`, `noise`: `"depolarizing"`, `"dephasing"` or `"bit_flip"`) | `line2`, `star`, and an auto per-app default |
 | **Link noise / staleness** — `pair_age` + `coherence_time` on `run_once` (reference backend) | fresh, noiseless-to-Werner link models |
 | **Per-run config** — `seed`, `cfg={"rounds": …, "depth": …}` | sensible defaults per app |
 | **Backend** — `backend="reference"|"sequence"|"netsquid"` | 3 backends behind extras |

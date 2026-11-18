@@ -1,0 +1,38 @@
+Measured contracts: each tenant's min_fidelity is replaced by its F_1/2 from the
+characterization data. Deadlines and every other field stay as declared.
+
+application               declared  measured F_1/2
+bqc                           0.95           0.778
+chsh                           0.8           0.884
+distributed_gate               0.9           0.743
+position_verification         0.85           0.847
+qkd                            0.9           0.838
+
+1. Default mixes, default execution model, 160 pairs/s, 32 draws.
+   FIFO / fidelity-first / EDF. Utility is the mean over applications.
+   satisfaction
+     deadline_heavy    declared   0.932 0.932 0.976
+     deadline_heavy    measured   0.932 0.901 0.976
+     fidelity_heavy    declared   0.969 0.997 0.997
+     fidelity_heavy    measured   0.969 0.937 0.997
+   worst served
+     deadline_heavy    declared   0.915 0.915 0.970
+     deadline_heavy    measured   0.915 0.877 0.970
+     fidelity_heavy    declared   0.923 0.993 0.993
+     fidelity_heavy    measured   0.923 0.842 0.993
+   utility
+     deadline_heavy    declared   0.624 0.624 0.624
+     deadline_heavy    measured   0.624 0.624 0.624
+     fidelity_heavy    declared   0.694 0.694 0.694
+     fidelity_heavy    measured   0.694 0.694 0.694
+   draws with no policy best on both mixes, declared: 0 of 32
+   draws with no policy best on both mixes, measured: 0 of 32
+
+2. Two position_verification tenants beside three background tenants, 160 pairs/s, 64 seeds, no memory decay.
+   Verifier utility and finish time (s), FIFO / fidelity-first / EDF.
+     qkd       declared   0.031 0.493 0.372     3.07   6.07   1.52   EDF - FIFO +0.342 (72.3 s.e.)
+     qkd       measured   0.031 0.372 0.372     3.07   1.52   1.52   EDF - FIFO +0.342 (72.3 s.e.)
+     gates     declared   0.038 0.461 0.272     3.00   3.66   1.81   EDF - FIFO +0.234 (44.6 s.e.)
+     gates     measured   0.038 0.373 0.272     3.00   1.52   1.81   EDF - FIFO +0.234 (44.6 s.e.)
+     bqc       declared   0.038 0.461 0.272     3.00   3.66   1.81   EDF - FIFO +0.234 (44.6 s.e.)
+     bqc       measured   0.038 0.373 0.272     3.00   1.52   1.81   EDF - FIFO +0.234 (44.6 s.e.)

@@ -60,6 +60,33 @@ def _age_fidelity(f0: float, age: float, coherence_time: float) -> float:
     return 0.25 + (f0 - 0.25) * math.exp(-age / coherence_time)
 
 
+def _bell_weights(
+    sampled: float, prepared: float, noise: str
+) -> tuple[float, float, float, float] | None:
+    """Bell-diagonal weights (Φ+, Ψ+, Φ-, Ψ-) of a delivered pair, or None for a Werner pair.
+
+    `sampled` is the fidelity the link delivered and `noise` the shape of its error.
+    `prepared` is that fidelity after any aging, which mixes the state toward I/4 by the
+    same factor as the Werner decay of `_age_fidelity`, so it applies to every shape.
+    """
+    if noise == "depolarizing" or sampled <= _MAXIMALLY_MIXED:
+        return None
+    error = 1.0 - sampled
+    if noise == "dephasing":
+        shape = (sampled, 0.0, error, 0.0)
+    elif noise == "bit_flip":
+        shape = (sampled, error, 0.0, 0.0)
+    else:
+        raise ValueError(f"unknown link noise {noise!r}")
+    keep = (prepared - _MAXIMALLY_MIXED) / (sampled - _MAXIMALLY_MIXED)
+    return (
+        keep * shape[0] + (1 - keep) / 4,
+        keep * shape[1] + (1 - keep) / 4,
+        keep * shape[2] + (1 - keep) / 4,
+        keep * shape[3] + (1 - keep) / 4,
+    )
+
+
 def _merge_demands(a: Demand, b: Demand) -> Demand:
     """The governing contract for a two-sided rendezvous is the stricter of the
     two sides' demands."""
@@ -488,7 +515,11 @@ class ReferenceBackend:
     ) -> None:
         matched, gov = transfer.matched, transfer.gov
         prepared = [_age_fidelity(f, pair_age, self.coherence_time) for f in sampled]
-        pair_qubits = [self.register.make_bell_pair(fid) for fid in prepared]
+        noise = self.topology.link(transfer.node, matched.side).noise
+        pair_qubits = [
+            self.register.make_bell_pair(fid, _bell_weights(raw, fid, noise))
+            for raw, fid in zip(sampled, prepared, strict=True)
+        ]
         # A stored pair is made fresh and stamped with when it really was made, so its decay
         # reaches the application through `settle`. The trace reports the same decay.
         fidelities = [self.register.aged_fidelity(fid, stored) for fid in prepared]

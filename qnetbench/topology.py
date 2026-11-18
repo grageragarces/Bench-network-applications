@@ -7,8 +7,11 @@ routing and swapping arrive with the SeQUeNCe backend.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Literal
 
 from qnetbench.api.types import NodeId
+
+LinkNoise = Literal["depolarizing", "dephasing", "bit_flip"]
 
 
 @dataclass(frozen=True)
@@ -18,6 +21,10 @@ class LinkModel:
     attempt_latency: float = 1e-3  # mean seconds to deliver one pair
     link_fidelity: float = 0.95  # mean delivered fidelity to Φ+
     fidelity_std: float = 0.01
+    # The shape of a delivered pair's error at that fidelity, as a Bell-diagonal state:
+    # "depolarizing" spreads it over the three other Bell states (a Werner pair),
+    # "dephasing" puts it all on Φ-, and "bit_flip" all on Ψ+.
+    noise: LinkNoise = "depolarizing"
 
 
 @dataclass(frozen=True)

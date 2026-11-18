@@ -38,7 +38,7 @@ import json
 import math
 import typing
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -193,7 +193,7 @@ def _supply_backend(
         return ReferenceBackend(line2(link=link), seed=seed)
     rate = 1.0 / link.attempt_latency
     delay = link.attempt_latency if classical_latency is None else classical_latency
-    topology = line2(link=LinkModel(delay, link.link_fidelity, 0.0))
+    topology = line2(link=LinkModel(delay, link.link_fidelity, 0.0, link.noise))
     if supply == "sequence":
         from qnetbench.backends.sequence import SequenceBackend
 
@@ -261,9 +261,7 @@ def run_tenants(
         stored_pair=model.stored_pair,
     )
     tenant_link = (
-        link
-        if classical_latency is None
-        else LinkModel(classical_latency, link.link_fidelity, link.fidelity_std)
+        link if classical_latency is None else replace(link, attempt_latency=classical_latency)
     )
 
     backends: dict[str, ReferenceBackend] = {}

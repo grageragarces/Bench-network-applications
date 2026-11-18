@@ -241,15 +241,27 @@ class Register:
         if fidelity < 1.0 and self._rng.random() >= fidelity:
             self.apply_1q(qid, _PAULIS[self._rng.integers(1, 4)])  # X, Y, or Z
 
-    def make_bell_pair(self, fidelity: float) -> tuple[int, int]:
-        """Create a Werner-noised Φ+ pair at the given fidelity; return (id_a, id_b).
+    def make_bell_pair(
+        self, fidelity: float, weights: tuple[float, float, float, float] | None = None
+    ) -> tuple[int, int]:
+        """Create a noisy Φ+ pair at the given fidelity; return (id_a, id_b).
 
-        The maximally-mixed part is unravelled as a random Pauli twirl on one half,
-        so many shots reproduce the Werner state's statistics with a pure register.
+        With `weights=None` the pair is a Werner state: its maximally-mixed part is
+        unravelled as a random Pauli twirl on one half, so many shots reproduce the
+        Werner state's statistics with a pure register.
+
+        `weights` gives any Bell-diagonal state instead, as the probabilities of
+        (Φ+, Ψ+, Φ-, Ψ-). One of I, X, Z or Y is applied to the second half with those
+        probabilities, which turns Φ+ into the corresponding Bell state.
         """
         a, b = self.alloc(), self.alloc()
         self.apply_1q(a, _H)
         self.cnot(a, b)
+        if weights is not None:
+            k = int(self._rng.choice(4, p=np.asarray(weights) / sum(weights)))
+            if k:
+                self.apply_1q(b, (_X, _Z, _Y)[k - 1])
+            return a, b
         p = (4.0 * fidelity - 1.0) / 3.0  # Werner weight of the ideal Bell state
         p = min(max(p, 0.0), 1.0)
         if self._rng.random() >= p:

@@ -37,6 +37,11 @@ class SequenceBackend(ReplayBackend):
 
     def _make_supply(self, node: NodeId, peer: NodeId) -> Supply:
         link = self.topology.link(node, peer)
+        if link.noise != "depolarizing":
+            raise ValueError(
+                f"SeQUeNCe's entanglement generation makes Werner pairs, so link noise must be "
+                f"'depolarizing', got {link.noise!r}"
+            )
         # Stable per-edge seed so runs are reproducible across processes
         # (hash() is salted per-process; crc32 is not).
         edge_seed = self.seed + (zlib.crc32("|".join(sorted((node, peer))).encode()) & 0xFFFF)

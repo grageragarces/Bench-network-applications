@@ -53,6 +53,9 @@ def generate_supply(
                 "attenuation": attenuation,
                 "distance": distance_m,
                 "type": "meet_in_the_middle",
+                # SeQUeNCe seeds the BSM node it creates from this key, and defaults it to 0,
+                # so without it every seed would replay the same heralding stream.
+                "seed": seed + 2,
             }
         ],
         "cconnections": [{"node1": "alice", "node2": "bob", "delay": cc_delay_ps}],
@@ -65,6 +68,11 @@ def generate_supply(
         marr = node.components[node.memo_arr_name]
         marr.update_memory_params("coherence_time", -1)  # disable decoherence
         marr.update_memory_params("raw_fidelity", link_fidelity)  # sets delivered fidelity
+        # The BSM builds the stored state from each memory's photon encoding, which copied
+        # raw_fidelity when the memory was made. Only the label is replayed, but keeping the two
+        # in step means SeQUeNCe's own state matches what is replayed.
+        for memory in marr.memories:
+            memory.encoding["raw_fidelity"] = link_fidelity
 
     deliveries: list[tuple[float, float]] = []
 

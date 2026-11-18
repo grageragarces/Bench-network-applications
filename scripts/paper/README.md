@@ -129,6 +129,10 @@ under its own name. `.venv` is an environment with SeQUeNCe, `.venv-ns` one with
 they need different numpy versions. Scripts that take a supply name write a partial result
 per environment and are combined with `--merge`.
 
+NetSquid's source draws random gaps between pairs by default since release 1.1.0. These scripts
+still call the fixed-period source `netsquid` and the random one `netsquid-exponential`, and pin
+each explicitly, so their results do not depend on the default.
+
 | Script | What it measures | Environment |
 |---|---|---|
 | `executed_contention.py` | The default mixes as real applications, from the queue model's assumptions to the execution model one assumption at a time; `--sweep` over capacity | `.venv` |
@@ -136,6 +140,9 @@ per environment and are combined with `--merge`.
 | `executed_memory.py` | Which applications lose utility while waiting, and whether the policy changes it | `.venv` |
 | `coherence_sensitivity.py` | How those results move with the coherence time | `.venv` |
 | `position_mix.py` | Position verification beside other tenants, by policy, contract, capacity and coherence time | `.venv` |
+| `position_window.py` | Position verification by the length of its timing window, alone and beside other tenants | `.venv` |
+| `measured_contracts.py` | The default mixes and position verification with each `min_fidelity` set to the measured threshold | `.venv` |
+| `xbasis_gates.py` | Teleported gates on superposition inputs (`basis="x"`), by policy and coherence time | `.venv` |
 | `verifier_rounds.py` | The same, round by round, with one seed's full trace as CSV | `.venv` |
 | `distillation_and_burstiness.py` | Distillation and burstiness with applications that block | `.venv` |
 | `one_link_description.py` | Entanglement-based QKD on every supply at one link description | both, then `--merge` |
@@ -150,6 +157,7 @@ per environment and are combined with `--merge`.
 | `native_timing_ablation.py` | The same, with two protocol-timing details switched off | `.venv-ns` |
 | `native_sequence.py` | The state SeQUeNCe stores for each delivered pair, against its fidelity label | `.venv` |
 | `native_sequence_bbm92.py` | BBM92 written directly on SeQUeNCe, against the engine | `.venv` |
+| `link_noise.py` | The engine with Werner, dephased and bit-flipped links, against native NetSquid's section B | `.venv` |
 | `fidelity_age_policies.py`, `scheduler_comparison.py` | Ercetin and Gedik's schedulers, written outside the package, and run on the suite's workloads | `.venv` |
 | `staleness_spread.py` | Spread of staleness half-lives, absolute and from each curve's floor | any |
 | `contract_provenance.py` | Where each declared contract comes from, against the measured threshold | `.venv` |
