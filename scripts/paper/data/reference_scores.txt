@@ -1,0 +1,43 @@
+Reference scores. Satisfaction is over all tenants. Utility and finish time (s) are those
+of the scenario's focus application. All are means over seeds.
+
+scenario        focus                   policy                satisfaction   utility   finish
+deadline_heavy  distributed_gate        fifo                         0.932     0.993     3.18
+deadline_heavy  distributed_gate        fidelity_first               0.932     0.993     3.18
+deadline_heavy  distributed_gate        edf                          0.976     0.993     3.02
+deadline_heavy  distributed_gate        tp_max                       0.932     0.993     3.18
+deadline_heavy  distributed_gate        fid_max                      0.932     0.993     3.18
+deadline_heavy  distributed_gate        fa_index_intended            0.933     0.993     3.18
+deadline_heavy  distributed_gate        fa_thr                       0.932     0.993     3.18
+
+fidelity_heavy  bqc                     fifo                         0.969     0.991     3.14
+fidelity_heavy  bqc                     fidelity_first               0.997     0.991     3.00
+fidelity_heavy  bqc                     edf                          0.997     0.991     3.00
+fidelity_heavy  bqc                     tp_max                       0.969     0.991     3.14
+fidelity_heavy  bqc                     fid_max                      0.969     0.991     3.14
+fidelity_heavy  bqc                     fa_index_intended            0.969     0.991     3.12
+fidelity_heavy  bqc                     fa_thr                       0.969     0.991     3.14
+
+verifiers       position_verification   fifo                         0.612     0.031     3.07
+verifiers       position_verification   fidelity_first               0.799     0.493     6.07
+verifiers       position_verification   edf                          0.750     0.372     1.52
+verifiers       position_verification   tp_max                       0.612     0.031     3.07
+verifiers       position_verification   fid_max                      0.612     0.031     3.07
+verifiers       position_verification   fa_index_intended            0.615     0.038     3.00
+verifiers       position_verification   fa_thr                       0.612     0.031     3.07
+
+gates           distributed_gate        fifo                         0.960     0.600     2.05
+gates           distributed_gate        fidelity_first               0.960     0.600     2.05
+gates           distributed_gate        edf                          0.998     0.751     1.02
+gates           distributed_gate        tp_max                       0.960     0.600     2.05
+gates           distributed_gate        fid_max                      0.960     0.600     2.05
+gates           distributed_gate        fa_index_intended            0.962     0.606     2.00
+gates           distributed_gate        fa_thr                       0.960     0.600     2.05
+
+switch          position_verification   fifo                         0.626     0.170     2.40
+switch          position_verification   fidelity_first               0.626     0.166     2.46
+switch          position_verification   edf                          0.628     0.179     2.31
+switch          position_verification   tp_max                       0.626     0.170     2.40
+switch          position_verification   fid_max                      0.626     0.170     2.40
+switch          position_verification   fa_index_intended            0.626     0.170     2.40
+switch          position_verification   fa_thr                       0.626     0.170     2.40

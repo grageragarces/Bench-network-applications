@@ -144,6 +144,7 @@ each explicitly, so their results do not depend on the default.
 | `measured_contracts.py` | The default mixes and position verification with each `min_fidelity` set to the measured threshold | `.venv` |
 | `xbasis_gates.py` | Teleported gates on superposition inputs (`basis="x"`), by policy and coherence time | `.venv` |
 | `star_switch.py` | Five tenants on one shared link and on a four-leaf star with a switch at the hub | `.venv` |
+| `reference_scores.py` | The five scheduling scenarios under the built-in and published policies | `.venv` |
 | `verifier_rounds.py` | The same, round by round, with one seed's full trace as CSV | `.venv` |
 | `distillation_and_burstiness.py` | Distillation and burstiness with applications that block | `.venv` |
 | `one_link_description.py` | Entanglement-based QKD on every supply at one link description | both, then `--merge` |
