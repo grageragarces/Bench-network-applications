@@ -10,7 +10,7 @@ asks the question directly, on the agreed execution model:
 
 The mixes and contract variations below were fixed before looking at any result.
 
-    python scripts/paper/executed_memory.py --draws 64
+    python scripts/paper/executed_memory.py --draws 256
 """
 
 from __future__ import annotations
@@ -155,7 +155,7 @@ def _mixes(pool: multiprocessing.pool.Pool, draws: int) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=(__doc__ or "").splitlines()[0])
-    parser.add_argument("--draws", type=int, default=64)
+    parser.add_argument("--draws", type=int, default=256)
     parser.add_argument("--census-seeds", type=int, default=16)
     parser.add_argument("--jobs", type=int, default=max(1, (multiprocessing.cpu_count() or 2) - 1))
     parser.add_argument("--out", type=Path, default=OUT)

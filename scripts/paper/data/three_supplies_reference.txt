@@ -2,8 +2,8 @@
 dephasing memory at 0.25 s. Satisfaction counts fidelity and deadline; '+ staleness' also counts staleness.
 
 Timing of each supply, asked for 153 pairs/s:
-  reference     155.2 pairs/s   mean gap   6.44 ms   cv  1.01   mean/median  1.42   F 0.9900
-  sequence      152.8 pairs/s   mean gap   6.55 ms   cv  0.70   mean/median  1.09   F 0.9900
+  reference                 155.2 pairs/s   mean gap   6.44 ms   cv  1.01   mean/median  1.42   F 0.9900
+  sequence                  149.4 pairs/s   mean gap   6.69 ms   cv  0.71   mean/median  1.11   F 0.9900
 
 supply: reference, on demand
                                       fifo  fidelity_first             edf
@@ -47,44 +47,72 @@ supply: reference, free running, 10 pairs
   fidelity_heavy  pair age, ms             2.722           2.722           2.722
   draws with no policy best on both mixes: 0 of 16
 
+supply: reference, free running, 10 pairs, oldest first
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             0.900           0.900           0.955
+  deadline_heavy  + staleness              0.877           0.877           0.932
+  deadline_heavy  worst served             0.881           0.881           0.948
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             1.460           1.460           1.460
+  fidelity_heavy  satisfaction             0.916           0.947           0.947
+  fidelity_heavy  + staleness              0.916           0.947           0.947
+  fidelity_heavy  worst served             0.825           0.901           0.901
+  fidelity_heavy  utility                  0.765           0.765           0.765
+  fidelity_heavy  pair age, ms             3.314           3.314           3.314
+  draws with no policy best on both mixes: 0 of 16
+
 supply: sequence, on demand
                                       fifo  fidelity_first             edf
-  deadline_heavy  satisfaction             0.958           0.958           0.994
-  deadline_heavy  + staleness              0.958           0.958           0.994
-  deadline_heavy  worst served             0.948           0.948           0.992
+  deadline_heavy  satisfaction             0.961           0.961           0.994
+  deadline_heavy  + staleness              0.961           0.961           0.994
+  deadline_heavy  worst served             0.951           0.951           0.992
   deadline_heavy  utility                  0.846           0.846           0.846
   deadline_heavy  pair age, ms             0.000           0.000           0.000
-  fidelity_heavy  satisfaction             0.984           1.000           1.000
-  fidelity_heavy  + staleness              0.984           1.000           1.000
-  fidelity_heavy  worst served             0.961           1.000           1.000
+  fidelity_heavy  satisfaction             0.983           1.000           1.000
+  fidelity_heavy  + staleness              0.983           1.000           1.000
+  fidelity_heavy  worst served             0.958           0.999           0.999
   fidelity_heavy  utility                  0.779           0.779           0.779
   fidelity_heavy  pair age, ms             0.000           0.000           0.000
   draws with no policy best on both mixes: 0 of 16
 
 supply: sequence, free running, 1 pair
                                       fifo  fidelity_first             edf
-  deadline_heavy  satisfaction             0.957           0.957           0.994
-  deadline_heavy  + staleness              0.956           0.956           0.993
-  deadline_heavy  worst served             0.947           0.947           0.993
+  deadline_heavy  satisfaction             0.962           0.962           0.997
+  deadline_heavy  + staleness              0.951           0.951           0.986
+  deadline_heavy  worst served             0.953           0.953           0.996
   deadline_heavy  utility                  0.846           0.846           0.846
-  deadline_heavy  pair age, ms             0.003           0.003           0.003
-  fidelity_heavy  satisfaction             0.985           1.000           1.000
-  fidelity_heavy  + staleness              0.985           1.000           1.000
-  fidelity_heavy  worst served             0.963           1.000           1.000
+  deadline_heavy  pair age, ms             0.050           0.050           0.050
+  fidelity_heavy  satisfaction             0.983           1.000           1.000
+  fidelity_heavy  + staleness              0.983           1.000           1.000
+  fidelity_heavy  worst served             0.958           1.000           1.000
   fidelity_heavy  utility                  0.779           0.779           0.779
-  fidelity_heavy  pair age, ms             0.032           0.032           0.032
+  fidelity_heavy  pair age, ms             0.076           0.076           0.076
   draws with no policy best on both mixes: 0 of 16
 
 supply: sequence, free running, 10 pairs
                                       fifo  fidelity_first             edf
-  deadline_heavy  satisfaction             0.957           0.957           0.994
-  deadline_heavy  + staleness              0.956           0.956           0.993
-  deadline_heavy  worst served             0.946           0.946           0.993
+  deadline_heavy  satisfaction             0.949           0.949           0.981
+  deadline_heavy  + staleness              0.892           0.892           0.923
+  deadline_heavy  worst served             0.939           0.939           0.978
   deadline_heavy  utility                  0.846           0.846           0.846
-  deadline_heavy  pair age, ms             0.004           0.004           0.004
-  fidelity_heavy  satisfaction             0.980           0.995           0.995
-  fidelity_heavy  + staleness              0.980           0.995           0.995
-  fidelity_heavy  worst served             0.955           0.991           0.991
-  fidelity_heavy  utility                  0.779           0.779           0.779
-  fidelity_heavy  pair age, ms             0.446           0.446           0.446
+  deadline_heavy  pair age, ms             2.069           2.069           2.069
+  fidelity_heavy  satisfaction             0.956           0.970           0.970
+  fidelity_heavy  + staleness              0.956           0.970           0.970
+  fidelity_heavy  worst served             0.917           0.954           0.954
+  fidelity_heavy  utility                  0.768           0.768           0.768
+  fidelity_heavy  pair age, ms             2.988           2.988           2.988
+  draws with no policy best on both mixes: 0 of 16
+
+supply: sequence, free running, 10 pairs, oldest first
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             0.914           0.914           0.946
+  deadline_heavy  + staleness              0.874           0.874           0.906
+  deadline_heavy  worst served             0.904           0.904           0.943
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             2.622           2.622           2.622
+  fidelity_heavy  satisfaction             0.921           0.936           0.936
+  fidelity_heavy  + staleness              0.921           0.936           0.936
+  fidelity_heavy  worst served             0.846           0.879           0.879
+  fidelity_heavy  utility                  0.767           0.767           0.767
+  fidelity_heavy  pair age, ms             4.138           4.138           4.138
   draws with no policy best on both mixes: 0 of 16

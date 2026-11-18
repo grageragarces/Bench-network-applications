@@ -94,3 +94,8 @@ def test_missing_link_names_the_missing_link() -> None:
 def test_cli_reports_the_failure_without_a_traceback(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["run", "raises_on_alice"]) == 1
     assert "the bug in the application" in capsys.readouterr().err
+
+
+def test_reference_backend_takes_no_supply_options() -> None:
+    with pytest.raises(ValueError, match="no supply options"):
+        run_once("qkd", seed=0, supply_options={"timing": "fixed"})

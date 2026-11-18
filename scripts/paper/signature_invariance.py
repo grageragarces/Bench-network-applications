@@ -33,6 +33,11 @@ from typing import Any
 AXES = ("request_cv", "fano_factor", "msgs_per_pair", "bytes_per_pair", "n_parties")
 
 
+# NetSquid's source has drawn random gaps by default since release 1.1.0. The results here were
+# produced with its fixed-period source, so "netsquid" is pinned to it.
+NETSQUID_FIXED = {"timing": "fixed"}
+
+
 def run_all(backends: list[str]) -> dict[str, dict[str, Any]]:
     from qnetbench.apps import available_apps
     from qnetbench.characterize import characterize_trace
@@ -43,7 +48,10 @@ def run_all(backends: list[str]) -> dict[str, dict[str, Any]]:
         out[app] = {}
         for backend in backends:
             try:
-                sig = characterize_trace(run_once(app, seed=0, backend=backend))
+                options = NETSQUID_FIXED if backend == "netsquid" else None
+                sig = characterize_trace(
+                    run_once(app, seed=0, backend=backend, supply_options=options)
+                )
             except Exception as exc:  # a backend that cannot run this app
                 out[app][backend] = {"error": f"{type(exc).__name__}: {exc}"[:120]}
                 continue
@@ -85,8 +93,7 @@ def merge(paths: list[str]) -> None:
         identical += same
         print(f"{app:<26} " + " ".join(f"{c:>14}" for c in cells))
     print(f"\n{identical} of {len(merged)} applications: every axis identical on every backend.")
-    print("worst relative spread per axis: " + ", ".join(
-        f"{a} {worst[a]:.1%}" for a in AXES))
+    print("worst relative spread per axis: " + ", ".join(f"{a} {worst[a]:.1%}" for a in AXES))
     if errors:
         print("\nbackends that could not run an application:")
         for e in errors:

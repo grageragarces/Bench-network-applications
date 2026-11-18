@@ -5,9 +5,10 @@ protocol whose result is a plain error rate. The protocol uses SeQUeNCe's own ro
 and its own quantum manager to measure them: each end picks a basis at random, the rounds where the bases agree are
 kept, and the error rate is the fraction of kept rounds whose outcomes break the correlation a Bell pair should show.
 
-SeQUeNCe stores a pure Bell state for every delivered pair, whatever fidelity it reports (`native_sequence.py`), so a
-protocol written this way sees no link noise unless the author adds it. qnetbench replays the reported fidelity into
-its own engine, which does apply it. The two columns below show what each gives at the same link fidelity.
+In its default ket-vector formalism SeQUeNCe stores a pure Bell state for each delivered pair, drawing the wrong
+Bell state with probability 1 - F, so over many pairs a native protocol sees a Werner pair at the reported fidelity
+(`native_sequence.py`). qnetbench replays the reported fidelity into its own engine. The columns below show what each
+gives at the same link fidelity, against the closed form.
 
     .venv/bin/python scripts/paper/native_sequence_bbm92.py
 """
@@ -52,7 +53,14 @@ def native_bbm92(fidelity: float, seed: int) -> tuple[int, int]:
             {"name": "bob", "type": "QuantumRouter", "seed": seed + 1, "memo_size": 2},
         ],
         "qconnections": [
-            {"node1": "alice", "node2": "bob", "attenuation": 0.0, "distance": 1000.0, "type": "meet_in_the_middle"}
+            {
+                "node1": "alice",
+                "node2": "bob",
+                "attenuation": 0.0,
+                "distance": 1000.0,
+                "type": "meet_in_the_middle",
+                "seed": seed + 2,  # the BSM node's seed; SeQUeNCe defaults it to 0 for every run
+            }
         ],
         "cconnections": [{"node1": "alice", "node2": "bob", "delay": CC_DELAY_PS}],
     }
@@ -63,6 +71,10 @@ def native_bbm92(fidelity: float, seed: int) -> tuple[int, int]:
         memories = node.components[node.memo_arr_name]
         memories.update_memory_params("coherence_time", -1)
         memories.update_memory_params("raw_fidelity", fidelity)
+        # The BSM builds the stored state from each memory's photon encoding, which copied
+        # raw_fidelity when the memory was made (default 0.85), so it is updated as well.
+        for memory in memories.memories:
+            memory.encoding["raw_fidelity"] = fidelity
     rng = np.random.default_rng(seed)
     tally = [0, 0]
 
@@ -148,9 +160,6 @@ def main() -> None:
         "",
         f"The native protocol, including the SeQUeNCe reservation that generates the pairs, takes {_source_lines()} lines",
         "of code. In qnetbench the same experiment is one TenantSpec, and it runs on all three supplies.",
-        "",
-        "SeQUeNCe's pairs carry no link noise, so a protocol written on it measures a perfect pair at every",
-        "fidelity. Reproducing what qnetbench reports would mean adding the noise by hand.",
     ]
     text = "\n".join(lines) + "\n"
     write_atomic(OUT, text)

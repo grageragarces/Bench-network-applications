@@ -32,6 +32,11 @@ from typing import Any
 UTILITY_TOL = 1e-6  # exact agreement expected; a tolerance guards float formatting
 
 
+# NetSquid's source has drawn random gaps by default since release 1.1.0. The results here were
+# produced with its fixed-period source, so "netsquid" is pinned to it.
+NETSQUID_FIXED = {"timing": "fixed"}
+
+
 def _topology_for(app: str, fidelity_std: float) -> Any:
     """The app's default topology, but with the link's fidelity spread overridden.
 
@@ -53,7 +58,9 @@ def _topology_for(app: str, fidelity_std: float) -> Any:
     return star(roles[0], list(roles[1:]), link=link)
 
 
-def run_all(backends: list[str], seed: int, fidelity_std: float | None) -> dict[str, dict[str, Any]]:
+def run_all(
+    backends: list[str], seed: int, fidelity_std: float | None
+) -> dict[str, dict[str, Any]]:
     from qnetbench.apps import available_apps
     from qnetbench.harness.runner import run_once
     from qnetbench.metrics import compute_report
@@ -64,6 +71,8 @@ def run_all(backends: list[str], seed: int, fidelity_std: float | None) -> dict[
         for backend in backends:
             try:
                 kwargs: dict[str, Any] = {}
+                if backend == "netsquid":
+                    kwargs["supply_options"] = NETSQUID_FIXED
                 if fidelity_std is not None:
                     kwargs["topology"] = _topology_for(app, fidelity_std)
                 rep = compute_report(run_once(app, seed=seed, backend=backend, **kwargs))
@@ -126,8 +135,12 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--backends", help="comma-separated backends to run")
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--fidelity-std", type=float, default=None,
-                    help="override the link fidelity spread; 0 equalises supply across backends")
+    ap.add_argument(
+        "--fidelity-std",
+        type=float,
+        default=None,
+        help="override the link fidelity spread; 0 equalises supply across backends",
+    )
     ap.add_argument("--out", help="write raw results JSON here")
     ap.add_argument("--merge", nargs="*", help="merge these result JSONs and render")
     args = ap.parse_args()

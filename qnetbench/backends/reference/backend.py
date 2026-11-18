@@ -32,7 +32,7 @@ from qnetbench.api.types import (
     ViolationKind,
 )
 from qnetbench.backends.reference.engine import Engine, Process
-from qnetbench.backends.reference.link import LinkRequest, LinkServer
+from qnetbench.backends.reference.link import LinkRequest, LinkServer, RequestServer
 from qnetbench.backends.reference.qstate import MemoryNoise, Register, gate_matrix
 from qnetbench.policies.base import Policy
 from qnetbench.topology import Topology
@@ -58,6 +58,33 @@ def _age_fidelity(f0: float, age: float, coherence_time: float) -> float:
     if age <= 0.0 or math.isinf(coherence_time):
         return f0
     return 0.25 + (f0 - 0.25) * math.exp(-age / coherence_time)
+
+
+def _bell_weights(
+    sampled: float, prepared: float, noise: str
+) -> tuple[float, float, float, float] | None:
+    """Bell-diagonal weights (Φ+, Ψ+, Φ-, Ψ-) of a delivered pair, or None for a Werner pair.
+
+    `sampled` is the fidelity the link delivered and `noise` the shape of its error.
+    `prepared` is that fidelity after any aging, which mixes the state toward I/4 by the
+    same factor as the Werner decay of `_age_fidelity`, so it applies to every shape.
+    """
+    if noise == "depolarizing" or sampled <= _MAXIMALLY_MIXED:
+        return None
+    error = 1.0 - sampled
+    if noise == "dephasing":
+        shape = (sampled, 0.0, error, 0.0)
+    elif noise == "bit_flip":
+        shape = (sampled, error, 0.0, 0.0)
+    else:
+        raise ValueError(f"unknown link noise {noise!r}")
+    keep = (prepared - _MAXIMALLY_MIXED) / (sampled - _MAXIMALLY_MIXED)
+    return (
+        keep * shape[0] + (1 - keep) / 4,
+        keep * shape[1] + (1 - keep) / 4,
+        keep * shape[2] + (1 - keep) / 4,
+        keep * shape[3] + (1 - keep) / 4,
+    )
 
 
 def _merge_demands(a: Demand, b: Demand) -> Demand:
@@ -262,7 +289,7 @@ class ReferenceBackend:
         # Everything below until the seeds is set by `qnetbench.tenancy`, which runs several
         # backends on one engine and one link. Defaults give a single application on its own.
         self.engine = engine or Engine()
-        self.shared_link: LinkServer | None = None
+        self.shared_link: RequestServer | None = None
         self.tenant = ""
         self.queue_wait_aging = False  # a pair ages by its request's time in the queue
         self.arrivals: tuple[float, ...] = ()  # earliest time of each side's k-th request
@@ -430,7 +457,7 @@ class ReferenceBackend:
             return demand
         return demand.model_copy(update={"deadline": demand.deadline + delay})
 
-    def _link_for(self, node: NodeId, peer: NodeId) -> LinkServer:
+    def _link_for(self, node: NodeId, peer: NodeId) -> RequestServer:
         if self.shared_link is not None:
             return self.shared_link
         key = frozenset((node, peer))
@@ -488,7 +515,11 @@ class ReferenceBackend:
     ) -> None:
         matched, gov = transfer.matched, transfer.gov
         prepared = [_age_fidelity(f, pair_age, self.coherence_time) for f in sampled]
-        pair_qubits = [self.register.make_bell_pair(fid) for fid in prepared]
+        noise = self.topology.link(transfer.node, matched.side).noise
+        pair_qubits = [
+            self.register.make_bell_pair(fid, _bell_weights(raw, fid, noise))
+            for raw, fid in zip(sampled, prepared, strict=True)
+        ]
         # A stored pair is made fresh and stamped with when it really was made, so its decay
         # reaches the application through `settle`. The trace reports the same decay.
         fidelities = [self.register.aged_fidelity(fid, stored) for fid in prepared]

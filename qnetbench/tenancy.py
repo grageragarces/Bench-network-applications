@@ -26,8 +26,9 @@ The other two are structural, and changing them means changing code:
     5. One trace per tenant, each valid under the unchanged trace schema, plus a small
        manifest (`TenantsRun.write`). A single merged trace needs a tenant field on each
        event, which is a contract change.
-    6. Two-role applications on one link (`_check_scope`). Multipartite tenants need a
-       decision about how their edges map onto physical links.
+    6. Two-role applications on one link (`_check_scope`), or, with `placement`, on two
+       leaves of a star whose hub swaps their pairs (`qnetbench.backends.reference.switch`).
+       Multipartite tenants need a decision about how their edges map onto physical links.
 
 Tenants do not compete for memory qubits or node time, only for the link.
 """
@@ -38,7 +39,7 @@ import json
 import math
 import typing
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any, Literal
 
@@ -58,6 +59,7 @@ from qnetbench.backends.reference.link import (
     StoredPair,
 )
 from qnetbench.backends.reference.qstate import MemoryNoise
+from qnetbench.backends.reference.switch import SwitchServer
 from qnetbench.characterize.provenance import write_atomic
 from qnetbench.contention import ContentionResult, Tenant, arrival_times
 from qnetbench.harness.runner import _checked_override, _parse_arbitration
@@ -134,9 +136,16 @@ class TenantsRun:
     link: LinkModel
     supply: str
     coherence_time: float
+    placement: Mapping[str, tuple[str, str]] | None = None  # leaves of a star, if not one link
 
     def manifest(self) -> dict[str, object]:
+        star = (
+            {}
+            if self.placement is None
+            else {"placement": {name: list(leaves) for name, leaves in self.placement.items()}}
+        )
         return {
+            **star,
             "arbitration": self.arbitration,
             "seed": self.seed,
             "supply": self.supply,
@@ -193,7 +202,7 @@ def _supply_backend(
         return ReferenceBackend(line2(link=link), seed=seed)
     rate = 1.0 / link.attempt_latency
     delay = link.attempt_latency if classical_latency is None else classical_latency
-    topology = line2(link=LinkModel(delay, link.link_fidelity, 0.0))
+    topology = line2(link=LinkModel(delay, link.link_fidelity, 0.0, link.noise))
     if supply == "sequence":
         from qnetbench.backends.sequence import SequenceBackend
 
@@ -213,6 +222,50 @@ def _reset(policy: object) -> None:
         reset()
 
 
+def _switch(
+    engine: Engine,
+    tenants: Sequence[TenantSpec],
+    placement: Mapping[str, tuple[str, str]],
+    *,
+    policy: Policy | None,
+    model: ExecutionModel,
+    link: LinkModel,
+    classical_latency: float | None,
+    coherence_time: float,
+    supply: str,
+    seed: int,
+    supply_window: float,
+    supply_options: Mapping[str, Any] | None,
+) -> SwitchServer:
+    """A switch at the hub of a star, with a leg of its own supply to every leaf in use."""
+    missing = [t.name for t in tenants if t.name not in placement]
+    if missing:
+        raise ValueError(f"tenants with no placement on the star: {missing}")
+    if model.service != "on_demand" or model.service_unit != "pair":
+        raise NotImplementedError(
+            'a star supports service="on_demand" with service_unit="pair" only, got '
+            f"{model.service!r} and {model.service_unit!r}"
+        )
+    leaves = sorted({leaf for name in placement for leaf in placement[name]})
+    legs = {}
+    for index, leaf in enumerate(leaves):
+        leg_seed = int(np.random.SeedSequence([seed, 7919, index]).generate_state(1)[0])
+        supplier = _supply_backend(
+            supply, link, classical_latency, leg_seed, supply_window, **(supply_options or {})
+        )
+        legs[leaf] = lambda _src, _dst, pairs, s=supplier: s._sample_pairs("alice", "bob", pairs)
+    return SwitchServer(
+        engine,
+        legs,
+        placement,
+        policy=policy,
+        missed_deadline=model.missed_deadline,
+        announce_delay=link.attempt_latency if classical_latency is None else classical_latency,
+        hub_coherence=coherence_time if model.aging == "held_qubits" else math.inf,
+        noise=link.noise,
+    )
+
+
 def run_tenants(
     tenants: Sequence[TenantSpec],
     *,
@@ -225,6 +278,7 @@ def run_tenants(
     supply: str = "reference",
     supply_window: float = 1.0,
     supply_options: Mapping[str, Any] | None = None,
+    placement: Mapping[str, tuple[str, str]] | None = None,
 ) -> TenantsRun:
     """Run `tenants` together, sharing one link, and return a trace for each.
 
@@ -239,6 +293,12 @@ def run_tenants(
     `supply_window` is how many seconds of pairs a simulator supply generates up front, and a
     run that needs more stops with an error saying so. `supply_options` go to that backend, such
     as `{"timing": "exponential"}` on NetSquid or `{"memo_size": 50}` on SeQUeNCe.
+
+    `placement` runs the tenants on a star instead of one link: it names the two leaves each
+    tenant's roles sit on, and every leaf has its own link to a hub, described by `link`, whose
+    switch swaps a pair from each leg into the tenant's end-to-end pair. Only on-demand service is
+    supported there, and with "held_qubits" aging the pair that reaches the hub first decays while
+    it waits for the other.
     """
     model = model or ExecutionModel()
     link = link or LinkModel()
@@ -247,23 +307,38 @@ def run_tenants(
     _reset(policy)
 
     engine = Engine()
-    supplier = _supply_backend(
-        supply, link, classical_latency, seed, supply_window, **(supply_options or {})
-    )
-    server = LinkServer(
-        engine,
-        lambda _src, _dst, pairs: supplier._sample_pairs("alice", "bob", pairs),
-        policy=typing.cast("Policy | None", policy),
-        service_unit=model.service_unit,
-        missed_deadline=model.missed_deadline,
-        period=link.attempt_latency if model.service == "ticks" else None,
-        storage=model.storage if model.service == "free_running" else None,
-        stored_pair=model.stored_pair,
-    )
+    server: LinkServer | SwitchServer
+    if placement is None:
+        supplier = _supply_backend(
+            supply, link, classical_latency, seed, supply_window, **(supply_options or {})
+        )
+        server = LinkServer(
+            engine,
+            lambda _src, _dst, pairs: supplier._sample_pairs("alice", "bob", pairs),
+            policy=typing.cast("Policy | None", policy),
+            service_unit=model.service_unit,
+            missed_deadline=model.missed_deadline,
+            period=link.attempt_latency if model.service == "ticks" else None,
+            storage=model.storage if model.service == "free_running" else None,
+            stored_pair=model.stored_pair,
+        )
+    else:
+        server = _switch(
+            engine,
+            tenants,
+            placement,
+            policy=typing.cast("Policy | None", policy),
+            model=model,
+            link=link,
+            classical_latency=classical_latency,
+            coherence_time=coherence_time,
+            supply=supply,
+            seed=seed,
+            supply_window=supply_window,
+            supply_options=supply_options,
+        )
     tenant_link = (
-        link
-        if classical_latency is None
-        else LinkModel(classical_latency, link.link_fidelity, link.fidelity_std)
+        link if classical_latency is None else replace(link, attempt_latency=classical_latency)
     )
 
     backends: dict[str, ReferenceBackend] = {}
@@ -300,6 +375,7 @@ def run_tenants(
         link=link,
         supply=supply,
         coherence_time=coherence_time,
+        placement=None if placement is None else dict(placement),
     )
 
 

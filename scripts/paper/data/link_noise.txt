@@ -1,0 +1,15 @@
+Links of equal fidelity and different noise. qnetbench's engine, 32 seeds of 256 rounds,
+against native NetSquid (native_netsquid.txt, section B). No memory noise.
+
+   quantity         F    engine Werner   native    engine dephased   native    engine bit flip  native amplitude
+   teleport      0.85    0.8983 ± 0.0030   0.9000      0.9275 ± 0.0025   0.9244      0.9194 ± 0.0036            0.8901
+   teleport      0.95    0.9656 ± 0.0022   0.9667      0.9772 ± 0.0018   0.9748      0.9729 ± 0.0018            0.9630
+   swap          0.85    0.8115 ± 0.0046   0.8231      0.8677 ± 0.0037   0.8744      0.8716 ± 0.0037            0.8035
+   swap          0.95    0.9313 ± 0.0030   0.9364      0.9518 ± 0.0019   0.9528      0.9504 ± 0.0024            0.9314
+   BBM92 QBER    0.85    0.1060 ± 0.0064   0.1053      0.0714 ± 0.0054   0.0793      0.0766 ± 0.0062            0.1227
+   BBM92 QBER    0.95    0.0383 ± 0.0040   0.0330      0.0240 ± 0.0032   0.0269      0.0258 ± 0.0039            0.0391
+
+Largest gap between engine and native, Werner and dephased columns: 2.5 engine s.e.
+The native values carry their own sampling error, about 0.004 for swap and QBER.
+Bit flip has no native column. Amplitude damping is not Bell-diagonal, so the engine has
+no column for it.

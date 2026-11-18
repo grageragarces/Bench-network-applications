@@ -9,27 +9,28 @@
    fidelity_first             4.478      10.238      12.104       1.003       1.000       0.000
    edf                        4.478      10.238      12.104       1.003       1.000       0.000
 
-2. The default mixes on the agreed model, 16 seeds.
+2. The default mixes on the agreed model, 32 seeds, as in executed_contention.py.
+   Utility here is the mean over tenants, so four tenants of one application weigh four times.
    deadline_heavy
      policy                satisfaction  worst served   utility
-     fifo                         0.940         0.925     0.846
-     tp_max                       0.940         0.925     0.846
-     fid_max                      0.940         0.925     0.846
-     fa_index_printed             0.930         0.912     0.846
-     fa_index_intended            0.942         0.928     0.846
-     fa_thr                       0.941         0.926     0.846
-     fidelity_first               0.940         0.925     0.846
-     edf                          0.980         0.975     0.846
+     fifo                         0.932         0.915     0.845
+     tp_max                       0.932         0.915     0.845
+     fid_max                      0.932         0.915     0.845
+     fa_index_printed             0.926         0.907     0.845
+     fa_index_intended            0.933         0.916     0.845
+     fa_thr                       0.932         0.915     0.845
+     fidelity_first               0.932         0.915     0.845
+     edf                          0.976         0.970     0.845
    fidelity_heavy
      policy                satisfaction  worst served   utility
-     fifo                         0.976         0.939     0.779
-     tp_max                       0.976         0.939     0.779
-     fid_max                      0.976         0.939     0.779
-     fa_index_printed             0.962         0.905     0.779
-     fa_index_intended            0.976         0.940     0.779
-     fa_thr                       0.976         0.939     0.779
-     fidelity_first               0.998         0.994     0.779
-     edf                          0.998         0.994     0.779
+     fifo                         0.969         0.923     0.782
+     tp_max                       0.969         0.923     0.782
+     fid_max                      0.969         0.923     0.782
+     fa_index_printed             0.960         0.900     0.782
+     fa_index_intended            0.969         0.923     0.782
+     fa_thr                       0.969         0.921     0.782
+     fidelity_first               0.997         0.993     0.782
+     edf                          0.997         0.993     0.782
 
 3. Three dqc tenants with a gates background, 128 seeds.
      policy                     dqc utility  gate utility

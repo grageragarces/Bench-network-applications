@@ -1,16 +1,29 @@
 Native SeQUeNCe: the state held for each delivered pair, against its fidelity label.
-SeQUeNCe 1.0.0, default quantum manager. Two routers 1 km apart, 1 ms classical delay,
+SeQUeNCe 1.0.0, Barrett-Kok generation. Two routers 1 km apart, 1 ms classical delay,
 decoherence disabled, 8 seeds per row.
-QBER is for BBM92 on a Werner pair, 2 (1 - F) / 3. 'implied' uses the stored state's Bell overlap;
-'labelled' uses the fidelity SeQUeNCe reports, which is what qnetbench and NetSquid use.
+'overlap' is the mean overlap of the stored state with psi+, the state generation heralds.
+'other' is the fraction of pairs whose nearest Bell state is not psi+.
+QBER is for BBM92, 2 (1 - F) / 3: 'implied' from the overlap, 'labelled' from the reported fidelity,
+which is what qnetbench replays.
 
- raw F  pairs   label  Bell overlap  Bell state  QBER implied  QBER labelled
-  0.99    232   0.990        1.0000        psi+        0.0000         0.0067
-  0.95    232   0.950        1.0000        psi+        0.0000         0.0333
-  0.85    232   0.850        1.0000        psi+        0.0000         0.1000
-  0.70    232   0.700        1.0000        psi+        0.0000         0.2000
-  0.60    232   0.600        1.0000        psi+        0.0000         0.2667
+Formalism: ket_vector (SeQUeNCe's default)
+ raw F  pairs   label   overlap   other  QBER implied  QBER labelled
+  0.99    258   0.990    0.9961   0.004        0.0026         0.0067
+  0.95    258   0.950    0.9806   0.019        0.0129         0.0333
+  0.85    258   0.850    0.8798   0.120        0.0801         0.1000
+  0.70    258   0.700    0.7132   0.287        0.1912         0.2000
+  0.60    258   0.600    0.6008   0.399        0.2661         0.2667
 
-SeQUeNCe's delivered pair is a pure Bell state whatever fidelity it reports. A protocol written natively
-on it sees a perfect pair unless the author applies the noise by hand, so the fidelity label is the only
-channel through which its link physics reaches an application. That is the channel qnetbench replays.
+Formalism: density_matrix
+ raw F  pairs   label   overlap   other  QBER implied  QBER labelled
+  0.99    228   0.990    0.9900   0.000        0.0067         0.0067
+  0.95    228   0.950    0.9500   0.000        0.0333         0.0333
+  0.85    228   0.850    0.8500   0.000        0.1000         0.1000
+  0.70    228   0.700    0.7000   0.000        0.2000         0.2000
+  0.60    228   0.600    0.6000   0.000        0.2667         0.2667
+
+In the ket-vector formalism each delivered pair is a pure Bell state, psi+ with probability F and
+one of the other three otherwise, so over many pairs a native protocol sees a Werner state at the
+reported fidelity. In the density-matrix formalism each pair is that Werner state. Both carry the
+fidelity qnetbench replays, provided it is set before the memories are made or their photon
+encoding is updated with it: setting raw_fidelity afterwards changes only the label.

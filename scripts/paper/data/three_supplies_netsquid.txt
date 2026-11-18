@@ -2,7 +2,7 @@
 dephasing memory at 0.25 s. Satisfaction counts fidelity and deadline; '+ staleness' also counts staleness.
 
 Timing of each supply, asked for 153 pairs/s:
-  netsquid      153.0 pairs/s   mean gap   6.54 ms   cv  0.00   mean/median  1.00   F 0.9900
+  netsquid                  153.0 pairs/s   mean gap   6.54 ms   cv  0.00   mean/median  1.00   F 0.9900
 
 supply: netsquid, on demand
                                       fifo  fidelity_first             edf
@@ -44,4 +44,18 @@ supply: netsquid, free running, 10 pairs
   fidelity_heavy  worst served             0.989           0.989           0.989
   fidelity_heavy  utility                  0.779           0.779           0.779
   fidelity_heavy  pair age, ms             0.685           0.685           0.685
+  draws with no policy best on both mixes: 0 of 16
+
+supply: netsquid, free running, 10 pairs, oldest first
+                                      fifo  fidelity_first             edf
+  deadline_heavy  satisfaction             1.000           1.000           1.000
+  deadline_heavy  + staleness              0.995           0.995           0.995
+  deadline_heavy  worst served             1.000           1.000           1.000
+  deadline_heavy  utility                  0.846           0.846           0.846
+  deadline_heavy  pair age, ms             0.029           0.029           0.029
+  fidelity_heavy  satisfaction             0.989           0.989           0.989
+  fidelity_heavy  + staleness              0.989           0.989           0.989
+  fidelity_heavy  worst served             0.976           0.976           0.976
+  fidelity_heavy  utility                  0.774           0.774           0.774
+  fidelity_heavy  pair age, ms             0.824           0.824           0.824
   draws with no policy best on both mixes: 0 of 16

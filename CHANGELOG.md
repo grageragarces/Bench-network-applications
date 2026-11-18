@@ -21,6 +21,65 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
+## [1.1.2] — 2026-11-18
+
+The package is unchanged from 1.1.0. Every script in `scripts/paper/` now reproduces its committed data byte for
+byte with its documented command. `executed_memory.py` defaults to the 256 draws its committed output used, and two
+data files that predated their scripts' current output are regenerated, with no number changed.
+
+---
+
+## [1.1.1] — 2026-11-18
+
+The package is unchanged from 1.1.0. This release adds `scripts/paper/reference_scores.py` and its data, which run
+the five scheduling scenarios under the built-in policies and four published schedulers and give the reference
+scores a new policy is compared with.
+
+---
+
+## [1.1.0] — 2026-11-18
+
+Contracts are unchanged (API and trace schema 0.3.0), and so is the published corpus: every new
+setting defaults to the earlier behaviour, except NetSquid's source timing below.
+
+### Added
+
+- **`LinkModel.noise`, the shape of a link's error at a given fidelity.** `"depolarizing"` (the
+  default) is the Werner pair as before. `"dephasing"` puts the whole error on Φ- and `"bit_flip"`
+  on Ψ+. The engine prepares the matching Bell-diagonal pair, and holding it mixes it toward I/4 as
+  before. The NetSquid supply passes one half of each pair through the matching channel. The
+  SeQUeNCe supply makes Werner pairs only and refuses the other shapes.
+- `distributed_gate` takes `basis`: `"z"` (default, unchanged) tests computational basis states,
+  and `"x"` prepares |±> inputs, on which held-qubit dephasing reaches the utility.
+- **Tenants on a star with a switch at its hub** (`run_tenants(..., placement=...)`,
+  `qnetbench.backends.reference.switch`). Each tenant's two roles sit on two leaves, every
+  leaf has its own link to the hub, and the switch swaps a pair from each leg into the tenant's
+  end-to-end pair, so applications are unchanged. In the policy's order, every request whose
+  two legs are idle starts at once. The pair that reaches the hub first decays while it waits
+  for the other if held qubits decay. The swap composes the legs' Bell-diagonal states, and
+  delivery waits one classical delay for the announcement. Without `placement`, runs are
+  unchanged.
+- `run_once(..., supply_options=...)` passes options to a simulator backend, as `run_tenants` does.
+- `qnetbench.apps.util.cfg_choice` for string options with a fixed set of values.
+
+### Changed
+
+- NetSquid's source now draws exponential gaps between pairs by default, as a heralded link with a
+  small success probability per attempt does. `timing="fixed"` gives the earlier fixed period.
+
+### Fixed
+
+- The SeQUeNCe supply replayed the same heralding stream for every seed. SeQUeNCe seeds the
+  Bell-state-measurement node it creates from the quantum connection's `seed`, which defaulted to 0.
+  The supply now gives it a seed per run. Supplies for seed `s` therefore differ from 1.0.0's for
+  every `s`.
+- The SeQUeNCe supply now also sets each memory's photon encoding to the link fidelity. SeQUeNCe
+  builds the stored state from the encoding, which `update_memory_params("raw_fidelity", ...)` does
+  not touch. Replay always used the reported fidelity, so this changes no supply. It only keeps
+  SeQUeNCe's own state in step with what is replayed.
+
+---
+
 ## [1.0.0] — 2026-11-17
 
 The first release on PyPI since 0.1.0: 0.2.0 was prepared but not published, and its changes are

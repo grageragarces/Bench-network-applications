@@ -6,6 +6,8 @@ sweep all go through."""
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
+from typing import Any
 
 from qnetbench.api.types import Demand
 from qnetbench.apps import get_app
@@ -55,6 +57,7 @@ def run_once(
     pair_age: float = 0.0,
     coherence_time: float = math.inf,
     demand_override: dict[str, object] | None = None,
+    supply_options: Mapping[str, Any] | None = None,
 ) -> list[Event]:
     """Execute one run and return its trace as a list of events.
 
@@ -65,8 +68,13 @@ def run_once(
     is how to vary a contract without editing the application. Applications that use
     `qsend` make no entanglement requests, so it has no effect on them. A
     `latency_budget` also clears the application's own deadline. The trace records
-    the contract in force."""
+    the contract in force.
+
+    `supply_options` go to a simulator backend's constructor, for example
+    ``{"timing": "fixed"}`` for NetSquid's fixed-period source. The reference backend
+    takes none."""
     override = _checked_override(demand_override)
+    options = dict(supply_options or {})
     app = get_app(app_name)
     topo = topology or default_topology(app.roles())
     roles_to_nodes = {role: role for role in app.roles()}
@@ -77,6 +85,10 @@ def run_once(
     arb_label, policy = _parse_arbitration(arbitration)
 
     if backend == "reference":
+        if options:
+            raise ValueError(
+                f"the reference backend takes no supply options, got {sorted(options)}"
+            )
         ref = ReferenceBackend(
             topo,
             seed=seed,
@@ -101,7 +113,13 @@ def run_once(
                 "the 'sequence' backend needs the optional SeQUeNCe dependency; "
                 "install it with: pip install qnetbench[sequence]"
             ) from exc
-        seq = SequenceBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        seq = SequenceBackend(
+            topo,
+            seed=seed,
+            arbitration=arb_label,
+            policy=policy,  # type: ignore[arg-type]
+            **options,
+        )
         seq.demand_override = override
         return seq.run(app, cfg or {}, roles_to_nodes)
 
@@ -114,7 +132,13 @@ def run_once(
                 "register at netsquid.org and install with: "
                 "pip install --extra-index-url https://pypi.netsquid.org qnetbench[netsquid]"
             ) from exc
-        nsq = NetSquidBackend(topo, seed=seed, arbitration=arb_label, policy=policy)  # type: ignore[arg-type]
+        nsq = NetSquidBackend(
+            topo,
+            seed=seed,
+            arbitration=arb_label,
+            policy=policy,  # type: ignore[arg-type]
+            **options,
+        )
         nsq.demand_override = override
         return nsq.run(app, cfg or {}, roles_to_nodes)
 

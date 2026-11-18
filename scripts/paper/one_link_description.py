@@ -25,7 +25,12 @@ from qnetbench.trace.events import EntanglementDelivered
 
 DATA = Path(__file__).parent / "data"
 RATE = 153.0
-OPTIONS: dict[str, dict] = {"netsquid-exponential": {"timing": "exponential"}}
+# NetSquid's source has drawn random gaps by default since release 1.1.0. The results here were
+# produced with its fixed-period source, so "netsquid" is pinned to it.
+OPTIONS: dict[str, dict] = {
+    "netsquid": {"timing": "fixed"},
+    "netsquid-exponential": {"timing": "exponential"},
+}
 ORDER = ("reference", "sequence", "netsquid", "netsquid-exponential")
 SEEDS = 16
 
