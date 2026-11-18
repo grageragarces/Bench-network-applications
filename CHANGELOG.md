@@ -35,6 +35,14 @@ setting defaults to the earlier behaviour, except NetSquid's source timing below
   SeQUeNCe supply makes Werner pairs only and refuses the other shapes.
 - `distributed_gate` takes `basis`: `"z"` (default, unchanged) tests computational basis states,
   and `"x"` prepares |±> inputs, on which held-qubit dephasing reaches the utility.
+- **Tenants on a star with a switch at its hub** (`run_tenants(..., placement=...)`,
+  `qnetbench.backends.reference.switch`). Each tenant's two roles sit on two leaves, every
+  leaf has its own link to the hub, and the switch swaps a pair from each leg into the tenant's
+  end-to-end pair, so applications are unchanged. In the policy's order, every request whose
+  two legs are idle starts at once. The pair that reaches the hub first decays while it waits
+  for the other if held qubits decay. The swap composes the legs' Bell-diagonal states, and
+  delivery waits one classical delay for the announcement. Without `placement`, runs are
+  unchanged.
 - `run_once(..., supply_options=...)` passes options to a simulator backend, as `run_tenants` does.
 - `qnetbench.apps.util.cfg_choice` for string options with a fixed set of values.
 

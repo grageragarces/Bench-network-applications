@@ -13,7 +13,7 @@ from __future__ import annotations
 import itertools
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Protocol
 
 from qnetbench.api.types import Demand, NodeId, SimTime
 from qnetbench.backends.reference.engine import Engine
@@ -54,6 +54,12 @@ class LinkRequest:
             request_time=self.arrival,
             tenant=self.tenant,
         )
+
+
+class RequestServer(Protocol):
+    """What an application's backend needs from whatever serves its pairs: one link or a switch."""
+
+    def submit(self, request: LinkRequest) -> None: ...
 
 
 class LinkServer:

@@ -32,7 +32,7 @@ from qnetbench.api.types import (
     ViolationKind,
 )
 from qnetbench.backends.reference.engine import Engine, Process
-from qnetbench.backends.reference.link import LinkRequest, LinkServer
+from qnetbench.backends.reference.link import LinkRequest, LinkServer, RequestServer
 from qnetbench.backends.reference.qstate import MemoryNoise, Register, gate_matrix
 from qnetbench.policies.base import Policy
 from qnetbench.topology import Topology
@@ -289,7 +289,7 @@ class ReferenceBackend:
         # Everything below until the seeds is set by `qnetbench.tenancy`, which runs several
         # backends on one engine and one link. Defaults give a single application on its own.
         self.engine = engine or Engine()
-        self.shared_link: LinkServer | None = None
+        self.shared_link: RequestServer | None = None
         self.tenant = ""
         self.queue_wait_aging = False  # a pair ages by its request's time in the queue
         self.arrivals: tuple[float, ...] = ()  # earliest time of each side's k-th request
@@ -457,7 +457,7 @@ class ReferenceBackend:
             return demand
         return demand.model_copy(update={"deadline": demand.deadline + delay})
 
-    def _link_for(self, node: NodeId, peer: NodeId) -> LinkServer:
+    def _link_for(self, node: NodeId, peer: NodeId) -> RequestServer:
         if self.shared_link is not None:
             return self.shared_link
         key = frozenset((node, peer))
