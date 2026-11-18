@@ -21,7 +21,7 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
-## [1.1.0] — unreleased
+## [1.1.0] — 2026-11-18
 
 Contracts are unchanged (API and trace schema 0.3.0), and so is the published corpus: every new
 setting defaults to the earlier behaviour, except NetSquid's source timing below.
