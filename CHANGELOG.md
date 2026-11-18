@@ -21,6 +21,14 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
+## [1.1.1] — 2026-11-18
+
+The package is unchanged from 1.1.0. This release adds `scripts/paper/reference_scores.py` and its data, which run
+the five scheduling scenarios under the built-in policies and four published schedulers and give the reference
+scores a new policy is compared with.
+
+---
+
 ## [1.1.0] — 2026-11-18
 
 Contracts are unchanged (API and trace schema 0.3.0), and so is the published corpus: every new
