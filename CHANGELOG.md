@@ -21,6 +21,14 @@ a consumer checks compatibility from the file rather than from this document.
 
 ---
 
+## [1.1.2] — 2026-11-18
+
+The package is unchanged from 1.1.0. Every script in `scripts/paper/` now reproduces its committed data byte for
+byte with its documented command. `executed_memory.py` defaults to the 256 draws its committed output used, and two
+data files that predated their scripts' current output are regenerated, with no number changed.
+
+---
+
 ## [1.1.1] — 2026-11-18
 
 The package is unchanged from 1.1.0. This release adds `scripts/paper/reference_scores.py` and its data, which run
