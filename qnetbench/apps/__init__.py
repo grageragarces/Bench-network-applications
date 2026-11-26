@@ -36,6 +36,7 @@ from qnetbench.apps.qkd import QKD
 from qnetbench.apps.secret_sharing import SecretSharing
 from qnetbench.apps.shared_randomness import SharedRandomness
 from qnetbench.apps.six_state import SixState
+from qnetbench.apps.star_switch_routing import StarSwitchRouting
 from qnetbench.apps.swap import EntanglementSwap
 from qnetbench.apps.teleport import Teleportation
 from qnetbench.apps.threshold_secret_sharing import ThresholdSecretSharing
@@ -81,7 +82,7 @@ _CORE_REGISTRY: dict[str, Application] = {app.name: app for app in _CORE}
 # Hand-written protocols outside the core: runnable by name and covered by the
 # full-catalog CI test, but not part of the published corpus. Promoting one is a
 # move into `_CORE` plus a corpus regeneration.
-_CONTRIBUTED: tuple[Application, ...] = (TieAudit(),)
+_CONTRIBUTED: tuple[Application, ...] = (TieAudit(), StarSwitchRouting())
 
 _CIRCUIT_FAMILIES = {
     "ghz": ghz,
@@ -163,6 +164,7 @@ __all__ = [
     "SecretSharing",
     "SharedRandomness",
     "SixState",
+    "StarSwitchRouting",
     "Teleportation",
     "ThresholdSecretSharing",
     "TieAudit",
