@@ -10,14 +10,14 @@ protocols for coverage, and a **generator** for quantity.
 
 ```bash
 qnetbench list          # the 27 core protocols
-qnetbench list --all    # the 67-entry catalog
+qnetbench list --all    # the 68-entry catalog
 qnetbench run <name>    # any entry from either
 ```
 
 | Layer | Count | What it is |
 |---|---|---|
 | Core protocols | **27** | hand-written protocols spanning every demand class; CI, the reference corpus and the cross-backend equivalence suite all iterate these |
-| Runnable catalog | **67** | the core plus 39 generated distributed-circuit instances and 1 contributed protocol |
+| Runnable catalog | **68** | the core plus 39 generated distributed-circuit instances and 2 contributed protocols |
 | Generatable | unbounded | any circuit family × size × partition, or any Qiskit / MQT Bench circuit |
 
 ## The core
@@ -83,6 +83,7 @@ corpus. Promoting one to the core is a move into `_CORE` and a corpus regenerati
 | App | Protocol | Demand signature |
 |---|---|---|
 | `tie_audit` | verified, entanglement-steered audit of sign consistency (the TieAudit task of [arXiv:2606.20344](https://arxiv.org/abs/2606.20344)) | **n pairs consumed jointly** per copy, so the value decays like F^n; strictly one-way classical traffic and no feed-forward; hidden test copies verify an untrusted source |
+| `star_switch_routing` | 5-node star-switch multipartite routing (`hub` + 4 two-qubit leaves via an 8-qubit CSS MDS state) | **multi-qubit bursts per leaf** (2 EPR pairs/leaf, 8 pairs/round), hub-side CSS state teleportation, and dynamic simultaneous two-pair extraction via local Pauli measurements |
 
 `tie_audit` is a verified protocol whose classical traffic runs one way. Alice holds
 a sign per slot, Bob a matching of the slots, and Bob wants the fraction `f` of
@@ -108,6 +109,45 @@ run_once("tie_audit", seed=0, cfg={"copies": 1024, "n": 4})  # tighter, on 16 sl
 Its reference characterization: F½util 0.72 ± 0.04, stale½ 0.48 ms, 0.34
 messages per pair, Fano factor 0.33 (regular bursts of n pairs), no deadlines.
 
+`star_switch_routing` models a central star switch (`hub`) serving four two-qubit
+end-nodes (`leaf0`–`leaf3`). Each round, the hub prepares an 8-qubit CSS multipartite
+resource state (the binary lift of the $[4, 2, 3]_4$ MDS code over $\mathbb{F}_4$) and
+teleports two qubits to each leaf (8 elementary EPR pairs per round, bounded to at most
+10 live qubits for fast statevector simulation). Once distributed, a uniformly random
+perfect matching $M \in \{\{(0,1),(2,3)\}, \{(0,2),(1,3)\}, \{(0,3),(1,2)\}\}$ is
+revealed: each leaf performs a single local Pauli measurement ($X$ or $Z$) to carve out
+two *simultaneous* point-to-point Bell pairs covering all four leaves without further
+quantum communication. Both extracted pairs are verified in a randomly chosen Pauli
+basis ($Z\otimes Z$ or $X\otimes X$) using the exact classical Pauli-frame parity from
+the four routing measurements; utility is the fraction of rounds in which *both* pairs
+verify.
+
+```bash
+qnetbench run star_switch_routing                     # 32 rounds on reference backend
+qnetbench run star_switch_routing --backend sequence  # run on SeQUeNCe
+qnetbench run star_switch_routing --backend netsquid  # run on NetSquid
+qnetbench characterize star_switch_routing            # demand signature & curves
+```
+
+Configure the round count or link model from Python:
+
+```python
+from qnetbench.apps import StarSwitchRouting
+from qnetbench.harness.runner import run_once
+from qnetbench.metrics import compute_report
+from qnetbench.topology import LinkModel, default_topology
+
+topo = default_topology(
+    StarSwitchRouting().roles(),
+    link=LinkModel(link_fidelity=0.98, fidelity_std=0.0),
+)
+events = run_once("star_switch_routing", backend="reference", topology=topo, cfg={"rounds": 64}, seed=0)
+print(compute_report(events).app_utility)
+```
+
+Its reference characterization: 5 parties, F½util 0.878 ± 0.028, stale½ 0.296 ± 0.073 ms,
+1.52 messages per pair, Fano factor 0.60 (multi-qubit bursts per leaf), no deadlines.
+
 ## The generated catalog
 
 The 39 generated entries are `DQC` over the built-in circuit families at sizes 4–10:
@@ -119,8 +159,9 @@ dqc_iqp4 … dqc_iqp10          dqc_hea4 … dqc_hea10
 ```
 
 Six families × seven sizes = 42, of which three (`dqc_ghz4`, `dqc_qft4`,
-`dqc_random4`) are also in the core. With the 27 core protocols and `tie_audit`, that
-makes 67 catalog entries. Each is runnable by name with no extra setup:
+`dqc_random4`) are also in the core. With the 27 core protocols, `tie_audit`, and
+`star_switch_routing`, that makes 68 catalog entries. Each is runnable by name with
+no extra setup:
 
 ```bash
 qnetbench run dqc_iqp8
@@ -136,7 +177,7 @@ Beyond the catalog the generator is unbounded — see [Circuits](circuits.md) an
 from qnetbench.apps import available_apps, catalog_apps, get_app, register_app
 
 available_apps()          # the 27 core names
-catalog_apps()            # all 67
+catalog_apps()            # all 68
 app = get_app("bqc")      # the Application instance
 app.name, app.roles()     # ('bqc', ['alice', 'bob'])
 ```

@@ -33,6 +33,12 @@ Catalog entries outside the core; see
         - decode
         - confidence_interval
 
+::: qnetbench.apps.star_switch_routing
+    options:
+      heading_level: 3
+      members:
+        - StarSwitchRouting
+
 ## Configuration helpers
 
 ::: qnetbench.apps.util
